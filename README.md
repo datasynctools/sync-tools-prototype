@@ -1,4 +1,4 @@
 sync-tools-prototype
 ====================
 
-Initial prototype of data sync tools
+Initial prototype of data sync tools.
