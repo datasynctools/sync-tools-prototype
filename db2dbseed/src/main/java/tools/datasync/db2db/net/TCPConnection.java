@@ -23,4 +23,8 @@ package tools.datasync.db2db.net;
 
 public class TCPConnection implements Connection {
 
+	public int send(byte[] data) {
+		return 0;
+	}
+
 }
