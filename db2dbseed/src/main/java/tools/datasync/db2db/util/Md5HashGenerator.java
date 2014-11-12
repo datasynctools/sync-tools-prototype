@@ -23,4 +23,11 @@ package tools.datasync.db2db.util;
 
 public class Md5HashGenerator implements HashGenerator {
 
+	/* (non-Javadoc)
+	 * @see tools.datasync.db2db.util.HashGenerator#generate(byte[])
+	 */
+	public String generate(byte[] data) {
+		return null;
+	}
+
 }

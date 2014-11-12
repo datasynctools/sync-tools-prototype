@@ -23,4 +23,5 @@ package tools.datasync.db2db.util;
 
 public interface HashGenerator {
 
+	public String generate(byte[] data);
 }

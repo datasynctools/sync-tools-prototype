@@ -18,18 +18,42 @@
  * @sponsor Douglas Johnson
  * @copyright datasync.tools
  * @version 1.0
- * @since   10-Nov-2014
+ * @since   12-Nov-2014
  */
 
-package tools.datasync.db2db.scenario1;
+package tools.datasync.db2db.util;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class Init {
+import org.springframework.stereotype.Service;
 
-	public Init() {
-		ApplicationContext context = new ClassPathXmlApplicationContext("SpringBeans.xml");
+import tools.datasync.db2db.model.SeedRecord;
+
+@Service
+public class SeedQueue {
+
+	private Queue<SeedRecord> seedIn;
+	private Queue<SeedRecord> seedOut;
+
+	public SeedQueue() {
+		seedIn = new ConcurrentLinkedQueue<SeedRecord>();
+		seedOut = new ConcurrentLinkedQueue<SeedRecord>();
 	}
 
+	public void seedIn(SeedRecord seed) {
+		seedIn.add(seed);
+	}
+
+	public void seedOut(SeedRecord seed) {
+		seedOut.add(seed);
+	}
+
+	public Queue<SeedRecord> getSeedInQueue() {
+		return this.seedIn;
+	}
+	
+	public Queue<SeedRecord> getSeedOutQueue() {
+		return this.seedOut;
+	}
 }

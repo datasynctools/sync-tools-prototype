@@ -19,37 +19,36 @@
 * @version 1.0
 * @since   2014-11-10
 */
-package tools.datasync.db2db.sync;
+package tools.datasync.db2db.scenario1;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
-import tools.datasync.db2db.model.SeedRecord;
-import tools.datasync.db2db.util.SeedQueue;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SyncManagerImpl implements SyncManager {
+public class PopulateDatabaseTest {
 
-	@Autowired
-	SeedQueue queue;
-
-	/* (non-Javadoc)
-	 * @see tools.datasync.db2db.sync.SyncManager#beginSync(tools.datasync.db2db.sync.SyncPeer)
-	 */
-	public void beginSync(SyncPeer peer) {
-		
+	ApplicationContext context;
+	
+	@Before
+	public void setup() {
+		context = new ClassPathXmlApplicationContext("SpringBeans.xml");
 	}
-
-	/* (non-Javadoc)
-	 * @see tools.datasync.db2db.sync.SyncManager#seedIn(tools.datasync.db2db.model.SeedRecord)
-	 */
-	public void seedIn(SeedRecord seed) {
+	
+	@Test
+	public void populateDatabase(){
 		
+		System.out.println("test populateDatabase");
+		assertEquals("actual", "actual");
 	}
-
-	/* (non-Javadoc)
-	 * @see tools.datasync.db2db.sync.SyncManager#seedOut(tools.datasync.db2db.model.SeedRecord)
-	 */
-	public void seedOut(SeedRecord seed) {
+	
+	@Test
+	public void assertFail(){
 		
+		System.out.println("test populateDatabase");
+		assertNotEquals("actual", "actual1");
 	}
-
 }

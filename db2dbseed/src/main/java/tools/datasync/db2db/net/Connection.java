@@ -21,7 +21,16 @@
 */
 package tools.datasync.db2db.net;
 
+import java.util.List;
+
+import tools.datasync.db2db.sync.DataHandler;
+
 public interface Connection {
 
 	public int send(byte[] data);
+	public void onData(byte[] data);
+	
+	public boolean addDataHandler(DataHandler handler);
+	public boolean removeDataHandler(DataHandler handler);
+	public List<DataHandler> getDataHandlers();
 }

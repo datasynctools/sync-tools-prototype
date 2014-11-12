@@ -21,6 +21,9 @@
 */
 package tools.datasync.db2db.seed;
 
+import tools.datasync.db2db.model.SeedRecord;
+
 public interface SeedConsumer {
 
+	public boolean consume(SeedRecord seed);
 }

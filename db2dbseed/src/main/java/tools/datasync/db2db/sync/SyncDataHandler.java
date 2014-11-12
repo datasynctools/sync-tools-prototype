@@ -23,5 +23,19 @@ package tools.datasync.db2db.sync;
 
 public class SyncDataHandler implements DataHandler {
 
+	/* (non-Javadoc)
+	 * @see tools.datasync.db2db.sync.DataHandler#send(byte[])
+	 */
+	public int send(byte[] data) {
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see tools.datasync.db2db.sync.DataHandler#onData(byte[])
+	 */
+	public void onData(byte[] data) {
+		
+	}
+
 	
 }

@@ -21,6 +21,10 @@
 */
 package tools.datasync.db2db.seed;
 
+import java.io.Serializable;
+import java.util.Map;
+
 public interface SeedProducer {
 
+	public boolean produce(Map<String, Serializable> record);
 }

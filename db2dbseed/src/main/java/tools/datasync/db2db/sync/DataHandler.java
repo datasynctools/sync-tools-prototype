@@ -23,4 +23,6 @@ package tools.datasync.db2db.sync;
 
 public interface DataHandler {
 
+	public int send(byte[] data);
+	public void onData(byte[] data);
 }

@@ -21,6 +21,21 @@
 */
 package tools.datasync.db2db.seed;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import tools.datasync.db2db.dao.SyncDao;
+import tools.datasync.db2db.model.SeedRecord;
+
 public class DbSeedConsumer implements SeedConsumer {
+
+	@Autowired
+	SyncDao syncDao;
+	
+	/* (non-Javadoc)
+	 * @see tools.datasync.db2db.seed.SeedConsumer#consume(tools.datasync.db2db.model.SeedRecord)
+	 */
+	public boolean consume(SeedRecord seed) {
+		return false;
+	}
 
 }

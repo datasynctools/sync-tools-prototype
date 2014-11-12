@@ -16,18 +16,20 @@
  * 
  * @author  Upendra Jariya
  * @sponsor Douglas Johnson
+ * @copyright datasync.tools
  * @version 1.0
- * @since   2014-11-10
+ * @since   10-Nov-2014
  */
-package tools.datasync.db2db.sync;
 
-import tools.datasync.db2db.model.SeedRecord;
+package tools.datasync.db2db.scenario1;
 
-public interface SyncManager {
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-	public void beginSync(SyncPeer peer);
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+   PopulateDatabaseTest.class
+})
+public class Scenario1TestSuite {
 
-	public void seedIn(SeedRecord seed);
-
-	public void seedOut(SeedRecord seed);
 }
