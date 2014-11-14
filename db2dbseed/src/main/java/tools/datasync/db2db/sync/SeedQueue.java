@@ -16,22 +16,34 @@
  * 
  * @author  Upendra Jariya
  * @sponsor Douglas Johnson
+ * @copyright datasync.tools
  * @version 1.0
- * @since   2014-11-10
+ * @since   12-Nov-2014
  */
+
 package tools.datasync.db2db.sync;
 
-import tools.datasync.db2db.model.SeedRecord;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 
-public interface SyncManager {
+import org.springframework.stereotype.Service;
 
-	public void initiate();
+@Service
+public class SeedQueue {
 
-	public boolean beginSync(SyncPeer peer);
+	private BlockingQueue<Runnable> seedIn;
+	private BlockingQueue<Runnable> seedOut;
+
+	public SeedQueue() {
+		seedIn = new LinkedBlockingDeque<Runnable>();
+		seedOut = new LinkedBlockingDeque<Runnable>();
+	}
+
+	protected BlockingQueue<Runnable> getSeedInQueue() {
+		return this.seedIn;
+	}
 	
-	public boolean endSync(SyncPeer peer);
-
-	public void seedIn(SeedRecord seed);
-
-	public void seedOut(SeedRecord seed);
+	protected BlockingQueue<Runnable> getSeedOutQueue() {
+		return this.seedOut;
+	}
 }

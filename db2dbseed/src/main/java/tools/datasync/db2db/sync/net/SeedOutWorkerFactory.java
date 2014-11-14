@@ -18,42 +18,28 @@
  * @sponsor Douglas Johnson
  * @copyright datasync.tools
  * @version 1.0
- * @since   12-Nov-2014
+ * @since   14-Nov-2014
  */
 
-package tools.datasync.db2db.util;
+package tools.datasync.db2db.sync.net;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import tools.datasync.db2db.model.SeedRecord;
+import tools.datasync.db2db.net.Connection;
+import tools.datasync.db2db.util.ExceptionHandler;
 
-@Service
-public class SeedQueue {
+public class SeedOutWorkerFactory {
 
-	private Queue<SeedRecord> seedIn;
-	private Queue<SeedRecord> seedOut;
+	@Autowired
+	private ExceptionHandler exceptionHandler;
 
-	public SeedQueue() {
-		seedIn = new ConcurrentLinkedQueue<SeedRecord>();
-		seedOut = new ConcurrentLinkedQueue<SeedRecord>();
-	}
+	@Autowired
+	private Connection connection;
 
-	public void seedIn(SeedRecord seed) {
-		seedIn.add(seed);
-	}
-
-	public void seedOut(SeedRecord seed) {
-		seedOut.add(seed);
-	}
-
-	public Queue<SeedRecord> getSeedInQueue() {
-		return this.seedIn;
-	}
-	
-	public Queue<SeedRecord> getSeedOutQueue() {
-		return this.seedOut;
+	// Factory method is required here to avoid bean auto-wiring in each worker instance
+	public SeedOutWorker newWorker(SeedRecord seed){
+		
+		return new SeedOutWorker(seed, connection, exceptionHandler);
 	}
 }

@@ -18,20 +18,37 @@
 * @sponsor Douglas Johnson
 * @copyright datasync.tools
 * @version 1.0
-* @since   12-Nov-2014
+* @since   14-Nov-2014
 */
 
-package tools.datasync.db2db.util;
+package tools.datasync.db2db.sync.net;
 
 import java.util.logging.Level;
 
+import tools.datasync.db2db.model.SeedRecord;
+import tools.datasync.db2db.seed.SeedConsumer;
+import tools.datasync.db2db.util.ExceptionHandler;
 
-public class ExceptionHandler {
+public class SeedInWorker implements Runnable {
+	
+	private SeedRecord seed;
+	private SeedConsumer seedConsumer;
+	private ExceptionHandler exceptionHandler;
 
-	public void handle(Throwable ex, Level level, String message, Object... params){
-		ex.printStackTrace();
-		// TODO: Implement... catch Throwable here.
-		// TODO: What if developer needs to re-throw - re-throw from here :D
-		// TODO: Get stack trace elements for class name, method name, line number etc.
+	protected SeedInWorker(SeedRecord record, SeedConsumer seedConsumer, ExceptionHandler exceptionHandler) {
+
+		this.seed = record;
+		this.seedConsumer = seedConsumer;
+		this.exceptionHandler = exceptionHandler;
+	}
+
+	public void run() {
+		try {
+			seedConsumer.consume(seed);
+
+		} catch (Throwable th) {
+			exceptionHandler.handle(th, Level.WARNING, "Exception while processing seed in entry");
+			// TODO: how to re-enqueue this failed message ?
+		}
 	}
 }

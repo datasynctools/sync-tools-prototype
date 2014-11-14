@@ -30,6 +30,9 @@ public interface Connection {
 	public int send(byte[] data);
 	public void onData(byte[] data);
 	
+	public boolean checkOutboundConnection();
+	public boolean checkInboundConnection();
+	
 	public boolean addDataHandler(DataHandler handler);
 	public boolean removeDataHandler(DataHandler handler);
 	public List<DataHandler> getDataHandlers();

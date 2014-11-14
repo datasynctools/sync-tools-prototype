@@ -21,10 +21,13 @@
 */
 package tools.datasync.db2db.model;
 
+import java.io.Serializable;
+
 import tools.datasync.db2db.sync.SyncPeer;
 
-public class SeedRecord {
+public class SeedRecord implements Serializable, Cloneable {
 
+	private static final long serialVersionUID = 2953233347238587733L;
 	private String entityId;
 	private String recordId;
 	private String recordHash;

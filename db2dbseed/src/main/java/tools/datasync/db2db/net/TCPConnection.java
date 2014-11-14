@@ -109,4 +109,18 @@ public class TCPConnection implements Connection {
 		return handlers;
 	}
 
+	/* (non-Javadoc)
+	 * @see tools.datasync.db2db.net.Connection#checkOutboundConnection()
+	 */
+	public boolean checkOutboundConnection() {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see tools.datasync.db2db.net.Connection#checkInboundConnection()
+	 */
+	public boolean checkInboundConnection() {
+		return false;
+	}
+
 }

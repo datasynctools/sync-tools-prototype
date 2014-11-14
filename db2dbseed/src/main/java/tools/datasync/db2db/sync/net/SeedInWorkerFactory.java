@@ -16,22 +16,30 @@
  * 
  * @author  Upendra Jariya
  * @sponsor Douglas Johnson
+ * @copyright datasync.tools
  * @version 1.0
- * @since   2014-11-10
+ * @since   14-Nov-2014
  */
-package tools.datasync.db2db.sync;
+
+package tools.datasync.db2db.sync.net;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import tools.datasync.db2db.model.SeedRecord;
+import tools.datasync.db2db.seed.SeedConsumer;
+import tools.datasync.db2db.util.ExceptionHandler;
 
-public interface SyncManager {
+public class SeedInWorkerFactory {
 
-	public void initiate();
+	@Autowired
+	private ExceptionHandler exceptionHandler;
 
-	public boolean beginSync(SyncPeer peer);
-	
-	public boolean endSync(SyncPeer peer);
+	@Autowired
+	private SeedConsumer seedConsumer;
 
-	public void seedIn(SeedRecord seed);
-
-	public void seedOut(SeedRecord seed);
+	// Factory method is required here to avoid bean auto-wiring in each worker instance
+	public SeedInWorker newWorker(SeedRecord seed){
+		
+		return new SeedInWorker(seed, seedConsumer, exceptionHandler);
+	}
 }
