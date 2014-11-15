@@ -26,17 +26,21 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import tools.datasync.db2db.sync.SyncManager;
+import tools.datasync.db2db.model.SeedRecord;
+import tools.datasync.db2db.sync.DataHandler;
 
 public class DbSeedProducer implements SeedProducer {
 
 	@Autowired
-	SyncManager manager;
+	DataHandler handler;
 	
 	/* (non-Javadoc)
 	 * @see tools.datasync.db2db.seed.SeedProducer#produce(java.util.Map)
 	 */
 	public boolean produce(Map<String, Serializable> record) {
+		
+		SeedRecord seed = new SeedRecord("", "", "", new byte[0], null);
+		//handler.seedOut(seed);
 		return false;
 	}
 

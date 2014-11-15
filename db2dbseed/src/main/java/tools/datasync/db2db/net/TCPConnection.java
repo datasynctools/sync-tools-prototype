@@ -73,7 +73,7 @@ public class TCPConnection implements Connection {
 			for(DataHandler handler : handlers){
 				try{
 					// TODO: This can be very slow... Performance hack
-					handler.onData(syncMessage.getPayload());
+					handler.onData(syncMessage);
 					
 				} catch (Exception ex){
 					// Handle exception...

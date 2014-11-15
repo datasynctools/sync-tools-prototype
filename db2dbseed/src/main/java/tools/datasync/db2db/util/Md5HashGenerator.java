@@ -30,4 +30,11 @@ public class Md5HashGenerator implements HashGenerator {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see tools.datasync.db2db.util.HashGenerator#validate(byte[], java.lang.String)
+	 */
+	public boolean validate(byte[] data, String hash) {
+		return false;
+	}
+
 }

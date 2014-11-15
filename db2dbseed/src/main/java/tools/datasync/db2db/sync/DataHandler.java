@@ -21,8 +21,10 @@
 */
 package tools.datasync.db2db.sync;
 
+import tools.datasync.db2db.net.SyncMessage;
+
 public interface DataHandler {
 
 	public int send(byte[] data);
-	public void onData(byte[] data);
+	public void onData(SyncMessage syncMessage);
 }

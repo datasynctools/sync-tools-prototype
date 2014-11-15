@@ -31,7 +31,7 @@ public class SyncMessage implements Serializable, Cloneable {
 	private static final long serialVersionUID = -3180554612753110701L;
 
 	private String originId;
-	private long messageNumber;
+	private long messageNumber; // required for ACK/ NACK
 	private String messageType;
 	private byte[] payload;
 	private String paloadHash;

@@ -16,14 +16,30 @@
 * 
 * @author  Upendra Jariya
 * @sponsor Douglas Johnson
+* @copyright datasync.tools
 * @version 1.0
-* @since   2014-11-10
+* @since   15-Nov-2014
 */
-package tools.datasync.db2db.util;
 
-public interface HashGenerator {
+package tools.datasync.db2db.sync.fsm;
 
-	public String generate(byte[] data);
+import tools.datasync.db2db.net.SyncMessageType;
+
+public class SyncStateTransition {
+
+	final SyncStateElement fromState;
+	final SyncMessageType message;
+	final SyncStateElement nextState;
 	
-	public boolean validate(byte[] data, String hash);
+	/**
+	 * @param fromState from state
+	 * @param message message
+	 * @param nextState next state
+	 */
+	public SyncStateTransition(SyncStateElement fromState, SyncMessageType message, SyncStateElement nextState) {
+		super();
+		this.fromState = fromState;
+		this.message = message;
+		this.nextState = nextState;
+	}
 }

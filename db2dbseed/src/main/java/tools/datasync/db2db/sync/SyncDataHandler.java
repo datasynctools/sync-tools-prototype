@@ -21,6 +21,8 @@
 */
 package tools.datasync.db2db.sync;
 
+import tools.datasync.db2db.net.SyncMessage;
+
 public class SyncDataHandler implements DataHandler {
 
 	/* (non-Javadoc)
@@ -33,7 +35,7 @@ public class SyncDataHandler implements DataHandler {
 	/* (non-Javadoc)
 	 * @see tools.datasync.db2db.sync.DataHandler#onData(byte[])
 	 */
-	public void onData(byte[] data) {
+	public void onData(SyncMessage syncMessage) {
 		
 	}
 
