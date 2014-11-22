@@ -28,6 +28,7 @@ import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.ClientInfoStatus;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -72,7 +73,7 @@ public class TCPConnection implements Connection {
 	private final Logger logger = Logger.getLogger(TCPConnection.class.getName());
 
 	public TCPConnection() {
-		logger.info("Creating TCP Connection service..."+exceptionHandler);
+		logger.info("Creating TCP Connection service...");
 		handlers = new ArrayList<SyncDataHandler>();
 		connectionLock = new ReentrantLock();
 		isConnected = new AtomicBoolean(false);
@@ -80,38 +81,34 @@ public class TCPConnection implements Connection {
 
 	public void initiate() {
 		try {
-			if("A".equalsIgnoreCase(peerName)){
-				if (serverPort == 0) {
-					serverPort = 9991;
-					syncPeerIp = "127.0.0.1";
-					syncPeerPort = 7771;
-				}
-			} else {
-				if (serverPort == 0) {
-					serverPort = 7771;
-					syncPeerIp = "127.0.0.1";
-					syncPeerPort = 9991;
-				}
+			if (serverPort == 0) {
+				serverPort = 9991;
+				syncPeerIp = "127.0.0.1";
+				syncPeerPort = 7771;
 			}
-			
 			logger.info("Initializing with serverPort=[" + serverPort + "], syncPeerIp=[" + syncPeerIp + "], syncPeerPort=[" + syncPeerPort
 					+ "]");
-
-			logger.info("Starting TCP server listener thread...");
-			TCPServerListener server_ = new TCPServerListener(serverPort);
-			Thread serverThread = new Thread(server_);
-			serverThread.start();
-
-			logger.info("Starting TCP client listener thread...");
-			TCPClientListener client_ = new TCPClientListener(syncPeerIp, syncPeerPort);
-			Thread clientThread = new Thread(client_);
-			clientThread.start();
-
+			
+			Thread connectionThread = null;
+			if("A".equalsIgnoreCase(peerName)){
+				logger.info("Starting TCP server listener thread... Peer: " + peerName);
+				TCPServerListener server_ = new TCPServerListener(serverPort);
+				connectionThread = new Thread(server_);
+			} else {
+				int temp = serverPort;
+				serverPort = syncPeerPort;
+				syncPeerPort = temp;
+				
+				logger.info("Starting TCP client listener thread...");
+				TCPClientListener client_ = new TCPClientListener(syncPeerIp, syncPeerPort);
+				connectionThread = new Thread(client_);
+			}
+			
+			connectionThread.start();
 			// Wait until connection is established...
 			logger.info("Waiting until connection is established...");
-			while (!isConnected.get()) {
-				Thread.sleep(1000);
-			}
+			connectionThread.join();
+			
 			logger.info("Connection established... Starting the input reader thread...");
 			TCPInputReader inputReader = new TCPInputReader(inStream);
 			Thread inputReaderThread = new Thread(inputReader);
@@ -262,6 +259,8 @@ public class TCPConnection implements Connection {
 							outStream = new ObjectOutputStream(clientSocket.getOutputStream());
 							isConnected.set(true);
 						}
+						
+						connectionLock.unlock();
 					} else {
 						logger_.info("Connection lock is already acquired by server socket...");
 					}
@@ -273,6 +272,7 @@ public class TCPConnection implements Connection {
 					exceptionHandler.handle(ex, Level.WARNING, "Error in connection.");
 				}
 			}
+			logger.info("Exiting TCPClientListener thread.");
 		}
 
 	}
@@ -304,6 +304,8 @@ public class TCPConnection implements Connection {
 						outStream = new ObjectOutputStream(socket.getOutputStream());
 						isConnected.set(true);
 					}
+					
+					connectionLock.unlock();
 				} else {
 					logger_.info("Connection lock is already acquired by client socket...");
 				}
@@ -311,6 +313,7 @@ public class TCPConnection implements Connection {
 			} catch (IOException ex) {
 				exceptionHandler.handle(ex, Level.SEVERE, "Exception occured while creating server socket", serverPort);
 			}
+			logger.info("Exiting TCPServerListener thread.");
 		}
 	}
 }

@@ -23,14 +23,31 @@
 
 package tools.datasync.db2db.scenario1;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.logging.Logger;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite.SuiteClasses;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@SuiteClasses({ PopulateDatabaseTest.class, InitializeConnectionTest.class })
+@ContextConfiguration(locations = "classpath:/SpringBeans.xml")
 public class Scenario1TestSuite {
 
 	private Logger logger = Logger.getLogger(Scenario1TestSuite.class.getName());
 	
 	public Scenario1TestSuite() {
 		logger.info("Scenario1TestSuite... INIT...");
+	}
+	
+	@Test
+	public void testMethod(){
+		
+		logger.info("test Scenario1TestSuite logger");
+		assertEquals("actual", "actual");
 	}
 }

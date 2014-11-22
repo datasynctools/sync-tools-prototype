@@ -59,9 +59,7 @@ public class ExceptionHandler {
 		sb.append(". ");
 		sb.append(ex.getMessage());
 		sb.append('\n');
-		sb.append(ex.toString());
 		
-		logger.log(level, sb.toString(), ex);
-		ex.printStackTrace();
+		logger.log(level, sb.toString());
 	}
 }

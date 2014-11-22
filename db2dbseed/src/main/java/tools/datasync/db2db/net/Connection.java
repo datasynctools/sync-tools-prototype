@@ -27,6 +27,7 @@ import tools.datasync.db2db.sync.SyncDataHandler;
 
 public interface Connection {
 
+	public void initiate();
 	public int send(SyncMessage message);
 	public void onData(String data);
 	
