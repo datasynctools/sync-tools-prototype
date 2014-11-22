@@ -25,5 +25,9 @@ public interface HashGenerator {
 
 	public String generate(byte[] data);
 	
+	public String generate(String data);
+	
 	public boolean validate(byte[] data, String hash);
+	
+	public boolean validate(String data, String hash);
 }

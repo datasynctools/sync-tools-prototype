@@ -27,6 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import tools.datasync.db2db.model.SeedRecord;
 import tools.datasync.db2db.sync.net.SeedInWorker;
@@ -35,6 +36,7 @@ import tools.datasync.db2db.sync.net.SeedOutWorker;
 import tools.datasync.db2db.sync.net.SeedOutWorkerFactory;
 import tools.datasync.db2db.util.ExceptionHandler;
 
+@Service
 public class SyncManagerImpl implements SyncManager {
 
 	@Autowired
@@ -49,6 +51,7 @@ public class SyncManagerImpl implements SyncManager {
 	private ThreadPoolExecutor seedOutExecutor = null;
 	private ThreadPoolExecutor seedInExecutor = null;
 	private final ReentrantLock syncLock = new ReentrantLock();
+	private SyncPeer me = new SyncPeer();
 	private SyncPeer currentPeer = null;
 
 	public void initiate() {
@@ -61,13 +64,6 @@ public class SyncManagerImpl implements SyncManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * tools.datasync.db2db.sync.SyncManager#beginSync(tools.datasync.db2db.
-	 * sync.SyncPeer)
-	 */
 	public boolean beginSync(SyncPeer peer) {
 
 		if(syncLock.tryLock()){
@@ -78,13 +74,6 @@ public class SyncManagerImpl implements SyncManager {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * tools.datasync.db2db.sync.SyncManager#endSync(tools.datasync.db2db.
-	 * sync.SyncPeer)
-	 */
 	public boolean endSync(SyncPeer peer) {
 
 		syncLock.unlock();
@@ -92,26 +81,12 @@ public class SyncManagerImpl implements SyncManager {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * tools.datasync.db2db.sync.SyncManager#seedIn(tools.datasync.db2db.model
-	 * .SeedRecord)
-	 */
 	public void seedIn(SeedRecord seed) {
 
 		SeedInWorker seedInWorker = seedInWorkerFactory.newWorker(seed);
 		queues.getSeedInQueue().add(seedInWorker);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * tools.datasync.db2db.sync.SyncManager#seedOut(tools.datasync.db2db.model
-	 * .SeedRecord)
-	 */
 	public void seedOut(SeedRecord seed) {
 
 		SeedOutWorker seedOutWorker = seedOutWorkerFactory.newWorker(seed);

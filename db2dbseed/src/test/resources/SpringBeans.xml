@@ -1,8 +1,6 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:util="http://www.springframework.org/schema/util" 
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xsi:schemaLocation="http://www.springframework.org/schema/mvc 
 		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd  
       	http://www.springframework.org/schema/beans 
@@ -10,10 +8,20 @@
       	http://www.springframework.org/schema/util 
       	http://www.springframework.org/schema/util/spring-util-3.2.xsd  
       	http://www.springframework.org/schema/context 
-      	http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+      	http://www.springframework.org/schema/context/spring-context-3.2.xsd ">
 
 	<context:annotation-config />
 	<context:component-scan base-package="tools.datasync.db2db"></context:component-scan>
 	<context:property-placeholder location="classpath:server.properties" />
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" />
+		<property name="url"
+			value="jdbc:derby:/tmp/derby/sync;create=true" />
+		<property name="username" value="admin" />
+		<property name="password" value="admin" />
+	</bean>
+
 
 </beans>

@@ -1,6 +1,6 @@
-CREATE SCHEMA app AUTHORIZATION DBA;
+CREATE SCHEMA org AUTHORIZATION DBA;
 
-create table app.Contact (
+create table org.Contact (
 	ContactId			varchar(36)		not null,
 	DateOfBirth			timestamp,
 	FirstName			varchar(25)		not null,
@@ -12,13 +12,13 @@ create table app.Contact (
 	primary key (ContactId)
 );
 
-create table app.Organization (
+create table org.Organization (
 	OrganizationId		varchar(36)		not null,
 	Name				varchar(50)		not null,
 	primary key (OrganizationId)
 );
 
-create table app.WorkHistory (
+create table org.WorkHistory (
 	WorkHistoryId		varchar(36)		not null,
 	ContactId			varchar(36)		not null,
 	OrganizationId		varchar(36)		not null,
@@ -29,18 +29,18 @@ create table app.WorkHistory (
 	JobDescription		varchar(200),
 	JobTitle			varchar(50),
 	primary key (WorkHistoryId),
-	FOREIGN KEY (ContactId) REFERENCES app.Contact(ContactId),
-	FOREIGN KEY (OrganizationId) REFERENCES app.Organization(OrganizationId)
+	FOREIGN KEY (ContactId) REFERENCES org.Contact(ContactId),
+	FOREIGN KEY (OrganizationId) REFERENCES org.Organization(OrganizationId)
 );
 
-create table app.ContactLink (
+create table org.ContactLink (
 	ContactLinkId		varchar(36)		not null,
 	SourceContactId		varchar(36)		not null,
 	TargetContactId		varchar(36)		not null,
 	WorkHistoryId		varchar(36)		not null,
 	primary key (ContactLinkId),
-	FOREIGN KEY (SourceContactId) REFERENCES app.Contact(ContactId),
-	FOREIGN KEY (TargetContactId) REFERENCES app.Contact(ContactId),
-	FOREIGN KEY (WorkHistoryId) REFERENCES app.WorkHistory(WorkHistoryId)
+	FOREIGN KEY (SourceContactId) REFERENCES org.Contact(ContactId),
+	FOREIGN KEY (TargetContactId) REFERENCES org.Contact(ContactId),
+	FOREIGN KEY (WorkHistoryId) REFERENCES org.WorkHistory(WorkHistoryId)
 );
 

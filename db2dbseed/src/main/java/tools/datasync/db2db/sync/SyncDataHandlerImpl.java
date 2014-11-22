@@ -19,21 +19,31 @@
 * @version 1.0
 * @since   2014-11-10
 */
-package tools.datasync.db2db.net;
+package tools.datasync.db2db.sync;
 
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import tools.datasync.db2db.sync.SyncDataHandler;
+import tools.datasync.db2db.model.SeedRecord;
+import tools.datasync.db2db.net.SyncMessage;
 
-public interface Connection {
+@Service
+public class SyncDataHandlerImpl implements SyncDataHandler {
 
-	public int send(SyncMessage message);
-	public void onData(String data);
+	@Autowired
+	SyncManager syncManager;
+
+	public void onData(SyncMessage syncMessage) {
+		
+	}
+
+	public void seedOut(SeedRecord seed) {
+		try{
+			syncManager.seedOut(seed);
+		}catch(Exception ex){
+			
+		}
+	}
+
 	
-	public boolean checkOutboundConnection();
-	public boolean checkInboundConnection();
-	
-	public boolean addSyncDataHandler(SyncDataHandler handler);
-	public boolean removeSyncDataHandler(SyncDataHandler handler);
-	public List<SyncDataHandler> getSyncDataHandlers();
 }

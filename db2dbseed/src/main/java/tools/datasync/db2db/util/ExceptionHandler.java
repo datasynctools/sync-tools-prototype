@@ -24,14 +24,44 @@
 package tools.datasync.db2db.util;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import org.springframework.stereotype.Service;
 
+@Service
 public class ExceptionHandler {
 
+	private Logger logger = Logger.getLogger(ExceptionHandler.class.getName());
+	
+	public ExceptionHandler() {
+		logger.info("Starting ExceptionHandler...");
+	}
+	
 	public void handle(Throwable ex, Level level, String message, Object... params){
+		
+		// TODO: Log all caused by messages also...
+		// TODO: Search tools.datasync.db2db package method and log 'at' here...
+		StackTraceElement[] stackTraceElements = ex.getStackTrace();
+		StackTraceElement top = stackTraceElements[0];
+		
+		String clazz = top.getClassName();
+		String method = top.getMethodName();
+		int line = top.getLineNumber();
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(clazz);
+		sb.append('.');
+		sb.append(method);
+		sb.append('(');
+		sb.append(line);
+		sb.append(") : ");
+		sb.append(message);
+		sb.append(". ");
+		sb.append(ex.getMessage());
+		sb.append('\n');
+		sb.append(ex.toString());
+		
+		logger.log(level, sb.toString(), ex);
 		ex.printStackTrace();
-		// TODO: Implement... catch Throwable here.
-		// TODO: What if developer needs to re-throw - re-throw from here :D
-		// TODO: Get stack trace elements for class name, method name, line number etc.
 	}
 }

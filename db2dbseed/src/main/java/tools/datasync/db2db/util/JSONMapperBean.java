@@ -16,15 +16,29 @@
 * 
 * @author  Upendra Jariya
 * @sponsor Douglas Johnson
+* @copyright datasync.tools
 * @version 1.0
-* @since   2014-11-10
+* @since   20-Nov-2014
 */
-package tools.datasync.db2db.sync;
 
-import tools.datasync.db2db.net.SyncMessage;
+package tools.datasync.db2db.util;
 
-public interface DataHandler {
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig.Feature;
+import org.springframework.stereotype.Service;
 
-	public int send(byte[] data);
-	public void onData(SyncMessage syncMessage);
+@Service
+public class JSONMapperBean extends ObjectMapper {
+
+	public JSONMapperBean() {
+		super();
+		
+		init();
+	}
+
+	public void init() {
+		
+		this.configure(Feature.FAIL_ON_EMPTY_BEANS, false);
+	}
+
 }

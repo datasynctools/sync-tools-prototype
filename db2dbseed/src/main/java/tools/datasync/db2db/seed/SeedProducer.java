@@ -21,10 +21,11 @@
 */
 package tools.datasync.db2db.seed;
 
-import java.io.Serializable;
-import java.util.Map;
+import tools.datasync.db2db.model.JSON;
 
 public interface SeedProducer {
 
-	public boolean produce(Map<String, Serializable> record);
+	public boolean publish(JSON record) throws InterruptedException;
+	
+	public void stop();
 }

@@ -25,38 +25,50 @@ package tools.datasync.db2db.sync.net;
 
 import java.util.logging.Level;
 
-import org.springframework.util.SerializationUtils;
-
 import tools.datasync.db2db.model.SeedRecord;
 import tools.datasync.db2db.net.Connection;
 import tools.datasync.db2db.net.NetException;
+import tools.datasync.db2db.net.SyncMessage;
+import tools.datasync.db2db.net.SyncMessageType;
 import tools.datasync.db2db.util.ExceptionHandler;
+import tools.datasync.db2db.util.HashGenerator;
+import tools.datasync.db2db.util.JSONMapperBean;
 
 public class SeedOutWorker implements Runnable {
 	
 	private SeedRecord seed;
 	private Connection connection;
 	private ExceptionHandler exceptionHandler;
+	private JSONMapperBean jsonMapper;
+	private HashGenerator hashGenerator;
 
-	protected SeedOutWorker(SeedRecord record, Connection connection, ExceptionHandler exceptionHandler) {
+	protected SeedOutWorker(SeedRecord record, Connection connection, 
+			ExceptionHandler exceptionHandler, JSONMapperBean jsonMapper, HashGenerator hashGenerator) {
 
 		this.seed = record;
 		this.connection = connection;
 		this.exceptionHandler = exceptionHandler;
+		this.jsonMapper = jsonMapper;
+		this.hashGenerator = hashGenerator;
 	}
 
 	public void run() {
 		try {
-			byte[] seedBytes = SerializationUtils.serialize(seed);
+			String originId = seed.getOrigin();
+			String messageType = SyncMessageType.SEED.toString();
+			String payloadJson = jsonMapper.writeValueAsString(seed);
+			String paloadHash = hashGenerator.generate(payloadJson);
+			long timestamp = System.currentTimeMillis();
+			SyncMessage syncMessage = new SyncMessage(originId, 0, messageType, payloadJson, paloadHash, timestamp);
 			
 			if(connection.checkOutboundConnection()){
-				connection.send(seedBytes);
+				connection.send(syncMessage);
 			} else {
 				throw new NetException("Outbound connection failed.");
 			}
 
 		} catch (Throwable th) {
-			exceptionHandler.handle(th, Level.WARNING, "Exception while processing seed out entry");
+			exceptionHandler.handle(th, Level.WARNING, "Exception while processing seed out entry", seed);
 			// TODO: how to re-enqueue this failed message ?
 		}
 	}

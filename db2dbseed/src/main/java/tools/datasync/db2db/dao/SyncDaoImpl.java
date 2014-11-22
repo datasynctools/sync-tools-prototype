@@ -21,6 +21,9 @@
 */
 package tools.datasync.db2db.dao;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class SyncDaoImpl implements SyncDao {
 
 }

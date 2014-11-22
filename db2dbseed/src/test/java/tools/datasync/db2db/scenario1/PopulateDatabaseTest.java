@@ -24,31 +24,32 @@ package tools.datasync.db2db.scenario1;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import java.util.logging.Logger;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "classpath:/SpringBeans.xml")
 public class PopulateDatabaseTest {
 
 	ApplicationContext context;
-	
-	@Before
-	public void setup() {
-		context = new ClassPathXmlApplicationContext("SpringBeans.xml");
-	}
+	private Logger logger = Logger.getLogger(PopulateDatabaseTest.class.getName());
 	
 	@Test
 	public void populateDatabase(){
 		
-		System.out.println("test populateDatabase");
+		logger.info("test populateDatabase logger");
 		assertEquals("actual", "actual");
 	}
 	
 	@Test
 	public void assertFail(){
 		
-		System.out.println("test populateDatabase");
+		logger.info("test populateDatabase logger");
 		assertNotEquals("actual", "actual1");
 	}
 }

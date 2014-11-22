@@ -24,11 +24,13 @@
 package tools.datasync.db2db.sync.net;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import tools.datasync.db2db.model.SeedRecord;
 import tools.datasync.db2db.seed.SeedConsumer;
 import tools.datasync.db2db.util.ExceptionHandler;
 
+@Service
 public class SeedInWorkerFactory {
 
 	@Autowired

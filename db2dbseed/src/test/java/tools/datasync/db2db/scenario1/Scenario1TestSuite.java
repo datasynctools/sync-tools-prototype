@@ -23,13 +23,14 @@
 
 package tools.datasync.db2db.scenario1;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import java.util.logging.Logger;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-   PopulateDatabaseTest.class
-})
+
 public class Scenario1TestSuite {
 
+	private Logger logger = Logger.getLogger(Scenario1TestSuite.class.getName());
+	
+	public Scenario1TestSuite() {
+		logger.info("Scenario1TestSuite... INIT...");
+	}
 }

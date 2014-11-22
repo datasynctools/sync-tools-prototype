@@ -22,10 +22,12 @@
 package tools.datasync.db2db.seed;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import tools.datasync.db2db.dao.SyncDao;
 import tools.datasync.db2db.model.SeedRecord;
 
+@Service
 public class DbSeedConsumer implements SeedConsumer {
 
 	@Autowired

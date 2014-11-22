@@ -24,22 +24,29 @@
 package tools.datasync.db2db.sync.net;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import tools.datasync.db2db.model.SeedRecord;
 import tools.datasync.db2db.net.Connection;
 import tools.datasync.db2db.util.ExceptionHandler;
+import tools.datasync.db2db.util.HashGenerator;
+import tools.datasync.db2db.util.JSONMapperBean;
 
+@Service
 public class SeedOutWorkerFactory {
 
 	@Autowired
 	private ExceptionHandler exceptionHandler;
-
 	@Autowired
 	private Connection connection;
+	@Autowired
+	private JSONMapperBean jsonMapper;
+	@Autowired
+	private HashGenerator hashGenerator;
 
 	// Factory method is required here to avoid bean auto-wiring in each worker instance
 	public SeedOutWorker newWorker(SeedRecord seed){
 		
-		return new SeedOutWorker(seed, connection, exceptionHandler);
+		return new SeedOutWorker(seed, connection, exceptionHandler, jsonMapper, hashGenerator);
 	}
 }

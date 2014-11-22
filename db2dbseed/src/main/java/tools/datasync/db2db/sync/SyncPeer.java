@@ -23,6 +23,25 @@
 
 package tools.datasync.db2db.sync;
 
+import java.util.UUID;
+
 public class SyncPeer {
 
+	private String peerId = null;
+	
+	public SyncPeer() {
+		this.setPeerId(UUID.randomUUID().toString());
+	}
+	
+	public SyncPeer(String peerId) {
+		this.setPeerId(peerId);
+	}
+
+	public String getPeerId() {
+		return peerId;
+	}
+
+	public void setPeerId(String peerId) {
+		this.peerId = peerId;
+	}
 }

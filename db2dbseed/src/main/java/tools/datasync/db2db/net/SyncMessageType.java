@@ -53,7 +53,7 @@ public class SyncMessageType implements Serializable, Cloneable {
 	public static final SyncMessageType UNKNOWN = new SyncMessageType("UNKNOWN");
 	// ------------------------------------------------
 
-	private String messageType = "UNKNOWN";
+	private final String messageType;
 	private static final long serialVersionUID = 7007483768286153752L;
 
 	protected SyncMessageType(String messageType) {

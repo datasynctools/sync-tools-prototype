@@ -24,16 +24,15 @@
 package tools.datasync.db2db.net;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 public class SyncMessage implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = -3180554612753110701L;
 
-	private String originId;
+	private String originId; // peer id
 	private long messageNumber; // required for ACK/ NACK
 	private String messageType;
-	private byte[] payload;
+	private String payloadJson;
 	private String paloadHash;
 	private long timestamp;
 	
@@ -44,16 +43,16 @@ public class SyncMessage implements Serializable, Cloneable {
 	 * @param originId
 	 * @param messageNumber
 	 * @param messageType
-	 * @param payload
+	 * @param payloadJson
 	 * @param paloadHash
 	 * @param timestamp
 	 */
-	public SyncMessage(String originId, long messageNumber, String messageType, byte[] payload, String paloadHash, long timestamp) {
+	public SyncMessage(String originId, long messageNumber, String messageType, String payloadJson, String paloadHash, long timestamp) {
 		super();
 		this.originId = originId;
 		this.messageNumber = messageNumber;
 		this.messageType = messageType;
-		this.payload = payload;
+		this.payloadJson = payloadJson;
 		this.paloadHash = paloadHash;
 		this.timestamp = timestamp;
 	}
@@ -101,17 +100,17 @@ public class SyncMessage implements Serializable, Cloneable {
 	}
 
 	/**
-	 * @return the payload
+	 * @return the recordJson
 	 */
-	public byte[] getPayload() {
-		return payload;
+	public String getPayloadJson() {
+		return payloadJson;
 	}
 
 	/**
-	 * @param payload the payload to set
+	 * @param recordJson the recordJson to set
 	 */
-	public void setPayload(byte[] payload) {
-		this.payload = payload;
+	public void setPayloadJson(String payloadJson) {
+		this.payloadJson = payloadJson;
 	}
 
 	/**
@@ -154,7 +153,7 @@ public class SyncMessage implements Serializable, Cloneable {
 	 */
 	@Override
 	public String toString() {
-		return "SyncMessage [originId=" + originId + ", messageNumber=" + messageNumber + ", messageType=" + messageType + ", payload="
-				+ Arrays.toString(payload) + ", paloadHash=" + paloadHash + ", timestamp=" + timestamp + "]";
+		return "SyncMessage [originId=" + originId + ", messageNumber=" + messageNumber + ", messageType=" + messageType + ", payloadJson="
+				+ payloadJson + ", paloadHash=" + paloadHash + ", timestamp=" + timestamp + "]";
 	}
 }

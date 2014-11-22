@@ -23,16 +23,14 @@ package tools.datasync.db2db.model;
 
 import java.io.Serializable;
 
-import tools.datasync.db2db.sync.SyncPeer;
-
 public class SeedRecord implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 2953233347238587733L;
 	private String entityId;
 	private String recordId;
 	private String recordHash;
-	private byte[] recordData;
-	private SyncPeer origin;
+	private String recordJson;
+	private String origin;
 	
 	/**
 	 * @param entityId
@@ -41,12 +39,12 @@ public class SeedRecord implements Serializable, Cloneable {
 	 * @param recordData
 	 * @param origin
 	 */
-	public SeedRecord(String entityId, String recordId, String recordHash, byte[] recordData, SyncPeer origin) {
+	public SeedRecord(String entityId, String recordId, String recordHash, String recordJson, String origin) {
 		super();
 		this.entityId = entityId;
 		this.recordId = recordId;
 		this.recordHash = recordHash;
-		this.recordData = recordData;
+		this.recordJson = recordJson;
 		this.origin = origin;
 	}
 
@@ -93,31 +91,40 @@ public class SeedRecord implements Serializable, Cloneable {
 	}
 
 	/**
-	 * @return the recordData
+	 * @return the recordJson
 	 */
-	public byte[] getRecordData() {
-		return recordData;
+	public String getRecordJson() {
+		return recordJson;
 	}
 
 	/**
-	 * @param recordData the recordData to set
+	 * @param recordJson the recordJson to set
 	 */
-	public void setRecordData(byte[] recordData) {
-		this.recordData = recordData;
+	public void setRecordJson(String recordJson) {
+		this.recordJson = recordJson;
 	}
 
 	/**
 	 * @return the origin
 	 */
-	public SyncPeer getOrigin() {
+	public String getOrigin() {
 		return origin;
 	}
 
 	/**
 	 * @param origin the origin to set
 	 */
-	public void setOrigin(SyncPeer origin) {
+	public void setOrigin(String origin) {
 		this.origin = origin;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "SeedRecord [entityId=" + entityId + ", recordId=" + recordId + ", recordHash=" + recordHash + ", recordJson=" + recordJson
+				+ ", origin=" + origin + "]";
 	}
 
 }

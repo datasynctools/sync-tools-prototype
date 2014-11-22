@@ -21,23 +21,11 @@
 */
 package tools.datasync.db2db.sync;
 
+import tools.datasync.db2db.model.SeedRecord;
 import tools.datasync.db2db.net.SyncMessage;
 
-public class SyncDataHandler implements DataHandler {
+public interface SyncDataHandler {
 
-	/* (non-Javadoc)
-	 * @see tools.datasync.db2db.sync.DataHandler#send(byte[])
-	 */
-	public int send(byte[] data) {
-		return 0;
-	}
-
-	/* (non-Javadoc)
-	 * @see tools.datasync.db2db.sync.DataHandler#onData(byte[])
-	 */
-	public void onData(SyncMessage syncMessage) {
-		
-	}
-
-	
+	public void seedOut(SeedRecord seed);
+	public void onData(SyncMessage syncMessage);
 }

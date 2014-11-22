@@ -21,6 +21,16 @@
 */
 package tools.datasync.db2db.dao;
 
+import java.util.Iterator;
+import java.util.List;
+
+import tools.datasync.db2db.model.JSON;
+
 public interface GenericDao {
 
+	public Iterator<JSON> selectAll(String entityName);
+	
+	public void saveOrUpdate(String entityName, List<JSON> jsonList, String keyColumn);
+	
+	public void saveOrUpdate(String entityName, JSON json, String keyColumn);
 }
