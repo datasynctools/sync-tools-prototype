@@ -114,6 +114,10 @@ public class GenericJDBCDao implements GenericDao {
 						}
 					}
 				}
+				
+				public void remove() {
+					//TODO: implement;
+				}
 			};
 
 		} catch (SQLException e) {
