@@ -115,6 +115,10 @@ public class SyncMessageType implements Serializable, Cloneable {
 			if(((SyncMessageType) obj).messageType.equalsIgnoreCase(this.messageType)){
 				return true;
 			}
+		} else if (obj instanceof String) {
+		    if(this.messageType.equalsIgnoreCase((String)obj)){
+		        return true;
+		    }
 		}
 		return false;
 	}

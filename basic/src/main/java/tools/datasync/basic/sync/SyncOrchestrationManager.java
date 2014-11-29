@@ -1,4 +1,12 @@
 /**
+ * 
+ */
+package tools.datasync.basic.sync;
+
+import tools.datasync.basic.sync.pump.SyncPump;
+import tools.datasync.basic.sync.pump.SyncPumpFactory;
+
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,26 +25,25 @@
  * @author  Upendra Jariya
  * @sponsor Douglas Johnson
  * @version 1.0
- * @since   2014-11-10
+ * @since   29-Nov-2014
  */
-package tools.datasync.basic.sync;
+public class SyncOrchestrationManager {
 
-import tools.datasync.basic.comm.SyncMessage;
-import tools.datasync.basic.model.SeedRecord;
+    SyncPumpFactory pumpFactoryA;
+    SyncPumpFactory pumpFactoryB;
+    
+    public SyncOrchestrationManager(SyncPumpFactory pumpFactoryA, SyncPumpFactory pumpFactoryB) {
+        super();
+        this.pumpFactoryA = pumpFactoryA;
+        this.pumpFactoryB = pumpFactoryB;
+    }
 
-public interface SyncManager {
-
-    public void initiate();
-
-    public boolean beginSync(SyncPeer peer);
-
-    public boolean endSync(SyncPeer peer);
-
-    public void seedIn(SeedRecord seed);
-
-    public void seedOut(SeedRecord seed);
-
-    public void send(SyncMessage message);
-
-    public void onData(SyncMessage message);
+    SyncManager manager = null;
+    
+    public SyncSession createSession(){
+        SyncPump pumpA = pumpFactoryA.getInstance();
+        SyncPump pumpB = pumpFactoryB.getInstance();
+        
+        return new SyncSession(pumpA, pumpB);
+    }
 }

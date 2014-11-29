@@ -23,7 +23,7 @@ package tools.datasync.basic.seed;
 
 import tools.datasync.basic.model.JSON;
 
-public interface SeedProducer {
+public interface SeedProducer extends Runnable {
 
 	public boolean publish(JSON record) throws InterruptedException;
 	

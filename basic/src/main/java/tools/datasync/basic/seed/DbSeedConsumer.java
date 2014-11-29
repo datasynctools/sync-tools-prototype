@@ -21,18 +21,20 @@
 */
 package tools.datasync.basic.seed;
 
+import java.util.logging.Logger;
+
 import tools.datasync.basic.dao.SyncDao;
 import tools.datasync.basic.model.SeedRecord;
 
 public class DbSeedConsumer implements SeedConsumer {
 
 	SyncDao syncDao;
+	Logger logger = Logger.getLogger(DbSeedConsumer.class.getName());
 	
-	/* (non-Javadoc)
-	 * @see tools.datasync.db2db.seed.SeedConsumer#consume(tools.datasync.db2db.model.SeedRecord)
-	 */
 	public boolean consume(SeedRecord seed) {
-		return false;
+		
+	    logger.info("Received SEED Record: " + seed);
+	    return false;
 	}
 
 }

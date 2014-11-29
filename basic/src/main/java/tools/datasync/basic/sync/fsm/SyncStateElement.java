@@ -61,10 +61,10 @@ public class SyncStateElement implements Serializable, Cloneable {
 		this.transitions.add(transition);
 	}
 	
-	public boolean hasTransition(SyncStateElement fromState, SyncMessageType message){
+	public boolean hasTransition(SyncMessageType message){
 		
 		for(SyncStateTransition transition : transitions){
-			if(transition.fromState.equals(fromState)
+			if(transition.fromState.equals(this)
 					&& transition.message.equals(message)){
 				return true;
 			}
@@ -72,10 +72,10 @@ public class SyncStateElement implements Serializable, Cloneable {
 		return false;
 	}
 	
-	public SyncStateElement getTransition(SyncStateElement fromState, SyncMessageType message){
+	public SyncStateElement getTransition(SyncMessageType message){
 		
 		for(SyncStateTransition transition : transitions){
-			if(transition.fromState.equals(fromState)
+			if(transition.fromState.equals(this)
 					&& transition.message.equals(message)){
 				return transition.nextState;
 			}

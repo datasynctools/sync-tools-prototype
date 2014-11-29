@@ -1,4 +1,15 @@
 /**
+ * 
+ */
+package tools.datasync.basic.comm;
+
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import tools.datasync.basic.sync.SyncManager;
+import tools.datasync.basic.sync.SyncManagerImpl;
+
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,26 +28,22 @@
  * @author  Upendra Jariya
  * @sponsor Douglas Johnson
  * @version 1.0
- * @since   2014-11-10
+ * @since   29-Nov-2014
  */
-package tools.datasync.basic.sync;
+public class JvmSyncConnectionFactory implements SyncConnectionFactory {
 
-import tools.datasync.basic.comm.SyncMessage;
-import tools.datasync.basic.model.SeedRecord;
+    String myName;
+    BlockingQueue<String> queue = null;
+    
+    public JvmSyncConnectionFactory(String myName, BlockingQueue<String> queue) {
+        this.myName = myName;
+        this.queue = queue;
+    }
+    
+    @Override
+    public SyncConnection getConnection() {
+        SyncManager syncManager = new SyncManagerImpl(myName);
+        return new JvmSyncConnection(syncManager);
+    }
 
-public interface SyncManager {
-
-    public void initiate();
-
-    public boolean beginSync(SyncPeer peer);
-
-    public boolean endSync(SyncPeer peer);
-
-    public void seedIn(SeedRecord seed);
-
-    public void seedOut(SeedRecord seed);
-
-    public void send(SyncMessage message);
-
-    public void onData(SyncMessage message);
 }

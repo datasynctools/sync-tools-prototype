@@ -36,7 +36,7 @@ import tools.datasync.basic.util.HashGenerator;
 import tools.datasync.basic.util.JSONMapperBean;
 import tools.datasync.basic.util.NLogger;
 
-public class DbSeedProducer implements SeedProducer, Runnable {
+public class DbSeedProducer implements SeedProducer {
 
 	GenericDao genericDao;
 	NLogger nlogger;
@@ -52,6 +52,7 @@ public class DbSeedProducer implements SeedProducer, Runnable {
 	public DbSeedProducer(SyncManager syncManager, SyncPeer peer) {
 		this.me = peer;
 		this.syncManager = syncManager;
+		this.jsonMapper = JSONMapperBean.getInstance();
 	}
 	
 	public boolean publish(JSON record) throws InterruptedException {

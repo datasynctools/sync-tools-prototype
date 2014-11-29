@@ -1,4 +1,9 @@
 /**
+ * 
+ */
+package tools.datasync.basic.sync.pump;
+
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,26 +22,9 @@
  * @author  Upendra Jariya
  * @sponsor Douglas Johnson
  * @version 1.0
- * @since   2014-11-10
+ * @since   29-Nov-2014
  */
-package tools.datasync.basic.sync;
+public interface SyncPumpFactory {
 
-import tools.datasync.basic.comm.SyncMessage;
-import tools.datasync.basic.model.SeedRecord;
-
-public interface SyncManager {
-
-    public void initiate();
-
-    public boolean beginSync(SyncPeer peer);
-
-    public boolean endSync(SyncPeer peer);
-
-    public void seedIn(SeedRecord seed);
-
-    public void seedOut(SeedRecord seed);
-
-    public void send(SyncMessage message);
-
-    public void onData(SyncMessage message);
+    public SyncPump getInstance();
 }

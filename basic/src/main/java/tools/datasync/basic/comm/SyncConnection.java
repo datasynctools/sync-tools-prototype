@@ -21,29 +21,15 @@
 */
 package tools.datasync.basic.comm;
 
-import tools.datasync.basic.sync.SyncManager;
+public interface SyncConnection {
 
-public class JvmConnection implements Connection {
-
-    SyncManager other;
-    public void initiate() {
-        
-    }
-
-    public int send(SyncMessage message) {
-        return 0;
-    }
-
-    public void onData(String data) {
-        
-    }
-
-    public boolean checkOutboundConnection() {
-        return false;
-    }
-
-    public boolean checkInboundConnection() {
-        return false;
-    }
-
+	public void initiate();
+	public void setOtherConnection(SyncConnection other);
+	
+	public int send(SyncMessage message);
+	public void onData(String data);
+	
+	public boolean checkOutboundConnection();
+	public boolean checkInboundConnection();
+	
 }
