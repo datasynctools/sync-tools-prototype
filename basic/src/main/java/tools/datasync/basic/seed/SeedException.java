@@ -23,4 +23,21 @@ package tools.datasync.basic.seed;
 
 public class SeedException extends Exception {
 
+    private static final long serialVersionUID = -383765003985920204L;
+    
+    public SeedException() {
+
+    }
+
+    public SeedException(String message) {
+        super(message);
+    }
+
+    public SeedException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public SeedException(Throwable cause) {
+        super(cause);
+    }
 }

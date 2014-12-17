@@ -43,11 +43,14 @@ public class GenericJDBCDao implements GenericDao {
 	private NLogger nlogger = NLogger.getLogger();
 	private Logger logger = Logger.getLogger(GenericJDBCDao.class.getName());
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see tools.datasync.db2db.dao.GenericDao#selectAll(java.lang.String)
-	 */
+    public GenericJDBCDao() {
+        // TODO: create instance of data source
+    }
+    
+    public void setDataSource(DataSource dataSource){
+        this.dataSource = dataSource;
+    }
+    
 	// Returning result set linked iterator because size of database can cause
 	// out of memory error.
 	public Iterator<JSON> selectAll(final String entityName) {

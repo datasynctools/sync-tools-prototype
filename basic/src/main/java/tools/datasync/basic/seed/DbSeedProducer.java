@@ -30,88 +30,96 @@ import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.model.Ids;
 import tools.datasync.basic.model.JSON;
 import tools.datasync.basic.model.SeedRecord;
-import tools.datasync.basic.sync.SyncManager;
-import tools.datasync.basic.sync.SyncPeer;
 import tools.datasync.basic.util.HashGenerator;
 import tools.datasync.basic.util.JSONMapperBean;
+import tools.datasync.basic.util.Md5HashGenerator;
 import tools.datasync.basic.util.NLogger;
 
 public class DbSeedProducer implements SeedProducer {
 
-	GenericDao genericDao;
-	NLogger nlogger;
-	HashGenerator hashGenerator;
-	JSONMapperBean jsonMapper;
-	SyncPeer me = null;
-	SyncManager syncManager;
-	
+    NLogger nlogger = NLogger.getLogger();
+    GenericDao genericDao;
+    HashGenerator hashGenerator;
+    JSONMapperBean jsonMapper;
+    boolean isRunning = false;
 
-	Logger logger = Logger.getLogger(DbSeedProducer.class.getName());
-	boolean stop = false;
+    Logger logger = Logger.getLogger(DbSeedProducer.class.getName());
+    boolean stop = false;
+    
+    Iterator<JSON> currentJsonIterator = null;
+    Iterator<String> tableNameIterator = new Iterator<String>() {
+        String[] tables = { Ids.Table.CONTACT, Ids.Table.WORK_HISTORY, Ids.Table.CONTACT_LINK };
+        int index = 0;
 
-	public DbSeedProducer(SyncManager syncManager, SyncPeer peer) {
-		this.me = peer;
-		this.syncManager = syncManager;
-		this.jsonMapper = JSONMapperBean.getInstance();
-	}
-	
-	public boolean publish(JSON record) throws InterruptedException {
+        @Override
+        public String next() {
+            if (index < tables.length) {
+                return tables[index++];
+            }
+            return null;
+        }
 
-		if (stop) {
-			throw new InterruptedException("");
-		}
-		SeedRecord seed = null;
-		try {
-			String entityId = Ids.EntityId.get(record.getEntity());
-			String recordId = String.valueOf(record.get(Ids.KeyColumn.get(record.getEntity())));
-			String recordJson = jsonMapper.writeValueAsString(record);
-			String recordHash = hashGenerator.generate(recordJson);
-			String origin = me.getPeerId();
-			seed = new SeedRecord(entityId, recordId, recordHash, recordJson, origin);
-			logger.finest("generated seed record: " + seed);
-		} catch (IOException e) {
-			nlogger.log(e, Level.WARNING, "Error while JSON Serialization", record);
-		}
+        @Override
+        public boolean hasNext() {
+            return (index < tables.length);
+        }
+    };
 
-		try {
-			if (seed != null) {
-				logger.finer("Publishing seed record: " + seed);
-				syncManager.seedOut(seed);
-				return true;
-			}
-		} catch (Exception ex) {
-			nlogger.log(ex, Level.WARNING, "Error while sending record to peer", record);
-		}
+    public DbSeedProducer() {
+        
+        this.jsonMapper = JSONMapperBean.getInstance();
+        this.hashGenerator = Md5HashGenerator.getInstance();
+        this.isRunning = true;
+    }
+    
+    public void setGenericDao(GenericDao genericDao){
+        this.genericDao = genericDao;
+    }
 
-		return false;
-	}
+    @Override
+    public SeedRecord getNextSeed() throws SeedOverException, SeedException {
 
-	public void run() {
-		try {
+        if (this.currentJsonIterator == null || !this.currentJsonIterator.hasNext()) {
 
-			Iterator<JSON> contactIterator = genericDao.selectAll(Ids.Table.CONTACT);
-			while (contactIterator.hasNext()) {
-				this.publish(contactIterator.next());
-			}
+            if (this.tableNameIterator.hasNext()) {
 
-			Iterator<JSON> workHistoryIterator = genericDao.selectAll(Ids.Table.WORK_HISTORY);
-			while (workHistoryIterator.hasNext()) {
-				this.publish(workHistoryIterator.next());
-			}
+                String tableName = this.tableNameIterator.next();
+                this.currentJsonIterator = genericDao.selectAll(tableName);
+            } else {
 
-			Iterator<JSON> contactLinkIterator = genericDao.selectAll(Ids.Table.CONTACT_LINK);
-			while (contactLinkIterator.hasNext()) {
-				this.publish(contactLinkIterator.next());
-			}
+                this.isRunning = false;
+                throw new SeedOverException("No more tables to seed from.");
+            }
+        }
 
-		} catch (InterruptedException interrupt) {
-			nlogger.log(interrupt, Level.SEVERE, "Seed Producer is interrupted by another thread.");
-		}
-	}
+        JSON json = this.currentJsonIterator.next();
+        SeedRecord seed = this.createSeed(json);
+        return seed;
+    }
 
-	public void stop() {
-		logger.info("Stopping DB producer thread.");
-		this.stop = true;
-	}
+    @Override
+    public boolean isRunning() {
+        return this.isRunning;
+    }
 
+    private SeedRecord createSeed(JSON record) throws SeedException {
+
+        SeedRecord seed = null;
+        try {
+            String entityId = Ids.EntityId.get(record.getEntity());
+            String recordId = String.valueOf(record.get(Ids.KeyColumn.get(record.getEntity())));
+            String recordJson = jsonMapper.writeValueAsString(record);
+            String recordHash = hashGenerator.generate(recordJson);
+            // TODO: get peer id from database
+            String origin = "";//me.getPeerId();
+            seed = new SeedRecord(entityId, recordId, recordHash, recordJson, origin);
+            logger.finest("generated seed record: " + seed);
+
+        } catch (IOException e) {
+            nlogger.log(e, Level.WARNING, "Error while JSON Serialization", record);
+            throw new SeedException("Error while JSON Serialization", e);
+        }
+
+        return seed;
+    }
 }

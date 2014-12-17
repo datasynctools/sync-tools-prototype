@@ -40,7 +40,7 @@ public class SyncOrchestrationManager {
 
     SyncManager manager = null;
     
-    public SyncSession createSession(){
+    public SyncSession createSession() throws InstantiationException {
         SyncPump pumpA = pumpFactoryA.getInstance();
         SyncPump pumpB = pumpFactoryB.getInstance();
         

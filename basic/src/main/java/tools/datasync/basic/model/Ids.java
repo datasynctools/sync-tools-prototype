@@ -27,13 +27,13 @@ public class Ids {
 
 	public static interface Table {
 
-		public static final String CONTACT = "Contact";
-		public static final String CONTACT_LINK = "ContactLink";
-		public static final String WORK_HISTORY = "WorkHistory";
+		public static final String CONTACT = "org.Contact";
+		public static final String CONTACT_LINK = "org.ContactLink";
+		public static final String WORK_HISTORY = "org.WorkHistory";
 
-		public static final String SYNC_ENTITY = "SyncEntity";
-		public static final String SYNC_PEER = "SyncPeer";
-		public static final String SYNC_STATE = "SyncState";
+		public static final String SYNC_ENTITY = "seed.SyncEntity";
+		public static final String SYNC_PEER = "seed.SyncPeer";
+		public static final String SYNC_STATE = "seed.SyncState";
 	}
 
 	public static class KeyColumn {

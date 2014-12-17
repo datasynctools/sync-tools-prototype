@@ -59,7 +59,6 @@ public class SyncManagerImpl implements SyncManager {
 
     public SyncManagerImpl(String myName) {
         super();
-        this.connection = connection;
         this.initiate();
         this.me = new SyncPeer(myName);
     }
@@ -71,7 +70,7 @@ public class SyncManagerImpl implements SyncManager {
     public void initiate() {
         try {
             mapperBean = JSONMapperBean.getInstance();
-            this.hashGen = new Md5HashGenerator();
+            this.hashGen = Md5HashGenerator.getInstance();
             this.consumer = new DbSeedConsumer();
             this.state = READY;
             
@@ -136,9 +135,9 @@ public class SyncManagerImpl implements SyncManager {
                     
                     if(SEEDING.equals(this.state)){
                         // Start the producer thread
-                        SeedProducer producer = new DbSeedProducer(this, currentPeer);
-                        producerThread = new Thread(producer);
-                        producerThread.start();
+                        //SeedProducer producer = new DbSeedProducer(currentPeer);
+                        //producerThread = new Thread(producer);
+                        //producerThread.start();
                     }
                 }
             }

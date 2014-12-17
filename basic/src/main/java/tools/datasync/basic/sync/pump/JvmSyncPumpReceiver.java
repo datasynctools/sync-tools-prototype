@@ -3,9 +3,16 @@
  */
 package tools.datasync.basic.sync.pump;
 
+import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import tools.datasync.basic.comm.SyncMessage;
+import tools.datasync.basic.comm.SyncMessageType;
+import tools.datasync.basic.util.JSONMapperBean;
+import tools.datasync.basic.util.NLogger;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -31,29 +38,50 @@ import java.util.logging.Logger;
 public class JvmSyncPumpReceiver implements Runnable {
 
     BlockingQueue<String> receiveQueue;
-    Logger logger  = Logger.getLogger(JvmSyncPumpReceiver.class.getName());
+    Logger logger  = Logger.getLogger(JvmSyncPumpReceiver.class.getSimpleName());
+    NLogger nlogger = NLogger.getLogger();
     AtomicBoolean isRunning;
+    JSONMapperBean jsonMapper;
     
     public JvmSyncPumpReceiver(BlockingQueue<String> receiveQueue ){
     
         this.receiveQueue = receiveQueue ;
-        isRunning = new AtomicBoolean(true);
+        this.isRunning = new AtomicBoolean(true);
+        this.jsonMapper = JSONMapperBean.getInstance();
     }
     
     @Override
     public void run() {
-        //TODO: Add receiving logic
-        
-        logger.info("received 1");
-        logger.info("received 2");
-        logger.info("received 3");
-        logger.info("received 4");
-        
+        while(! Thread.currentThread().isInterrupted()){
+            String message = this.receiveQueue.poll();
+            if(message == null){
+                // TODO: Try sleep for 100 ms later
+                continue;
+            }
+            
+            try {
+                SyncMessage syncMessage = jsonMapper.readValue(message, SyncMessage.class);
+                
+                if(SyncMessageType.SEED.equals(syncMessage.getMessageType())) {
+                    // TODO: process this seed message
+                }
+                else if (SyncMessageType.SYNC_OVER.equals(syncMessage.getMessageType())) {
+                    break;
+                }
+            } catch (IOException ex) {
+                nlogger.log(ex, Level.WARNING, "Error while parsing message.");
+            }
+        }
+
+        logger.info("Finished sync receiver");
         isRunning.set(false);
     }
     
     public AtomicBoolean isRunning(){
         return isRunning;
     }
-
+    
+    public BlockingQueue<String> getQueue(){
+        return this.receiveQueue;
+    }
 }

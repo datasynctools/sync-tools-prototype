@@ -28,56 +28,64 @@ import java.util.logging.Level;
 
 public class Md5HashGenerator implements HashGenerator {
 
-	MessageDigest messageDigest = null;
-	NLogger nlogger;
+    private static Md5HashGenerator instance = null;
+    private MessageDigest messageDigest = null;
+    private NLogger nlogger;
 
-	public Md5HashGenerator() {
-		try {
-			messageDigest = MessageDigest.getInstance("MD5");
-		} catch (NoSuchAlgorithmException e) {
-			nlogger.log(e, Level.WARNING, "Error while initializing Hash Generator.");
-		}
-	}
+    private Md5HashGenerator() {
+        try {
+            messageDigest = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            nlogger.log(e, Level.WARNING, "Error while initializing Hash Generator.");
+        }
+    }
 
-	public String generate(String data) {
-		try {
-			byte[] input = toBytes(data);
-			messageDigest.update(input);
-			byte[] digest = messageDigest.digest();
-			String checksum = toHexString1(digest);
-			return checksum;
-		} catch (UnsupportedEncodingException e) {
-			nlogger.log(e, Level.WARNING, "Error while generating checksum", data);
-			return null;
-		}
-	}
+    public static synchronized Md5HashGenerator getInstance() {
+        if(instance == null){
+            instance = new Md5HashGenerator();
+        }
+        return instance;
+    }
 
-	public boolean validate(String data, String hash) {
-		String newHash = generate(data);
-		return newHash.equals(hash);
-	}
+    public String generate(String data) {
+        try {
+            byte[] input = toBytes(data);
+            messageDigest.update(input);
+            byte[] digest = messageDigest.digest();
+            String checksum = toHexString1(digest);
+            return checksum;
+        } catch (UnsupportedEncodingException e) {
+            nlogger.log(e, Level.WARNING, "Error while generating checksum", data);
+            return null;
+        }
+    }
 
-	private byte[] toBytes(String string) throws UnsupportedEncodingException {
-		return string.getBytes("UTF-8");
-	}
+    public boolean validate(String data, String hash) {
+        String newHash = generate(data);
+        return newHash.equals(hash);
+    }
 
-	private String toHexString1(byte[] bytes) {
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < bytes.length; i++) {
-			sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
-		}
-		return sb.toString();
-	}
+    private byte[] toBytes(String string) throws UnsupportedEncodingException {
+        return string.getBytes("UTF-8");
+    }
 
-//	private String toHexString2(byte[] bytes) {
-//		StringBuffer hexString = new StringBuffer();
-//		for (int i = 0; i < bytes.length; i++) {
-//			String hex = Integer.toHexString(0xff & bytes[i]);
-//			if (hex.length() == 1)
-//				hexString.append('0');
-//			hexString.append(hex);
-//		}
-//		return hexString.toString();
-//	}
+    private String toHexString1(byte[] bytes) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < bytes.length; i++) {
+            sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+        }
+        return sb.toString();
+    }
+
+    // private String toHexString2(byte[] bytes) {
+    // StringBuffer hexString = new StringBuffer();
+    // for (int i = 0; i < bytes.length; i++) {
+    // String hex = Integer.toHexString(0xff & bytes[i]);
+    // if (hex.length() == 1)
+    // hexString.append('0');
+    // hexString.append(hex);
+    // }
+    // return hexString.toString();
+    // }
 
 }

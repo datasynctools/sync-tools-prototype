@@ -42,6 +42,8 @@ public class JvmSyncPump implements SyncPump {
     JvmSyncPumpSender sender = null;
     JvmSyncPumpReceiver receiver = null;
     
+    boolean isPumping = false;
+    
     /**
      * @param syncPeerMe
      * @param syncPeerOther
@@ -54,6 +56,7 @@ public class JvmSyncPump implements SyncPump {
         
         this.sender = sender;
         this.receiver = receiver;
+        this.isPumping = false;
     }
 
     @Override
@@ -61,25 +64,32 @@ public class JvmSyncPump implements SyncPump {
         
         Thread senderThread = new Thread(sender);
         Thread receiverThread = new Thread(receiver);
-       
+        
         senderThread.start();
         receiverThread.start();
+        
+        this.isPumping = true;
+        
+        BlockingQueue<String> receiveQueue = receiver.getQueue();
         
         while(sender.isRunning().get()
                 && receiver.isRunning().get()){
             try {
                 Thread.sleep(100);
+                
+                
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
         
+        this.isPumping = false;
         throw (new RuntimeException("Not implemented"));
     }
 
     @Override
     public boolean isPumping() {
-        return false;
+        return this.isPumping;
     }
 
 }

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package tools.datasync.basic.sync;
 
 import tools.datasync.basic.comm.SyncConnection;
@@ -51,8 +48,6 @@ public class SyncSession {
         this.pumpA = pumpA;
         this.pumpB = pumpB;
     }
-
-
 
     public void doSync(){
         pumpA.beginPump();

@@ -9,4 +9,20 @@ public class StringUtils {
     public static boolean isNotEmpty(String str){
         return (str != null && str.length() > 0);
     }
+    
+    public static boolean isWhiteSpaceOnly(String str){
+        boolean result = false;
+        if(isEmpty(str)){
+            result = true;
+        } else {
+            str = str.replace('\n', ' ');
+            str = str.replace('\t', ' ');
+            str = str.replace('\b', ' ');
+            str = str.trim();
+            if(isEmpty(str)){
+                result = true;
+            }
+        }
+        return result;
+    }
 }

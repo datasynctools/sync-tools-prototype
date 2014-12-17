@@ -21,11 +21,23 @@
 */
 package tools.datasync.basic.seed;
 
-import tools.datasync.basic.model.SeedRecord;
+public class SeedOverException extends Exception {
 
-public interface SeedProducer {
+    private static final long serialVersionUID = -383765003985920204L;
+    
+    public SeedOverException() {
 
-	public SeedRecord getNextSeed() throws SeedOverException, SeedException;
-	
-	public boolean isRunning();
+    }
+
+    public SeedOverException(String message) {
+        super(message);
+    }
+
+    public SeedOverException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public SeedOverException(Throwable cause) {
+        super(cause);
+    }
 }
