@@ -113,6 +113,9 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
             logger.info("Creating model database...");
             runSQLScript(con, "/script/create_table_model.sql");
             
+            logger.info("Populating model database for Peer "+syncPeerMe.getPeerName());
+            runSQLScript(con, "/script/populate_database_peer"+syncPeerMe.getPeerName()+".sql");
+            
             con.commit();
             con.close();
             

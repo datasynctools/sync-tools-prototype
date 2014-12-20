@@ -63,16 +63,12 @@ public class GenericJDBCDao implements GenericDao {
 			final ResultSet result = statement.executeQuery(query);
 
 			return new Iterator<JSON>() {
-				boolean last = false;
-				int count = 0;
+				boolean hasMore = false;
 
 				public boolean hasNext() {
 					try {
-						if (last || result.isLast()) {
-							last = true;
-							logger.finest("selectAll() - end of result set after [" + count + "] records.");
-						}
-						return (!last);
+					    hasMore = result.next();
+					    return hasMore;
 					} catch (SQLException e) {
 						nlogger.log(e, Level.INFO, "result set error - hasNext().");
 						return false;
@@ -81,26 +77,25 @@ public class GenericJDBCDao implements GenericDao {
 
 				public JSON next() {
 					try {
-						result.next();
+						
 						JSON json = new JSON(entityName);
 						int count = result.getMetaData().getColumnCount();
-						for (int index = 0; index < count; index++) {
+						for (int index = 1; index <= count; index++) {
 							String columnName = result.getMetaData().getColumnName(index);
-							String value = result.getNString(index);
-
+							String value = result.getString(index);
+							
 							json.set(columnName, value);
 						}
 						count++;
-						logger.finest("selectAll() - returning " + entityName + " - " + json);
+						logger.info("ResultSet.next() - returning " + entityName + " - " + json);
 						return json;
 					} catch (SQLException e) {
 						nlogger.log(e, Level.INFO, "result set error - next().");
 						return null;
 					} finally {
 						try {
-							if (last || result.isLast()) {
+							if (! hasMore) {
 								logger.finest("selectAll() - closing resultset");
-								last = true;
 								result.close();
 								statement.close();
 								connection.close();

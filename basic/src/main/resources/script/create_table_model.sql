@@ -2,7 +2,7 @@ CREATE SCHEMA org AUTHORIZATION DBA;
 
 create table org.Contact (
 	ContactId			varchar(36)		not null,
-	DateOfBirth			timestamp,
+	DateOfBirth			date,
 	FirstName			varchar(25)		not null,
 	LastName			varchar(25)		not null,
 	HeightFt			integer,
@@ -21,11 +21,11 @@ create table org.Organization (
 create table org.WorkHistory (
 	WorkHistoryId		varchar(36)		not null,
 	ContactId			varchar(36)		not null,
-	OrganizationId		varchar(36)		not null,
-	StartMonth			integer,
-	StartYear			integer,
-	EndMonth			integer,
-	EndYear				integer,
+	OrganizationId		varchar(36),
+	StartMonth			varchar(2),
+	StartYear			varchar(4),
+	EndMonth			varchar(2),
+	EndYear				varchar(4),
 	JobDescription		varchar(200),
 	JobTitle			varchar(50),
 	primary key (WorkHistoryId),

@@ -85,6 +85,8 @@ public class DbSeedProducer implements SeedProducer {
 
                 String tableName = this.tableNameIterator.next();
                 this.currentJsonIterator = genericDao.selectAll(tableName);
+                // Invoke for the first time...
+                currentJsonIterator.hasNext();
             } else {
 
                 this.isRunning = false;

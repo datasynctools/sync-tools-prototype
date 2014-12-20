@@ -83,6 +83,8 @@ public class JvmSyncPumpSender implements Runnable {
                         SyncMessageType.SEED.toString(), payloadJson, paloadHash, System.currentTimeMillis());
                 String message = jsonMapper.writeValueAsString(syncMessage);
                 
+                this.sendQueue.add(message);
+                
             } catch (SeedOverException soe) {
                 nlogger.log(soe, Level.INFO, "Seed phase is over... Terminating the sender process logic.");
                 break;
