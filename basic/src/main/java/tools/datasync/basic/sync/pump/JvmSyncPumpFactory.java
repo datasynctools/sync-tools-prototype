@@ -47,8 +47,8 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
 
     SyncPeer syncPeerMe = null;
     SyncPeer syncPeerOther = null;
-    BlockingQueue<String> sendQueue = null;
-    BlockingQueue<String> receiveQueue = null;
+    BlockingQueue<String> queueA2B = null;
+    BlockingQueue<String> queueB2A = null;
 
     Logger logger = Logger.getLogger(JvmSyncPumpFactory.class.getName());
 
@@ -56,16 +56,16 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
      * @param syncPeerMe
      * @param syncPeerOther
      */
-    public JvmSyncPumpFactory(SyncPeer syncPeerMe, SyncPeer syncPeerOther, BlockingQueue<String> sendQueue,
-            BlockingQueue<String> receiveQueue) {
+    public JvmSyncPumpFactory(SyncPeer syncPeerMe, SyncPeer syncPeerOther, BlockingQueue<String> queueA2B,
+            BlockingQueue<String> queueB2A) {
         super();
         this.syncPeerMe = syncPeerMe;
         this.syncPeerOther = syncPeerOther;
-        this.sendQueue = sendQueue;
-        this.receiveQueue = receiveQueue;
+        this.queueA2B = queueA2B;
+        this.queueB2A = queueB2A;
     }
 
-    public SyncPump getInstance() throws InstantiationException {
+    public SyncPump getInstance(PeerMode peerMode) throws InstantiationException {
 
         try {
             DataSource dataSource = createDataSource("db-"+syncPeerMe.getPeerName(), true);
@@ -75,11 +75,19 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
 
             DbSeedProducer seedProducer = new DbSeedProducer();
             seedProducer.setGenericDao(genericDao);
+            
+            BlockingQueue<String> queue = null;
+            if(peerMode.A2B.equals(peerMode)){
+                queue = queueA2B;
+            } else {
+                queue = queueB2A;
+            }
 
-            JvmSyncPumpSender sender = new JvmSyncPumpSender(sendQueue);
+            JvmSyncPumpSender sender = new JvmSyncPumpSender(queue);
             sender.setSeedProducer(seedProducer);
 
-            JvmSyncPumpReceiver receiver = new JvmSyncPumpReceiver(receiveQueue);
+            //Temp Testing!
+            JvmSyncPumpReceiver receiver = new JvmSyncPumpReceiver(queue);
 
             return new JvmSyncPump(syncPeerMe, syncPeerOther, sender, receiver);
 

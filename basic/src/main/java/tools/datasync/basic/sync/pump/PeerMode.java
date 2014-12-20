@@ -1,11 +1,7 @@
 /**
  * 
  */
-package tools.datasync.basic.sync;
-
-import tools.datasync.basic.sync.pump.PeerMode;
-import tools.datasync.basic.sync.pump.SyncPump;
-import tools.datasync.basic.sync.pump.SyncPumpFactory;
+package tools.datasync.basic.sync.pump;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -26,25 +22,10 @@ import tools.datasync.basic.sync.pump.SyncPumpFactory;
  * @author  Upendra Jariya
  * @sponsor Douglas Johnson
  * @version 1.0
- * @since   29-Nov-2014
+ * @since   20-Dec-2014
  */
-public class SyncOrchestrationManager {
+public enum PeerMode {
 
-    SyncPumpFactory pumpFactoryA2B;
-    SyncPumpFactory pumpFactoryB2A;
-    
-    public SyncOrchestrationManager(SyncPumpFactory pumpFactoryA2B, SyncPumpFactory pumpFactoryB2A) {
-        super();
-        this.pumpFactoryA2B = pumpFactoryA2B;
-        this.pumpFactoryB2A = pumpFactoryB2A;
-    }
-
-    SyncManager manager = null;
-    
-    public SyncSession createSession() throws InstantiationException {
-        SyncPump pumpA2B = pumpFactoryA2B.getInstance(PeerMode.A2B);
-        SyncPump pumpB2A = pumpFactoryB2A.getInstance(PeerMode.B2A);
-        
-        return new SyncSession(pumpA2B, pumpB2A);
-    }
+    A2B,
+    B2A
 }

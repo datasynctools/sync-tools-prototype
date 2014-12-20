@@ -27,8 +27,8 @@ import tools.datasync.basic.sync.pump.SyncPump;
  */
 public class SyncSession {
 
-    public SyncPump pumpA;
-    public SyncPump pumpB;
+    public SyncPump pumpA2B;
+    public SyncPump pumpB2A;
     public SyncConnection syncConnA;
     public SyncConnection syncConnB;
     
@@ -43,18 +43,22 @@ public class SyncSession {
      * @param syncConnA
      * @param syncConnB
      */
-    public SyncSession(SyncPump pumpA, SyncPump pumpB) {
+    public SyncSession(SyncPump pumpA2B, SyncPump pumpB2A) {
         super();
-        this.pumpA = pumpA;
-        this.pumpB = pumpB;
+        this.pumpA2B = pumpA2B;
+        this.pumpB2A = pumpB2A;
     }
 
     public void doSync(){
-        pumpA.beginPump();
-        pumpB.beginPump();
-        while(pumpA.isPumping()
-                && pumpB.isPumping()){
-            
+        pumpA2B.beginPump();
+        pumpB2A.beginPump();
+        while(pumpA2B.isPumping()
+                || pumpB2A.isPumping()){
+            try {
+                Thread.currentThread().sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

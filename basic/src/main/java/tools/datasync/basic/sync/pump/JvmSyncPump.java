@@ -84,7 +84,7 @@ public class JvmSyncPump implements SyncPump {
         }
         
         this.isPumping = false;
-        throw (new RuntimeException("Not implemented"));
+        //throw (new RuntimeException("Not implemented"));
     }
 
     @Override

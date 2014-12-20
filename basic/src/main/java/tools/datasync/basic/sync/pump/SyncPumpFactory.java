@@ -26,5 +26,5 @@ package tools.datasync.basic.sync.pump;
  */
 public interface SyncPumpFactory {
 
-    public SyncPump getInstance() throws InstantiationException;
+    public SyncPump getInstance(PeerMode peerMode) throws InstantiationException;
 }

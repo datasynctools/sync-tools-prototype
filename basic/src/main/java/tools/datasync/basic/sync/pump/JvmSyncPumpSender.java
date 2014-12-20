@@ -83,7 +83,8 @@ public class JvmSyncPumpSender implements Runnable {
                         SyncMessageType.SEED.toString(), payloadJson, paloadHash, System.currentTimeMillis());
                 String message = jsonMapper.writeValueAsString(syncMessage);
                 
-                this.sendQueue.add(message);
+                logger.info("Sending - " + message);
+                this.sendQueue.put(message);
                 
             } catch (SeedOverException soe) {
                 nlogger.log(soe, Level.INFO, "Seed phase is over... Terminating the sender process logic.");
@@ -92,7 +93,7 @@ public class JvmSyncPumpSender implements Runnable {
                 nlogger.log(se, Level.WARNING, "Error while creating seed record.");
             } catch (JsonGenerationException | JsonMappingException  jme) {
                 nlogger.log(jme, Level.WARNING, "Error while creating JSON.");
-            } catch (IOException ioe) {
+            } catch (IOException | InterruptedException ioe) {
                 nlogger.log(ioe, Level.WARNING, "Error while creating JSON.");
             }
         }
