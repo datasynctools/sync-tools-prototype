@@ -59,10 +59,13 @@ public class JvmSyncPumpReceiver implements Runnable {
                 continue;
             }
             
+            logger.info("Received Seed "+message);
+            
             try {
                 SyncMessage syncMessage = jsonMapper.readValue(message, SyncMessage.class);
                 
                 if(SyncMessageType.SEED.equals(syncMessage.getMessageType())) {
+                    
                     // TODO: process this seed message
                 }
                 else if (SyncMessageType.SYNC_OVER.equals(syncMessage.getMessageType())) {

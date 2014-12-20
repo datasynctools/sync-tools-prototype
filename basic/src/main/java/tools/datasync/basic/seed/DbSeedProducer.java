@@ -63,6 +63,10 @@ public class DbSeedProducer implements SeedProducer {
         public boolean hasNext() {
             return (index < tables.length);
         }
+        
+        public void remove() {
+            // do nothing...
+        };
     };
 
     public DbSeedProducer() {
