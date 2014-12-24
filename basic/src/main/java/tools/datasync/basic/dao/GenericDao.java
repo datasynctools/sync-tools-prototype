@@ -21,6 +21,7 @@
 */
 package tools.datasync.basic.dao;
 
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,7 +31,9 @@ public interface GenericDao {
 
 	public Iterator<JSON> selectAll(String entityName);
 	
-	public void saveOrUpdate(String entityName, List<JSON> jsonList, String keyColumn);
+	public void saveOrUpdate(String entityName, List<JSON> jsonList, String keyColumn) throws SQLException;
 	
-	public void saveOrUpdate(String entityName, JSON json, String keyColumn);
+	public void saveOrUpdate(String entityName, JSON json, String keyColumn) throws SQLException;
+
+    public void save(String entityName, JSON json) throws SQLException;
 }

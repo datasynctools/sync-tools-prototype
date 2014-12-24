@@ -38,13 +38,13 @@ public class Ids {
 
 	public static class KeyColumn {
 
-		public static final String PK_CONTACT = "contactId";
-		public static final String PK_CONTACT_LINK = "contactLinkId";
-		public static final String PK_WORK_HISTORY = "workHistoryId";
+		public static final String PK_CONTACT = "CONTACTID";
+		public static final String PK_CONTACT_LINK = "CONTACTLINKID";
+		public static final String PK_WORK_HISTORY = "WORKHISTORYID";
 
-		public static final String PK_SYNC_ENTITY = "entityId";
-		public static final String PK_SYNC_PEER = "peerId";
-		public static final String PK_SYNC_STATE = "stateId";
+		public static final String PK_SYNC_ENTITY = "ENTITYID";
+		public static final String PK_SYNC_PEER = "PEERID";
+		public static final String PK_SYNC_STATE = "STATEID";
 		
 		public static String get(String entityName) {
 			if (Table.CONTACT.equalsIgnoreCase(entityName)) {
@@ -89,5 +89,19 @@ public class Ids {
 			}
 			return null;
 		}
+		
+		public static String getTableName(String entityId) {
+            if (UUID_CONTACT.equalsIgnoreCase(entityId)) {
+                return Table.CONTACT;
+
+            } else if (UUID_CONTACT_LINK.equalsIgnoreCase(entityId)) {
+                return Table.CONTACT_LINK;
+
+            } else if (UUID_WORK_HISTORY.equalsIgnoreCase(entityId)) {
+                return Table.WORK_HISTORY;
+
+            }
+            return null;
+        }
 	}
 }

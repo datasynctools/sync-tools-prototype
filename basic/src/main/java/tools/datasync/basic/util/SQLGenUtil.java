@@ -24,6 +24,7 @@
 package tools.datasync.basic.util;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,11 +49,27 @@ public class SQLGenUtil {
 
 		StringBuffer names = new StringBuffer();
 		StringBuffer values = new StringBuffer();
-		Iterator<String> keys = json.getAllNames().iterator();
+		Iterator<String> keys = json.getData().keySet().iterator();
 		while (keys.hasNext()) {
 			String name = keys.next();
+			if(StringUtils.isEmpty(json.get(name))
+			        || "null".equals(json.get(name))){
+			    continue;
+			}
 			names.append(name);
-			values.append(json.get(name));
+			String type = json.getType(name);
+			if("String".equalsIgnoreCase(type)){
+			    values.append("'");
+	            values.append(json.get(name));
+	            values.append("'");
+			} else if("Date".equalsIgnoreCase(type) || "Long".equalsIgnoreCase(type)){
+                values.append("'");
+                values.append(new Date((Long)json.get(name)));
+                values.append("'");
+            } else {
+			    values.append(json.get(name));
+			}
+			
 			if (keys.hasNext()) {
 				names.append(", ");
 				values.append(", ");
@@ -60,7 +77,7 @@ public class SQLGenUtil {
 		}
 		insert.append(" (");
 		insert.append(names);
-		insert.append(") valuse (");
+		insert.append(") values (");
 		insert.append(values);
 		insert.append(")");
 
@@ -76,7 +93,7 @@ public class SQLGenUtil {
 
 		StringBuffer names = new StringBuffer();
 		StringBuffer values = new StringBuffer();
-		Iterator<String> keys = json.getAllNames().iterator();
+		Iterator<String> keys = json.getData().keySet().iterator();
 		while (keys.hasNext()) {
 			String name = keys.next();
 			names.append(name);
@@ -88,7 +105,7 @@ public class SQLGenUtil {
 		}
 		insertps.append(" (");
 		insertps.append(names);
-		insertps.append(") valuse (");
+		insertps.append(") values (");
 		insertps.append(values);
 		insertps.append(")");
 
@@ -103,7 +120,7 @@ public class SQLGenUtil {
 		update.append(tableName);
 		update.append(" set ");
 
-		Iterator<String> keys = json.getAllNames().iterator();
+		Iterator<String> keys = json.getData().keySet().iterator();
 		while (keys.hasNext()) {
 			String name = keys.next();
 			Object value = json.get(name);

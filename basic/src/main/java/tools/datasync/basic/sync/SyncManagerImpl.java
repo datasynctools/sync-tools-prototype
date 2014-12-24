@@ -21,21 +21,29 @@
  */
 package tools.datasync.basic.sync;
 
+import static tools.datasync.basic.comm.SyncMessageType.BEGIN_SEED;
+import static tools.datasync.basic.comm.SyncMessageType.BEGIN_SYNC;
+import static tools.datasync.basic.comm.SyncMessageType.SEED;
+import static tools.datasync.basic.comm.SyncMessageType.SEED_OVER_FOLLOW;
+import static tools.datasync.basic.comm.SyncMessageType.SEED_OVER_INIT;
+import static tools.datasync.basic.comm.SyncMessageType.SYNC_OVER;
+import static tools.datasync.basic.sync.fsm.SyncStateElement.INVALID;
+import static tools.datasync.basic.sync.fsm.SyncStateElement.READY;
+import static tools.datasync.basic.sync.fsm.SyncStateElement.SEEDING;
+
 import java.io.IOException;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import tools.datasync.basic.comm.SyncConnection;
 import tools.datasync.basic.comm.SyncMessage;
 import tools.datasync.basic.comm.SyncMessageType;
-import static tools.datasync.basic.comm.SyncMessageType.*;
 import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.seed.DbSeedConsumer;
-import tools.datasync.basic.seed.DbSeedProducer;
 import tools.datasync.basic.seed.SeedConsumer;
-import tools.datasync.basic.seed.SeedProducer;
+import tools.datasync.basic.seed.SeedException;
 import tools.datasync.basic.sync.fsm.SyncStateElement;
-import static tools.datasync.basic.sync.fsm.SyncStateElement.*;
 import tools.datasync.basic.util.HashGenerator;
 import tools.datasync.basic.util.JSONMapperBean;
 import tools.datasync.basic.util.Md5HashGenerator;
@@ -43,7 +51,7 @@ import tools.datasync.basic.util.NLogger;
 
 public class SyncManagerImpl implements SyncManager {
 
-    private NLogger nlogger;
+    private Logger logger = NLogger.getLogger(SyncManagerImpl.class.getName());
 
     private final ReentrantLock syncLock = new ReentrantLock();
     private SyncPeer me = null;
@@ -75,7 +83,7 @@ public class SyncManagerImpl implements SyncManager {
             this.state = READY;
             
         } catch (Exception ex) {
-            nlogger.log(ex, Level.SEVERE, "Initialization Failure");
+            logger.log(Level.SEVERE, "Initialization Failure", ex);
         }
     }
 
@@ -98,7 +106,11 @@ public class SyncManagerImpl implements SyncManager {
 
     public void seedIn(SeedRecord seed) {
 
-        consumer.consume(seed);
+        try {
+            consumer.consume(seed);
+        } catch (IOException | SeedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void seedOut(SeedRecord seed) {
@@ -114,7 +126,7 @@ public class SyncManagerImpl implements SyncManager {
 
             this.send(message);
         } catch (IOException ex) {
-            nlogger.log(ex, Level.SEVERE, "Exception while sending seed record...");
+            logger.log(Level.SEVERE, "Exception while sending seed record...", ex);
         }
 
     }
@@ -149,7 +161,9 @@ public class SyncManagerImpl implements SyncManager {
                     SeedRecord seed = mapperBean.readValue(seedStr, SeedRecord.class);
                     consumer.consume(seed);
                 } catch (IOException e) {
-                    nlogger.log(e, Level.WARNING, "Unable to parse seed record.");
+                    logger.log(Level.WARNING, "Unable to parse seed record.", e);
+                } catch (SeedException e) {
+                    logger.log(Level.WARNING, "Unable to parse seed record.", e);
                 }
             }
         }

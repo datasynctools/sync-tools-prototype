@@ -23,50 +23,30 @@
 
 package tools.datasync.basic.util;
 
-import java.util.logging.Level;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Formatter;
+import java.util.logging.Handler;
 import java.util.logging.Logger;
 
-public class NLogger {
+public class NLogger extends Logger {
 
-    private Logger logger = Logger.getLogger(NLogger.class.getName());
-    private static NLogger instance = null;
+    protected NLogger(String name, String resourceBundleName) {
+        super(name, resourceBundleName);
+    }
 
-    // no need to synchronize... 2 instances are fine :D
-    public static NLogger getLogger() {
-        if (instance == null) {
-            instance = new NLogger();
+    public static Logger getLogger(String name) {
+        Logger logger = Logger.getLogger(name);
+        
+        Handler[] handlers = logger.getHandlers();
+        for (Handler handler : handlers){
+            logger.removeHandler(handler);
         }
-        return instance;
-    }
-
-    private NLogger() {
-        logger.info("Constructing NLogger instance...");
-    }
-
-    public void log(Throwable ex, Level level, String message, Object... params) {
-
-        // TODO: Log all caused by messages also...
-        // TODO: Search tools.datasync.db2db package method and log 'at' here...
-        StackTraceElement[] stackTraceElements = ex.getStackTrace();
-        StackTraceElement top = stackTraceElements[0];
-
-        String clazz = top.getClassName();
-        String method = top.getMethodName();
-        int line = top.getLineNumber();
-
-        StringBuffer sb = new StringBuffer();
-        sb.append(clazz);
-        sb.append('.');
-        sb.append(method);
-        sb.append('(');
-        sb.append(line);
-        sb.append(") : ");
-        sb.append(message);
-        sb.append(". ");
-        sb.append(ex.getMessage());
-        sb.append('\n');
-
-        Logger logger2 = Logger.getLogger(clazz); // TODO: Is this costly ?
-        logger2.log(level, sb.toString());
+        
+        Formatter newFormatter = new LogFormatter();
+        ConsoleHandler console = new ConsoleHandler();
+        console.setFormatter(newFormatter);
+        logger.addHandler(console);
+        
+        return logger;
     }
 }

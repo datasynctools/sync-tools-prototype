@@ -37,13 +37,12 @@ import tools.datasync.basic.util.NLogger;
 
 public class DbSeedProducer implements SeedProducer {
 
-    NLogger nlogger = NLogger.getLogger();
     GenericDao genericDao;
     HashGenerator hashGenerator;
     JSONMapperBean jsonMapper;
     boolean isRunning = false;
 
-    Logger logger = Logger.getLogger(DbSeedProducer.class.getName());
+    Logger logger = NLogger.getLogger(DbSeedProducer.class.getName());
     boolean stop = false;
     
     Iterator<JSON> currentJsonIterator = null;
@@ -122,7 +121,7 @@ public class DbSeedProducer implements SeedProducer {
             logger.finest("generated seed record: " + seed);
 
         } catch (IOException e) {
-            nlogger.log(e, Level.WARNING, "Error while JSON Serialization", record);
+            logger.log(Level.WARNING, "Error while JSON Serialization", e);
             throw new SeedException("Error while JSON Serialization", e);
         }
 

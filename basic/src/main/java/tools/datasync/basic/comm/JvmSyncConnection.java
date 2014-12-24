@@ -23,6 +23,7 @@ package tools.datasync.basic.comm;
 
 import java.io.IOException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import tools.datasync.basic.sync.SyncManager;
 import tools.datasync.basic.util.JSONMapperBean;
@@ -33,7 +34,7 @@ public class JvmSyncConnection implements SyncConnection {
     private SyncManager me;
     private SyncConnection other;
     private JSONMapperBean jsonMapper;
-    private NLogger nlogger = NLogger.getLogger();
+    private Logger logger = NLogger.getLogger(JvmSyncConnection.class.getName());
     
     public JvmSyncConnection(SyncManager me) {
         this.me = me;
@@ -54,7 +55,7 @@ public class JvmSyncConnection implements SyncConnection {
             String jsonData = jsonMapper.writeValueAsString(message);
             other.onData(jsonData);
         } catch (IOException e) {
-            nlogger.log(e, Level.WARNING, "Unable to send message to peer", message);
+            logger.log(Level.WARNING, "Unable to send message to peer", e);
         }
         return 1;
     }
@@ -65,7 +66,7 @@ public class JvmSyncConnection implements SyncConnection {
             SyncMessage message = jsonMapper.readValue(data, SyncMessage.class);
             me.onData(message);
         } catch (IOException e) {
-            nlogger.log(e, Level.WARNING, "Unable to parse message from peer", data);
+            logger.log(Level.WARNING, "Unable to parse message from peer", e);
         }
     }
 

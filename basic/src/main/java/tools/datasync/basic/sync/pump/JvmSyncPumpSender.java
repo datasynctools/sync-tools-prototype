@@ -54,8 +54,7 @@ public class JvmSyncPumpSender implements Runnable {
     HashGenerator hashGen = null;
     int messageNumber = 0;
     
-    Logger logger = Logger.getLogger(JvmSyncPumpSender.class.getName());
-    NLogger nlogger = NLogger.getLogger();
+    Logger logger = NLogger.getLogger(JvmSyncPumpSender.class.getName());
     
     public JvmSyncPumpSender(BlockingQueue<String> sendQueue){
     
@@ -74,7 +73,8 @@ public class JvmSyncPumpSender implements Runnable {
         isRunning.set(true);
         
         logger.info("Started JvmSyncPumpSender...");
-        while(! Thread.currentThread().isInterrupted()){
+        while((!Thread.currentThread().isInterrupted())
+                && isRunning.get()){
             try {
                 SeedRecord seed = seedProducer.getNextSeed();
                 String payloadJson = jsonMapper.writeValueAsString(seed);
@@ -87,24 +87,30 @@ public class JvmSyncPumpSender implements Runnable {
                 this.sendQueue.put(message);
                 
             } catch (SeedOverException soe) {
-                nlogger.log(soe, Level.INFO, "Seed phase is over... Terminating the sender process logic.");
+                logger.log(Level.INFO, "Seed phase is over... Terminating the sender process logic.", soe);
                 break;
             } catch (SeedException se) {
-                nlogger.log(se, Level.WARNING, "Error while creating seed record.");
+                logger.log(Level.WARNING, "Error while creating seed record.", se);
+                break;
             } catch (JsonGenerationException | JsonMappingException  jme) {
-                nlogger.log(jme, Level.WARNING, "Error while creating JSON.");
+                logger.log(Level.WARNING, "Error while creating JSON.", jme);
+                break;
             } catch (IOException | InterruptedException ioe) {
-                nlogger.log(ioe, Level.WARNING, "Error while creating JSON.");
+                logger.log(Level.WARNING, "Error while creating JSON.", ioe);
+                break;
             }
         }
-        logger.info("put 1");
-        sendQueue.offer("Data 1");
-        logger.info("put 2");
-        sendQueue.offer("Data 2");
-        logger.info("put 3");
-        sendQueue.offer("Data 3");
-        logger.info("put 4");
-        sendQueue.offer("Data 4");
+        
+        try {
+            SyncMessage syncMessage = new SyncMessage(null, messageNumber++, 
+                    SyncMessageType.SYNC_OVER.toString(), null, null, System.currentTimeMillis());
+            String message = jsonMapper.writeValueAsString(syncMessage);
+            
+            logger.info("Sending - " + message);
+            this.sendQueue.put(message);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
         
         isRunning.set(false);
     }

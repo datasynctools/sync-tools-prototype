@@ -32,6 +32,9 @@ public class SeedRecord implements Serializable, Cloneable {
 	private String recordJson;
 	private String origin;
 	
+    public SeedRecord() {
+    }
+    
 	/**
 	 * @param entityId
 	 * @param recordId

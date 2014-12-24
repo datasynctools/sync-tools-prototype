@@ -40,8 +40,7 @@ import tools.datasync.basic.util.SQLGenUtil;
 public class GenericJDBCDao implements GenericDao {
 
 	private DataSource dataSource;
-	private NLogger nlogger = NLogger.getLogger();
-	private Logger logger = Logger.getLogger(GenericJDBCDao.class.getName());
+	private Logger logger = NLogger.getLogger(GenericJDBCDao.class.getName());
 
     public GenericJDBCDao() {
         // TODO: create instance of data source
@@ -59,10 +58,11 @@ public class GenericJDBCDao implements GenericDao {
 			String query = "select * from " + entityName;
 			final Connection connection = dataSource.getConnection();
 			final Statement statement = connection.createStatement();
-			logger.finest("selectAll() - " + query);
+			logger.finest(query);
 			final ResultSet result = statement.executeQuery(query);
 
 			return new Iterator<JSON>() {
+			    private Logger logger = NLogger.getLogger(Iterator.class.getName());
 				boolean hasMore = false;
 
 				public boolean hasNext() {
@@ -70,7 +70,7 @@ public class GenericJDBCDao implements GenericDao {
 					    hasMore = result.next();
 					    return hasMore;
 					} catch (SQLException e) {
-						nlogger.log(e, Level.INFO, "result set error - hasNext().");
+						logger.log(Level.INFO, "result set error - hasNext().", e);
 						return false;
 					}
 				}
@@ -82,15 +82,15 @@ public class GenericJDBCDao implements GenericDao {
 						int count = result.getMetaData().getColumnCount();
 						for (int index = 1; index <= count; index++) {
 							String columnName = result.getMetaData().getColumnName(index);
-							String value = result.getString(index);
+							Object value = result.getObject(index);
 							
-							json.set(columnName, value);
+							json.set(columnName.toUpperCase(), value);
 						}
 						count++;
 						logger.info("ResultSet.next() - returning " + entityName + " - " + json);
 						return json;
 					} catch (SQLException e) {
-						nlogger.log(e, Level.INFO, "result set error - next().");
+						logger.log(Level.INFO, "result set error - next().", e);
 						return null;
 					} finally {
 						try {
@@ -101,7 +101,7 @@ public class GenericJDBCDao implements GenericDao {
 								connection.close();
 							}
 						} catch (SQLException e) {
-							nlogger.log(e, Level.INFO, "error while closing result set.");
+							logger.log(Level.INFO, "error while closing result set.", e);
 						}
 					}
 				}
@@ -112,19 +112,40 @@ public class GenericJDBCDao implements GenericDao {
 			};
 
 		} catch (SQLException e) {
-			nlogger.log(e, Level.INFO, "result set error.");
+			logger.log(Level.INFO, "result set error.", e);
 			List<JSON> jsonList = new ArrayList<JSON>();
 			return jsonList.iterator();
 		}
 	}
+	
+	public void save(String entityName, JSON json) throws SQLException {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see tools.datasync.db2db.dao.GenericDao#saveOrUpdate(java.lang.String,
-	 * tools.datasync.db2db.model.JSON)
-	 */
-	public void saveOrUpdate(String entityName, JSON json, String keyColumn) {
+        logger.finer("entityName=" + entityName + ", json=" + json);
+        Connection connection = null;
+        Statement statement = null;
+        try {
+            // Try insert statement...
+            String insert = SQLGenUtil.getInsertStatement(entityName, json);
+            connection = dataSource.getConnection();
+            statement = connection.createStatement();
+            logger.info(insert);
+            statement.execute(insert);
+        } finally {
+            if (statement != null) {
+                try {
+                    logger.finest("commiting changes.");
+                    connection.commit();
+                    statement.close();
+                    connection.close();
+                } catch (SQLException e) {
+                    logger.log(Level.WARNING, "Failed to close connection.", e);
+                }
+            }
+        }
+    }
+
+	public void saveOrUpdate(String entityName, JSON json, String keyColumn) 
+	throws SQLException {
 
 		logger.finest("saveOrUpdate() - entityName=" + entityName + ", json=" + json + ", keyColumn=" + keyColumn);
 		Connection connection = null;
@@ -144,10 +165,12 @@ public class GenericJDBCDao implements GenericDao {
 					logger.finest("saveOrUpdate() - " + update);
 					statement.execute(update);
 				} catch (SQLException e) {
-					nlogger.log(e, Level.WARNING, "Failed to update record", json);
+					logger.log(Level.WARNING, "Failed to update record", e);
+					throw ex;
 				}
 			} else {
-				nlogger.log(ex, Level.SEVERE, "Failed to insert record", json);
+				logger.log(Level.SEVERE, "Failed to insert record", ex);
+				throw ex;
 			}
 		} finally {
 			if (statement != null) {
@@ -157,19 +180,13 @@ public class GenericJDBCDao implements GenericDao {
 					statement.close();
 					connection.close();
 				} catch (SQLException e) {
-					nlogger.log(e, Level.WARNING, "Failed to close connection.");
+					logger.log(Level.WARNING, "Failed to close connection.", e);
 				}
 			}
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see tools.datasync.db2db.dao.GenericDao#saveOrUpdate(java.lang.String,
-	 * java.util.List)
-	 */
-	public void saveOrUpdate(String entityName, List<JSON> jsonList, String keyColumn) {
+	public void saveOrUpdate(String entityName, List<JSON> jsonList, String keyColumn) throws SQLException {
 		logger.finest("saveOrUpdate() - entityName=" + entityName + ", count=" + jsonList.size() + ", keyColumn=" + keyColumn);
 		for (JSON json : jsonList) {
 			this.saveOrUpdate(entityName, json, keyColumn);

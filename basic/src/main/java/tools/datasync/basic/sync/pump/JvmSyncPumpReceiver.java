@@ -11,6 +11,9 @@ import java.util.logging.Logger;
 
 import tools.datasync.basic.comm.SyncMessage;
 import tools.datasync.basic.comm.SyncMessageType;
+import tools.datasync.basic.model.SeedRecord;
+import tools.datasync.basic.seed.SeedConsumer;
+import tools.datasync.basic.seed.SeedException;
 import tools.datasync.basic.util.JSONMapperBean;
 import tools.datasync.basic.util.NLogger;
 
@@ -38,10 +41,10 @@ import tools.datasync.basic.util.NLogger;
 public class JvmSyncPumpReceiver implements Runnable {
 
     BlockingQueue<String> receiveQueue;
-    Logger logger  = Logger.getLogger(JvmSyncPumpReceiver.class.getSimpleName());
-    NLogger nlogger = NLogger.getLogger();
+    Logger logger  = NLogger.getLogger(JvmSyncPumpReceiver.class.getTypeName());
     AtomicBoolean isRunning;
     JSONMapperBean jsonMapper;
+    SeedConsumer seedConsumer;
     
     public JvmSyncPumpReceiver(BlockingQueue<String> receiveQueue ){
     
@@ -50,9 +53,14 @@ public class JvmSyncPumpReceiver implements Runnable {
         this.jsonMapper = JSONMapperBean.getInstance();
     }
     
+    public void setSeedConsumer(SeedConsumer seedConsumer){
+        this.seedConsumer = seedConsumer;
+    }
+    
     @Override
     public void run() {
-        while(! Thread.currentThread().isInterrupted()){
+        while((!Thread.currentThread().isInterrupted())
+                && isRunning.get()){
             String message = this.receiveQueue.poll();
             if(message == null){
                 // TODO: Try sleep for 100 ms later
@@ -67,12 +75,19 @@ public class JvmSyncPumpReceiver implements Runnable {
                 if(SyncMessageType.SEED.equals(syncMessage.getMessageType())) {
                     
                     // TODO: process this seed message
+                    SeedRecord seed = jsonMapper.readValue(syncMessage.getPayloadJson(), SeedRecord.class);
+                    seedConsumer.consume(seed);
+                    
                 }
                 else if (SyncMessageType.SYNC_OVER.equals(syncMessage.getMessageType())) {
                     break;
                 }
             } catch (IOException ex) {
-                nlogger.log(ex, Level.WARNING, "Error while parsing message.");
+                logger.log(Level.WARNING, "Error while parsing message."+ ex);
+                isRunning.set(false);
+            } catch (SeedException ex) {
+                logger.log(Level.WARNING, "Error while consuming message."+ ex);
+                isRunning.set(false);
             }
         }
 

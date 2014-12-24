@@ -25,18 +25,19 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Md5HashGenerator implements HashGenerator {
 
     private static Md5HashGenerator instance = null;
     private MessageDigest messageDigest = null;
-    private NLogger nlogger;
+    private Logger logger = NLogger.getLogger(Md5HashGenerator.class.getName());
 
     private Md5HashGenerator() {
         try {
             messageDigest = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
-            nlogger.log(e, Level.WARNING, "Error while initializing Hash Generator.");
+            logger.log(Level.WARNING, "Error while initializing Hash Generator.", e);
         }
     }
 
@@ -55,7 +56,7 @@ public class Md5HashGenerator implements HashGenerator {
             String checksum = toHexString1(digest);
             return checksum;
         } catch (UnsupportedEncodingException e) {
-            nlogger.log(e, Level.WARNING, "Error while generating checksum", data);
+            logger.log(Level.WARNING, "Error while generating checksum", e);
             return null;
         }
     }

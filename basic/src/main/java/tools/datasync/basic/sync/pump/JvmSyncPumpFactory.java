@@ -18,6 +18,7 @@ import javax.sql.DataSource;
 import org.apache.derby.jdbc.EmbeddedDataSource;
 
 import tools.datasync.basic.dao.GenericJDBCDao;
+import tools.datasync.basic.seed.DbSeedConsumer;
 import tools.datasync.basic.seed.DbSeedProducer;
 import tools.datasync.basic.sync.SyncPeer;
 import tools.datasync.basic.util.StringUtils;
@@ -68,28 +69,44 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
     public SyncPump getInstance(PeerMode peerMode) throws InstantiationException {
 
         try {
-            DataSource dataSource = createDataSource("db-"+syncPeerMe.getPeerName(), true);
-            GenericJDBCDao genericDao = new GenericJDBCDao();
-            genericDao.setDataSource(dataSource);
-            prepareDatabase(dataSource);
-
-            DbSeedProducer seedProducer = new DbSeedProducer();
-            seedProducer.setGenericDao(genericDao);
-            
+            String sourceDb = "";
+            String targetDb = "";
             BlockingQueue<String> queue = null;
-            if(peerMode.A2B.equals(peerMode)){
+            if(PeerMode.A2B.equals(peerMode)){
                 queue = queueA2B;
+                sourceDb = "db-A";
+                targetDb = "db-B";
             } else {
                 queue = queueB2A;
+                sourceDb = "db-B";
+                targetDb = "db-A";
             }
-
+            
             JvmSyncPumpSender sender = new JvmSyncPumpSender(queue);
-            sender.setSeedProducer(seedProducer);
-
-            //Temp Testing!
+            {
+                DataSource sourceDataSource = createDataSource(sourceDb, true);
+                GenericJDBCDao sourceDao = new GenericJDBCDao();
+                sourceDao.setDataSource(sourceDataSource);
+                prepareDatabase(sourceDataSource);
+                
+                DbSeedProducer seedProducer = new DbSeedProducer();
+                seedProducer.setGenericDao(sourceDao);
+                
+                sender.setSeedProducer(seedProducer);
+            }
+            
             JvmSyncPumpReceiver receiver = new JvmSyncPumpReceiver(queue);
-
-            return new JvmSyncPump(syncPeerMe, syncPeerOther, sender, receiver);
+            {
+                DataSource targetDataSource = createDataSource(targetDb, true);
+                GenericJDBCDao targetDao = new GenericJDBCDao();
+                targetDao.setDataSource(targetDataSource);
+                
+                DbSeedConsumer seedConsumer = new DbSeedConsumer();
+                seedConsumer.setGenericDao(targetDao);
+            
+                receiver.setSeedConsumer(seedConsumer);
+            }
+            return new JvmSyncPump(peerMode, sender, receiver);
 
         } catch (Exception ex) {
             logger.log(Level.SEVERE, "Cannot instantiate JvmSyncPump", ex);

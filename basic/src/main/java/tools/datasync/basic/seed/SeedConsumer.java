@@ -21,9 +21,11 @@
 */
 package tools.datasync.basic.seed;
 
+import java.io.IOException;
+
 import tools.datasync.basic.model.SeedRecord;
 
 public interface SeedConsumer {
 
-	public boolean consume(SeedRecord seed);
+	public boolean consume(SeedRecord seed) throws IOException, SeedException;
 }

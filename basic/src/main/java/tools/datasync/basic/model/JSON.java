@@ -24,46 +24,96 @@
 package tools.datasync.basic.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class JSON implements Cloneable, Serializable {
 
 	private static final long serialVersionUID = 1052072136660446741L;
 	private String entity;
 	private Map<String, Object> props;
+	private Map<String, String> types;
 	
+    public JSON() {
+    }
+    
 	public JSON(String entity) {
 
 		this.setEntity(entity);
 		// Linked hash map to keep the order.
 		this.props = new LinkedHashMap<String, Object>();
+		this.types = new LinkedHashMap<String, String>();
 	}
 	
 	public void set(String name, Object value){
 		
+	    if(value == null){
+	        return;
+	    }
+	    if(value instanceof Date){
+	        value = ((Date) value).getTime();
+	    }
 		this.props.put(name, value);
+		this.types.put(name, value.getClass().getSimpleName());
 	}
 	
 	public Object get(String name){
 		
-		return this.props.get(name);
+	    String type = this.types.get(name);
+	    Object ret = null;
+	    String value = String.valueOf(this.props.get(name));
+	    
+	    if("String".equalsIgnoreCase(type)){
+	        ret = value;
+	    } else if("Integer".equalsIgnoreCase(type)){
+            ret = Integer.valueOf(value);
+        }  else if("Long".equalsIgnoreCase(type)){
+            ret = Long.valueOf(value);
+        }  else if("Double".equalsIgnoreCase(type)){
+            ret = Double.valueOf(value);
+        }  else if("Boolean".equalsIgnoreCase(type)){
+            ret = Boolean.valueOf(value);
+        } else if("Date".equalsIgnoreCase(type)){
+            ret = new Date(Long.valueOf(value));
+        } else {
+            throw new IllegalArgumentException("Type not supported "+type+" for value "+value);
+        }
+	    
+		return ret;
 	}
 	
-	public Set<String> getAllNames(){
-		
-		return this.props.keySet();
+	public String getType(String name){
+        
+        return types.get(name);
 	}
-
+	
 	public String getEntity() {
-		return entity;
-	}
+        return entity;
+    }
 
-	public void setEntity(String entity) {
-		this.entity = entity;
+    public void setEntity(String entity) {
+        this.entity = entity;
+    }
+    
+	public Map<String, Object> getData(){
+		
+		return this.props;
 	}
 	
+	public void setData(Map<String, Object> props){
+        
+        this.props = props;
+    }
+	
+	public Map<String, String>  getTypes() {
+        return types;
+    }
+
+    public void setTypes(Map<String, String>  types) {
+        this.types = types;
+    }
+
 	@Override
 	public String toString() {
 		return String.valueOf(props);

@@ -3,9 +3,9 @@
  */
 package tools.datasync.basic.sync.pump;
 
-import java.util.concurrent.BlockingQueue;
+import java.util.logging.Logger;
 
-import tools.datasync.basic.sync.SyncPeer;
+import tools.datasync.basic.util.NLogger;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -36,24 +36,18 @@ public class JvmSyncPump implements SyncPump {
     // send messages
     // indication of completeness
     
-    SyncPeer syncPeerMe = null;
-    SyncPeer syncPeerOther = null;
-    
+    PeerMode peerMode;
     JvmSyncPumpSender sender = null;
     JvmSyncPumpReceiver receiver = null;
+    Logger logger = NLogger.getLogger(JvmSyncPump.class.getName());
     
     boolean isPumping = false;
     
-    /**
-     * @param syncPeerMe
-     * @param syncPeerOther
-     */
-    public JvmSyncPump(SyncPeer syncPeerMe, SyncPeer syncPeerOther,
+    public JvmSyncPump(PeerMode peerMode,
             JvmSyncPumpSender sender, JvmSyncPumpReceiver receiver) {
         super();
-        this.syncPeerMe = syncPeerMe;
-        this.syncPeerOther = syncPeerOther;
         
+        this.peerMode = peerMode;
         this.sender = sender;
         this.receiver = receiver;
         this.isPumping = false;
@@ -62,21 +56,18 @@ public class JvmSyncPump implements SyncPump {
     @Override
     public void beginPump() {
         
-        Thread senderThread = new Thread(sender);
-        Thread receiverThread = new Thread(receiver);
+        Thread senderThread = new Thread(sender, "Sender-"+this.peerMode.name());
+        Thread receiverThread = new Thread(receiver, "Receiver-"+this.peerMode.name());
         
         senderThread.start();
         receiverThread.start();
         
         this.isPumping = true;
         
-        BlockingQueue<String> receiveQueue = receiver.getQueue();
-        
         while(sender.isRunning().get()
-                && receiver.isRunning().get()){
+                || receiver.isRunning().get()){
             try {
                 Thread.sleep(100);
-                
                 
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -84,6 +75,7 @@ public class JvmSyncPump implements SyncPump {
         }
         
         this.isPumping = false;
+        logger.info("Finished JvmSyncPump.");
         //throw (new RuntimeException("Not implemented"));
     }
 

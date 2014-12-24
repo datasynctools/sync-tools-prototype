@@ -2,6 +2,7 @@ package tools.datasync.basic.seed;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Logger;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +13,7 @@ import tools.datasync.basic.sync.SyncPeer;
 import tools.datasync.basic.sync.SyncSession;
 import tools.datasync.basic.sync.pump.JvmSyncPumpFactory;
 import tools.datasync.basic.sync.pump.SyncPumpFactory;
+import tools.datasync.basic.util.NLogger;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -40,10 +42,13 @@ public class SeedIntegrationTest {
 
     SyncManager peerA = null;
     SyncManager peerB = null;
-
+    Logger logger = NLogger.getLogger(SeedIntegrationTest.class.getTypeName());
+    
     @Before
     public void init() {
 
+        logger.info("init...");
+        System.out.println("Test print sysout....");
         SyncPeer syncPeerA = new SyncPeer("A");
         SyncPeer syncPeerB = new SyncPeer("B");
 
@@ -53,14 +58,14 @@ public class SeedIntegrationTest {
         SyncPumpFactory pumpFactoryA = new JvmSyncPumpFactory(syncPeerA, syncPeerB, a2bQueue, b2aQueue);
         SyncPumpFactory pumpFactoryB = new JvmSyncPumpFactory(syncPeerB, syncPeerA, b2aQueue, a2bQueue);
         syncOrchMgr = new SyncOrchestrationManager(pumpFactoryA, pumpFactoryB);
-
+        
     }
 
     @Test
     public void firstTest() {
 
         try {
-
+            logger.info("first test...");
             SyncSession syncSession = syncOrchMgr.createSession();
 
             syncSession.doSync();
