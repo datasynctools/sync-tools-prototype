@@ -42,39 +42,41 @@ public class SeedIntegrationTest {
 
     SyncManager peerA = null;
     SyncManager peerB = null;
-    Logger logger = NLogger.getLogger(SeedIntegrationTest.class.getTypeName());
-    
+    Logger logger = NLogger.getLogger(SeedIntegrationTest.class.getName());
+
     @Before
     public void init() {
 
-        logger.info("init...");
-        System.out.println("Test print sysout....");
-        SyncPeer syncPeerA = new SyncPeer("A");
-        SyncPeer syncPeerB = new SyncPeer("B");
+	logger.info("init...");
+	System.out.println("Test print sysout....");
+	SyncPeer syncPeerA = new SyncPeer("A");
+	SyncPeer syncPeerB = new SyncPeer("B");
 
-        BlockingQueue<String> a2bQueue = new LinkedBlockingQueue<String>();
-        BlockingQueue<String> b2aQueue = new LinkedBlockingQueue<String>();
+	BlockingQueue<String> a2bQueue = new LinkedBlockingQueue<String>();
+	BlockingQueue<String> b2aQueue = new LinkedBlockingQueue<String>();
 
-        SyncPumpFactory pumpFactoryA = new JvmSyncPumpFactory(syncPeerA, syncPeerB, a2bQueue, b2aQueue);
-        SyncPumpFactory pumpFactoryB = new JvmSyncPumpFactory(syncPeerB, syncPeerA, b2aQueue, a2bQueue);
-        syncOrchMgr = new SyncOrchestrationManager(pumpFactoryA, pumpFactoryB);
-        
+	SyncPumpFactory pumpFactoryA = new JvmSyncPumpFactory(syncPeerA,
+		syncPeerB, a2bQueue, b2aQueue);
+	SyncPumpFactory pumpFactoryB = new JvmSyncPumpFactory(syncPeerB,
+		syncPeerA, b2aQueue, a2bQueue);
+	syncOrchMgr = new SyncOrchestrationManager(pumpFactoryA, pumpFactoryB);
+
     }
 
     @Test
     public void firstTest() {
 
-        try {
-            logger.info("first test...");
-            SyncSession syncSession = syncOrchMgr.createSession();
+	try {
+	    logger.info("first test...");
+	    SyncSession syncSession = syncOrchMgr.createSession();
 
-            syncSession.doSync();
+	    syncSession.doSync();
 
-            // TODO: Verify the state of both databases.
-            
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+	    // TODO: Verify the state of both databases.
+
+	} catch (Exception ex) {
+	    ex.printStackTrace();
+	}
     }
 
     // SyncConnection connectionA = null;

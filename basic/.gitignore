@@ -5,3 +5,4 @@
 *.autosave
 derby.log
 
+/bin/
