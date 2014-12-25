@@ -1,9 +1,11 @@
 package tools.datasync.basic.seed;
 
+import java.io.File;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -46,6 +48,9 @@ public class SeedIntegrationTest {
 
     @Before
     public void init() {
+
+	FileUtils.deleteQuietly(new File("db-A"));
+	FileUtils.deleteQuietly(new File("db-B"));
 
 	logger.info("init...");
 	System.out.println("Test print sysout....");
