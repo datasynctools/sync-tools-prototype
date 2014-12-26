@@ -1,8 +1,8 @@
 insert into org.Contact (ContactId, DateOfBirth, FirstName, LastName, HeightFt, HeightInch, Picture, PreferredHeight)
-values ('42FC5EBC-088D-4DC2-BDBD-D89FA170E5C6','1992-1-23','John','Doe',5,9,null,'Metric');
+values ('B6581A36-804D-45AC-B2E2-F6DA265AF7DE','1990-4-29','Jack','Smith',6,1,null,'Metric');
 
 insert into org.Contact (ContactId, DateOfBirth, FirstName, LastName, HeightFt, HeightInch, Picture, PreferredHeight)
-values ('B6581A36-804D-45AC-B2E2-F6DA265AF7DE','1990-4-29','Jack','Smith',6,1,null,'Metric');
+values ('42FC5EBC-088D-4DC2-BDBD-D89FA170E5C6','1992-1-23','John','Doe',5,9,null,'Metric');
 
 insert into org.WorkHistory(contactId, endMonth, endYear, jobDescription, jobTitle, organizationId, startMonth, startYear, workHistoryId)
 values ('42FC5EBC-088D-4DC2-BDBD-D89FA170E5C6', '', '', 'Job Description 1', 'Job Title 1', null, '3', '2010', '6692C889-8A75-4869-B91D-4F1909D00D2B');

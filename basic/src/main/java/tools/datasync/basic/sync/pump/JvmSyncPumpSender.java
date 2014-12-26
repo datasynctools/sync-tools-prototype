@@ -6,9 +6,8 @@ package tools.datasync.basic.sync.pump;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 
@@ -21,7 +20,6 @@ import tools.datasync.basic.seed.SeedProducer;
 import tools.datasync.basic.util.HashGenerator;
 import tools.datasync.basic.util.JSONMapperBean;
 import tools.datasync.basic.util.Md5HashGenerator;
-import tools.datasync.basic.util.NLogger;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -54,7 +52,7 @@ public class JvmSyncPumpSender implements Runnable {
     HashGenerator hashGen = null;
     int messageNumber = 0;
     
-    Logger logger = NLogger.getLogger(JvmSyncPumpSender.class.getName());
+    Logger logger = Logger.getLogger(JvmSyncPumpSender.class.getName());
     
     public JvmSyncPumpSender(BlockingQueue<String> sendQueue){
     
@@ -87,16 +85,16 @@ public class JvmSyncPumpSender implements Runnable {
                 this.sendQueue.put(message);
                 
             } catch (SeedOverException soe) {
-                logger.log(Level.INFO, "Seed phase is over... Terminating the sender process logic.", soe);
+                logger.warn("Seed phase is over... Terminating the sender process logic.", soe);
                 break;
             } catch (SeedException se) {
-                logger.log(Level.WARNING, "Error while creating seed record.", se);
+                logger.warn("Error while creating seed record.", se);
                 break;
             } catch (JsonGenerationException | JsonMappingException  jme) {
-                logger.log(Level.WARNING, "Error while creating JSON.", jme);
+                logger.warn("Error while creating JSON.", jme);
                 break;
             } catch (IOException | InterruptedException ioe) {
-                logger.log(Level.WARNING, "Error while creating JSON.", ioe);
+                logger.warn("Error while creating JSON.", ioe);
                 break;
             }
         }

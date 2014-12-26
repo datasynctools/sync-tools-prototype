@@ -3,9 +3,7 @@
  */
 package tools.datasync.basic.sync.pump;
 
-import java.util.logging.Logger;
-
-import tools.datasync.basic.util.NLogger;
+import org.apache.log4j.Logger;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -39,7 +37,7 @@ public class JvmSyncPump implements SyncPump {
     PeerMode peerMode;
     JvmSyncPumpSender sender = null;
     JvmSyncPumpReceiver receiver = null;
-    Logger logger = NLogger.getLogger(JvmSyncPump.class.getName());
+    Logger logger = Logger.getLogger(JvmSyncPump.class.getName());
     
     boolean isPumping = false;
     

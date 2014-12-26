@@ -10,12 +10,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 
 import org.apache.derby.jdbc.EmbeddedDataSource;
+import org.apache.log4j.Logger;
 
 import tools.datasync.basic.dao.GenericJDBCDao;
 import tools.datasync.basic.seed.DbSeedConsumer;
@@ -109,7 +108,7 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
             return new JvmSyncPump(peerMode, sender, receiver);
 
         } catch (Exception ex) {
-            logger.log(Level.SEVERE, "Cannot instantiate JvmSyncPump", ex);
+            logger.error("Cannot instantiate JvmSyncPump", ex);
             throw new InstantiationException(ex.getMessage());
         }
     }
@@ -145,7 +144,7 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
             con.close();
             
         } catch (IOException | SQLException e) {
-            logger.log(Level.SEVERE, "Cannot prepare database." + e);
+            logger.error("Cannot prepare database." + e);
             throw e;
         }
     }

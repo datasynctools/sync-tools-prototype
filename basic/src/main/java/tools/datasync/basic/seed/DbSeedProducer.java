@@ -22,9 +22,10 @@
 package tools.datasync.basic.seed;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.model.Ids;
@@ -33,7 +34,6 @@ import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.util.HashGenerator;
 import tools.datasync.basic.util.JSONMapperBean;
 import tools.datasync.basic.util.Md5HashGenerator;
-import tools.datasync.basic.util.NLogger;
 
 public class DbSeedProducer implements SeedProducer {
 
@@ -42,7 +42,7 @@ public class DbSeedProducer implements SeedProducer {
     JSONMapperBean jsonMapper;
     boolean isRunning = false;
 
-    Logger logger = NLogger.getLogger(DbSeedProducer.class.getName());
+    Logger logger = Logger.getLogger(DbSeedProducer.class.getName());
     boolean stop = false;
     
     Iterator<JSON> currentJsonIterator = null;
@@ -87,7 +87,11 @@ public class DbSeedProducer implements SeedProducer {
             if (this.tableNameIterator.hasNext()) {
 
                 String tableName = this.tableNameIterator.next();
-                this.currentJsonIterator = genericDao.selectAll(tableName);
+                try {
+                    this.currentJsonIterator = genericDao.selectAll(tableName);
+                } catch (SQLException e) {
+                    throw new SeedException(e);
+                }
                 // Invoke for the first time...
                 currentJsonIterator.hasNext();
             } else {
@@ -118,10 +122,10 @@ public class DbSeedProducer implements SeedProducer {
             // TODO: get peer id from database
             String origin = "";//me.getPeerId();
             seed = new SeedRecord(entityId, recordId, recordHash, recordJson, origin);
-            logger.finest("generated seed record: " + seed);
+            logger.debug("generated seed record: " + seed);
 
         } catch (IOException e) {
-            logger.log(Level.WARNING, "Error while JSON Serialization", e);
+            logger.warn("Error while JSON Serialization", e);
             throw new SeedException("Error while JSON Serialization", e);
         }
 

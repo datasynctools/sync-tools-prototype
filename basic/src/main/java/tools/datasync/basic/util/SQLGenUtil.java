@@ -24,16 +24,19 @@
 package tools.datasync.basic.util;
 
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import tools.datasync.basic.model.JSON;
 
 public class SQLGenUtil {
 
 	private static Logger logger = Logger.getLogger(SQLGenUtil.class.getName());
+	private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 	
 	public static String getSelectSQL(String tableName) {
 		StringBuffer sql = new StringBuffer();
@@ -64,7 +67,7 @@ public class SQLGenUtil {
 	            values.append("'");
 			} else if("Date".equalsIgnoreCase(type) || "Long".equalsIgnoreCase(type)){
                 values.append("'");
-                values.append(new Date((Long)json.get(name)));
+                values.append(dateFormat.format(new Date((Long)json.get(name))));
                 values.append("'");
             } else {
 			    values.append(json.get(name));
@@ -81,7 +84,7 @@ public class SQLGenUtil {
 		insert.append(values);
 		insert.append(")");
 
-		logger.log(Level.ALL, insert.toString());
+		logger.debug(insert.toString());
 		return insert.toString();
 	}
 	
@@ -109,7 +112,7 @@ public class SQLGenUtil {
 		insertps.append(values);
 		insertps.append(")");
 
-		logger.log(Level.ALL, insertps.toString());
+		logger.debug(insertps.toString());
 		return insertps.toString();
 	}
 
@@ -142,7 +145,7 @@ public class SQLGenUtil {
 		update.append(json.get(keyColumn));
 		update.append("'");
 
-		logger.log(Level.ALL, update.toString());
+		logger.debug(update.toString());
 		return update.toString();
 	}
 	
@@ -158,7 +161,7 @@ public class SQLGenUtil {
         delete.append(json.get(keyColumn));
         delete.append("'");
 
-        logger.log(Level.ALL, delete.toString());
+        logger.debug(delete.toString());
         return delete.toString();
     }
 	

@@ -33,8 +33,8 @@ import static tools.datasync.basic.sync.fsm.SyncStateElement.SEEDING;
 
 import java.io.IOException;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 import tools.datasync.basic.comm.SyncConnection;
 import tools.datasync.basic.comm.SyncMessage;
@@ -47,11 +47,10 @@ import tools.datasync.basic.sync.fsm.SyncStateElement;
 import tools.datasync.basic.util.HashGenerator;
 import tools.datasync.basic.util.JSONMapperBean;
 import tools.datasync.basic.util.Md5HashGenerator;
-import tools.datasync.basic.util.NLogger;
 
 public class SyncManagerImpl implements SyncManager {
 
-    private Logger logger = NLogger.getLogger(SyncManagerImpl.class.getName());
+    private Logger logger = Logger.getLogger(SyncManagerImpl.class.getName());
 
     private final ReentrantLock syncLock = new ReentrantLock();
     private SyncPeer me = null;
@@ -83,7 +82,7 @@ public class SyncManagerImpl implements SyncManager {
             this.state = READY;
             
         } catch (Exception ex) {
-            logger.log(Level.SEVERE, "Initialization Failure", ex);
+            logger.error("Initialization Failure", ex);
         }
     }
 
@@ -126,7 +125,7 @@ public class SyncManagerImpl implements SyncManager {
 
             this.send(message);
         } catch (IOException ex) {
-            logger.log(Level.SEVERE, "Exception while sending seed record...", ex);
+            logger.error("Exception while sending seed record...", ex);
         }
 
     }
@@ -161,9 +160,9 @@ public class SyncManagerImpl implements SyncManager {
                     SeedRecord seed = mapperBean.readValue(seedStr, SeedRecord.class);
                     consumer.consume(seed);
                 } catch (IOException e) {
-                    logger.log(Level.WARNING, "Unable to parse seed record.", e);
+                    logger.warn("Unable to parse seed record.", e);
                 } catch (SeedException e) {
-                    logger.log(Level.WARNING, "Unable to parse seed record.", e);
+                    logger.warn("Unable to parse seed record.", e);
                 }
             }
         }

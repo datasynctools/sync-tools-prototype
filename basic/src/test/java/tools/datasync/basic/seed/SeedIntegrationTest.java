@@ -3,9 +3,9 @@ package tools.datasync.basic.seed;
 import java.io.File;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,7 +15,6 @@ import tools.datasync.basic.sync.SyncPeer;
 import tools.datasync.basic.sync.SyncSession;
 import tools.datasync.basic.sync.pump.JvmSyncPumpFactory;
 import tools.datasync.basic.sync.pump.SyncPumpFactory;
-import tools.datasync.basic.util.NLogger;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -44,7 +43,7 @@ public class SeedIntegrationTest {
 
     SyncManager peerA = null;
     SyncManager peerB = null;
-    Logger logger = NLogger.getLogger(SeedIntegrationTest.class.getName());
+    Logger logger = Logger.getLogger(SeedIntegrationTest.class.getName());
 
     @Before
     public void init() {

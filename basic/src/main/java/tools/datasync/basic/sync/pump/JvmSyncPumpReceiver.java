@@ -6,8 +6,8 @@ package tools.datasync.basic.sync.pump;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 import tools.datasync.basic.comm.SyncMessage;
 import tools.datasync.basic.comm.SyncMessageType;
@@ -15,7 +15,6 @@ import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.seed.SeedConsumer;
 import tools.datasync.basic.seed.SeedException;
 import tools.datasync.basic.util.JSONMapperBean;
-import tools.datasync.basic.util.NLogger;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -41,7 +40,7 @@ import tools.datasync.basic.util.NLogger;
 public class JvmSyncPumpReceiver implements Runnable {
 
     BlockingQueue<String> receiveQueue;
-    Logger logger = NLogger.getLogger(JvmSyncPumpReceiver.class.getName());
+    Logger logger = Logger.getLogger(JvmSyncPumpReceiver.class.getName());
     AtomicBoolean isRunning;
     JSONMapperBean jsonMapper;
     SeedConsumer seedConsumer;
@@ -84,11 +83,11 @@ public class JvmSyncPumpReceiver implements Runnable {
 		    break;
 		}
 	    } catch (IOException ex) {
-		logger.log(Level.WARNING, "Error while parsing message." + ex);
-		isRunning.set(false);
+	        logger.warn("Error while consuming message." + ex);
+	        isRunning.set(false);
 	    } catch (SeedException ex) {
-		logger.log(Level.WARNING, "Error while consuming message." + ex);
-		isRunning.set(false);
+	        logger.warn("Error while parsing message." + ex);
+	        isRunning.set(false);
 	    }
 	}
 

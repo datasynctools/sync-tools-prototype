@@ -23,7 +23,7 @@ package tools.datasync.basic.seed;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.dao.SyncDao;
@@ -32,12 +32,11 @@ import tools.datasync.basic.model.JSON;
 import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.util.JSONMapperBean;
 import tools.datasync.basic.util.Md5HashGenerator;
-import tools.datasync.basic.util.NLogger;
 
 public class DbSeedConsumer implements SeedConsumer {
 
 	SyncDao syncDao;
-	Logger logger = NLogger.getLogger(DbSeedConsumer.class.getName());
+	Logger logger = Logger.getLogger(DbSeedConsumer.class.getName());
     private JSONMapperBean jsonMapper;
     private Md5HashGenerator hashGenerator;
     private GenericDao genericDao;
@@ -53,7 +52,7 @@ public class DbSeedConsumer implements SeedConsumer {
     
 	public boolean consume(SeedRecord seed) throws IOException, SeedException {
 		
-	    logger.fine("Consuming SEED Record: " + seed);
+	    logger.debug("Consuming SEED Record: " + seed);
 	    
         String entityName = Ids.EntityId.getTableName(seed.getEntityId());
         String dbRecord = seed.getRecordJson();
@@ -61,7 +60,7 @@ public class DbSeedConsumer implements SeedConsumer {
         
         if(! hashGenerator.validate(dbRecord, seed.getRecordHash())){
             //throw new SeedException("Illegal message - Record does not match with its hash");
-            logger.warning("Illegal message - Record does not match with its hash");
+            logger.warn("Illegal message - Record does not match with its hash");
         }
         
         try {

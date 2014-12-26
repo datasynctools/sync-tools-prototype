@@ -29,7 +29,7 @@ import tools.datasync.basic.model.JSON;
 
 public interface GenericDao {
 
-	public Iterator<JSON> selectAll(String entityName);
+	public Iterator<JSON> selectAll(String entityName) throws SQLException;
 	
 	public void saveOrUpdate(String entityName, List<JSON> jsonList, String keyColumn) throws SQLException;
 	
