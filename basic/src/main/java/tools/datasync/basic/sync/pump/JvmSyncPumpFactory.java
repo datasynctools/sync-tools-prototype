@@ -56,115 +56,126 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
      * @param syncPeerMe
      * @param syncPeerOther
      */
-    public JvmSyncPumpFactory(SyncPeer syncPeerMe, SyncPeer syncPeerOther, BlockingQueue<String> queueA2B,
-            BlockingQueue<String> queueB2A) {
-        super();
-        this.syncPeerMe = syncPeerMe;
-        this.syncPeerOther = syncPeerOther;
-        this.queueA2B = queueA2B;
-        this.queueB2A = queueB2A;
+    public JvmSyncPumpFactory(SyncPeer syncPeerMe, SyncPeer syncPeerOther,
+	    BlockingQueue<String> queueA2B, BlockingQueue<String> queueB2A) {
+	super();
+	this.syncPeerMe = syncPeerMe;
+	this.syncPeerOther = syncPeerOther;
+	this.queueA2B = queueA2B;
+	this.queueB2A = queueB2A;
     }
 
-    public SyncPump getInstance(PeerMode peerMode) throws InstantiationException {
+    public SyncPump getInstance(PeerMode peerMode)
+	    throws InstantiationException {
 
-        try {
-            String sourceDb = "";
-            String targetDb = "";
-            BlockingQueue<String> queue = null;
-            if(PeerMode.A2B.equals(peerMode)){
-                queue = queueA2B;
-                sourceDb = "db-A";
-                targetDb = "db-B";
-            } else {
-                queue = queueB2A;
-                sourceDb = "db-B";
-                targetDb = "db-A";
-            }
-            
-            JvmSyncPumpSender sender = new JvmSyncPumpSender(queue);
-            {
-                DataSource sourceDataSource = createDataSource(sourceDb, true);
-                GenericJDBCDao sourceDao = new GenericJDBCDao();
-                sourceDao.setDataSource(sourceDataSource);
-                prepareDatabase(sourceDataSource);
-                
-                DbSeedProducer seedProducer = new DbSeedProducer();
-                seedProducer.setGenericDao(sourceDao);
-                
-                sender.setSeedProducer(seedProducer);
-            }
-            
-            JvmSyncPumpReceiver receiver = new JvmSyncPumpReceiver(queue);
-            {
-                DataSource targetDataSource = createDataSource(targetDb, true);
-                GenericJDBCDao targetDao = new GenericJDBCDao();
-                targetDao.setDataSource(targetDataSource);
-                
-                DbSeedConsumer seedConsumer = new DbSeedConsumer();
-                seedConsumer.setGenericDao(targetDao);
-            
-                receiver.setSeedConsumer(seedConsumer);
-            }
-            return new JvmSyncPump(peerMode, sender, receiver);
+	try {
+	    String sourceDb = "";
+	    String targetDb = "";
+	    BlockingQueue<String> queue = null;
+	    if (PeerMode.A2B.equals(peerMode)) {
+		queue = queueA2B;
+		sourceDb = "db-A";
+		targetDb = "db-B";
+	    } else {
+		queue = queueB2A;
+		sourceDb = "db-B";
+		targetDb = "db-A";
+	    }
 
-        } catch (Exception ex) {
-            logger.error("Cannot instantiate JvmSyncPump", ex);
-            throw new InstantiationException(ex.getMessage());
-        }
+	    JvmSyncPumpSender sender = new JvmSyncPumpSender(queue);
+	    {
+		DataSource sourceDataSource = createDataSource(sourceDb, true);
+		GenericJDBCDao sourceDao = new GenericJDBCDao();
+		sourceDao.setDataSource(sourceDataSource);
+		prepareDatabase(sourceDataSource);
+
+		DbSeedProducer seedProducer = new DbSeedProducer();
+		seedProducer.setGenericDao(sourceDao);
+
+		sender.setSeedProducer(seedProducer);
+	    }
+
+	    JvmSyncPumpReceiver receiver = new JvmSyncPumpReceiver(queue);
+	    {
+		DataSource targetDataSource = createDataSource(targetDb, true);
+		GenericJDBCDao targetDao = new GenericJDBCDao();
+		targetDao.setDataSource(targetDataSource);
+
+		DbSeedConsumer seedConsumer = new DbSeedConsumer();
+		seedConsumer.setGenericDao(targetDao);
+
+		receiver.setSeedConsumer(seedConsumer);
+	    }
+	    return new JvmSyncPump(peerMode, sender, receiver);
+
+	} catch (Exception ex) {
+	    logger.error("Cannot instantiate JvmSyncPump", ex);
+	    throw new InstantiationException(ex.getMessage());
+	}
     }
 
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
-    /*       Create and populate the databases before trial       */
+    /* Create and populate the databases before trial */
     /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
-    
+
     // creates the Apache Derby data source for given DB name
-    private DataSource createDataSource(String dbname, boolean create) throws Exception {
-        EmbeddedDataSource ds = new EmbeddedDataSource();
-        ds.setDatabaseName(dbname);
-        if (create) {
-            ds.setCreateDatabase("create");
-        }
-        return ds;
+    private DataSource createDataSource(String dbname, boolean create)
+	    throws Exception {
+	EmbeddedDataSource ds = new EmbeddedDataSource();
+	ds.setDatabaseName(dbname);
+	if (create) {
+	    ds.setCreateDatabase("create");
+	}
+	return ds;
     }
 
-    private void prepareDatabase(DataSource dataSource) throws IOException, SQLException {
-        try {
-            Connection con = dataSource.getConnection();
-            
-            logger.info("Creating framework database...");
-            runSQLScript(con, "/script/create_table_framework.sql");
-            
-            logger.info("Creating model database...");
-            runSQLScript(con, "/script/create_table_model.sql");
-            
-            logger.info("Populating model database for Peer "+syncPeerMe.getPeerName());
-            runSQLScript(con, "/script/populate_database_peer"+syncPeerMe.getPeerName()+".sql");
-            
-            con.commit();
-            con.close();
-            
-        } catch (IOException | SQLException e) {
-            logger.error("Cannot prepare database." + e);
-            throw e;
-        }
+    private void prepareDatabase(DataSource dataSource) throws IOException,
+	    SQLException {
+	try {
+	    Connection con = dataSource.getConnection();
+
+	    logger.info("Creating framework database...");
+	    runSQLScript(con, "/script/create_table_framework.sql");
+
+	    logger.info("Creating model database...");
+	    runSQLScript(con, "/script/create_table_model.sql");
+
+	    logger.info("Populating model database for Peer "
+		    + syncPeerMe.getPeerName());
+	    runSQLScript(con,
+		    "/script/populate_database_peer" + syncPeerMe.getPeerName()
+			    + ".sql");
+
+	    con.commit();
+	    con.close();
+
+	} catch (IOException | SQLException e) {
+	    logger.error("Cannot prepare database." + e);
+	    throw e;
+	}
     }
-    
-    private void runSQLScript(Connection con, String path) throws IOException, SQLException {
-        InputStream in = this.getClass().getResourceAsStream(path);
-        Scanner sc = new Scanner(in);
-        sc.useDelimiter(";");
-        
-        while(sc.hasNext()){
-            String sql = sc.next();
-            if(StringUtils.isWhiteSpaceOnly(sql)){
-                break;
-            }
-            logger.info(sql);
-            Statement stmt = con.createStatement();
-            stmt.execute(sql);
-            stmt.close();
-        }
-        sc.close();
-        logger.info("Executed " + path + " successfully.");
+
+    private void runSQLScript(Connection con, String path) throws IOException,
+	    SQLException {
+	InputStream in = this.getClass().getResourceAsStream(path);
+	Scanner sc = new Scanner(in);
+	sc.useDelimiter(";");
+
+	while (sc.hasNext()) {
+	    String sql = sc.next();
+	    sql = sql.trim();
+	    if (StringUtils.isWhiteSpaceOnly(sql)) {
+		continue;
+	    }
+	    if (sql.startsWith("--")) {
+		continue;
+	    }
+	    logger.info(sql);
+	    Statement stmt = con.createStatement();
+	    stmt.execute(sql);
+	    stmt.close();
+	}
+	sc.close();
+	logger.info("Executed " + path + " successfully.");
     }
 }
