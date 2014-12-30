@@ -80,7 +80,6 @@ public class JvmSyncPumpSender implements Runnable {
 
 	syncStateInitializer.setIsRunning(isRunning);
 	syncStateInitializer.doSeed();
-
 	// TODO: Send message to the other Peer's receiver "Begin seed"
 	SyncMessage syncMessage = new SyncMessage(null, messageNumber++,
 		SyncMessageType.BEGIN_SEED.toString(), null, null,
@@ -89,9 +88,12 @@ public class JvmSyncPumpSender implements Runnable {
 	try {
 	    message = jsonMapper.writeValueAsString(syncMessage);
 	    this.sendQueue.put(message);
+	    logger.info("Completed seeding, send message to the peer that we're ready to receive");
 
 	    // TODO: Wait for "Begin Seed" message from other peer
+	    logger.info("Waiting for received message from peer that we're ready to send");
 	    beginSeedLatch.await();
+	    logger.info("Peer sent begin seed, ready to send messages");
 
 	} catch (Exception e1) {
 	    // TODO Auto-generated catch block

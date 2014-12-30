@@ -88,7 +88,7 @@ public class JvmSyncPumpReceiver implements Runnable {
 			.getMessageType())) {
 		    // TODO: signal the sender to start sending
 		    beginSeedLatch.countDown();
-		    break;
+		    logger.info("Received begin seed from the sending peer.");
 		}
 	    } catch (IOException ex) {
 		logger.warn("Error while consuming message." + ex);
