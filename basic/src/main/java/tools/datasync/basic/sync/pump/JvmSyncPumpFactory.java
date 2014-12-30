@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 
 import javax.sql.DataSource;
 
@@ -50,6 +51,9 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
     BlockingQueue<String> queueA2B = null;
     BlockingQueue<String> queueB2A = null;
 
+    CountDownLatch seedLockA = new CountDownLatch(1);
+    CountDownLatch seedLockB = new CountDownLatch(1);
+
     Logger logger = Logger.getLogger(JvmSyncPumpFactory.class.getName());
 
     /**
@@ -71,15 +75,22 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
 	try {
 	    String sourceDb = "";
 	    String targetDb = "";
+	    CountDownLatch sendLock;
+	    CountDownLatch receiveLock;
 	    BlockingQueue<String> queue = null;
 	    if (PeerMode.A2B.equals(peerMode)) {
 		queue = queueA2B;
 		sourceDb = "db-A";
 		targetDb = "db-B";
+		sendLock = seedLockA;
+		receiveLock = seedLockB;
 	    } else {
 		queue = queueB2A;
+
 		sourceDb = "db-B";
 		targetDb = "db-A";
+		sendLock = seedLockB;
+		receiveLock = seedLockA;
 	    }
 
 	    JvmSyncPumpSender sender = new JvmSyncPumpSender(queue);
@@ -93,6 +104,7 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
 		seedProducer.setGenericDao(sourceDao);
 
 		sender.setSeedProducer(seedProducer);
+		sender.setBeginSeedLatch(sendLock);
 	    }
 
 	    JvmSyncPumpReceiver receiver = new JvmSyncPumpReceiver(queue);
@@ -105,6 +117,7 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
 		seedConsumer.setGenericDao(targetDao);
 
 		receiver.setSeedConsumer(seedConsumer);
+		receiver.setBeginSeedLatch(receiveLock);
 	    }
 	    return new JvmSyncPump(peerMode, sender, receiver);
 

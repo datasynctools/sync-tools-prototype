@@ -5,6 +5,7 @@ package tools.datasync.basic.sync.pump;
 
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
@@ -45,6 +46,8 @@ public class JvmSyncPumpReceiver implements Runnable {
     JSONMapperBean jsonMapper;
     SeedConsumer seedConsumer;
 
+    CountDownLatch beginSeedLatch;
+
     public JvmSyncPumpReceiver(BlockingQueue<String> receiveQueue) {
 
 	this.receiveQueue = receiveQueue;
@@ -81,13 +84,18 @@ public class JvmSyncPumpReceiver implements Runnable {
 		} else if (SyncMessageType.SYNC_OVER.equals(syncMessage
 			.getMessageType())) {
 		    break;
+		} else if (SyncMessageType.BEGIN_SEED.equals(syncMessage
+			.getMessageType())) {
+		    // TODO: signal the sender to start sending
+		    beginSeedLatch.countDown();
+		    break;
 		}
 	    } catch (IOException ex) {
-	        logger.warn("Error while consuming message." + ex);
-	        isRunning.set(false);
+		logger.warn("Error while consuming message." + ex);
+		isRunning.set(false);
 	    } catch (SeedException ex) {
-	        logger.warn("Error while parsing message." + ex);
-	        isRunning.set(false);
+		logger.warn("Error while parsing message." + ex);
+		isRunning.set(false);
 	    }
 	}
 
@@ -97,6 +105,10 @@ public class JvmSyncPumpReceiver implements Runnable {
 
     public AtomicBoolean isRunning() {
 	return isRunning;
+    }
+
+    public void setBeginSeedLatch(CountDownLatch beginSeedLatch) {
+	this.beginSeedLatch = beginSeedLatch;
     }
 
     public BlockingQueue<String> getQueue() {
