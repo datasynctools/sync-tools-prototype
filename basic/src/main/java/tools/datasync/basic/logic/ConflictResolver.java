@@ -21,6 +21,9 @@
 */
 package tools.datasync.basic.logic;
 
+import tools.datasync.basic.model.JSON;
+
 public interface ConflictResolver {
 
+	public JSON resolve(JSON my, JSON theirs) throws ConflictException;
 }

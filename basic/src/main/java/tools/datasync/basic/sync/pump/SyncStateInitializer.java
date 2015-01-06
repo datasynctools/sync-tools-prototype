@@ -1,11 +1,17 @@
 package tools.datasync.basic.sync.pump;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.io.IOException;
+import java.sql.SQLException;
+
+import tools.datasync.basic.dao.GenericDao;
+
 
 public interface SyncStateInitializer {
 
-    void doSeed();
+    void doSeed() throws SQLException, IOException;
 
-    void setIsRunning(AtomicBoolean isRunning);
+    void setIsRunning(boolean isRunning);
+
+	void setGenericDao(GenericDao genericDao);
 
 }

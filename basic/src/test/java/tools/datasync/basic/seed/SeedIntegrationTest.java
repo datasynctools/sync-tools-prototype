@@ -39,75 +39,46 @@ import tools.datasync.basic.sync.pump.SyncPumpFactory;
  */
 public class SeedIntegrationTest {
 
-    SyncOrchestrationManager syncOrchMgr;
+	SyncOrchestrationManager syncOrchMgr;
 
-    SyncManager peerA = null;
-    SyncManager peerB = null;
-    Logger logger = Logger.getLogger(SeedIntegrationTest.class.getName());
+	SyncManager peerA = null;
+	SyncManager peerB = null;
+	Logger logger = Logger.getLogger(SeedIntegrationTest.class.getName());
 
-    @Before
-    public void init() {
+	@Before
+	public void init() {
 
-	FileUtils.deleteQuietly(new File("db-A"));
-	FileUtils.deleteQuietly(new File("db-B"));
+		FileUtils.deleteQuietly(new File("db-A"));
+		FileUtils.deleteQuietly(new File("db-B"));
 
-	logger.info("init...");
-	System.out.println("Test print sysout....");
-	SyncPeer syncPeerA = new SyncPeer("A");
-	SyncPeer syncPeerB = new SyncPeer("B");
+		logger.info("init...");
+		System.out.println("Test print sysout....");
+		SyncPeer syncPeerA = new SyncPeer("A");
+		SyncPeer syncPeerB = new SyncPeer("B");
 
-	BlockingQueue<String> a2bQueue = new LinkedBlockingQueue<String>();
-	BlockingQueue<String> b2aQueue = new LinkedBlockingQueue<String>();
+		BlockingQueue<String> a2bQueue = new LinkedBlockingQueue<String>();
+		BlockingQueue<String> b2aQueue = new LinkedBlockingQueue<String>();
 
-	SyncPumpFactory pumpFactoryA = new JvmSyncPumpFactory(syncPeerA,
-		syncPeerB, a2bQueue, b2aQueue);
-	SyncPumpFactory pumpFactoryB = new JvmSyncPumpFactory(syncPeerB,
-		syncPeerA, b2aQueue, a2bQueue);
-	syncOrchMgr = new SyncOrchestrationManager(pumpFactoryA, pumpFactoryB);
+		SyncPumpFactory pumpFactoryA = new JvmSyncPumpFactory(syncPeerA, syncPeerB, a2bQueue, b2aQueue);
+		SyncPumpFactory pumpFactoryB = new JvmSyncPumpFactory(syncPeerB, syncPeerA, b2aQueue, a2bQueue);
+		syncOrchMgr = new SyncOrchestrationManager(pumpFactoryA, pumpFactoryB);
 
-    }
-
-    @Test
-    public void firstTest() {
-
-	try {
-	    logger.info("first test...");
-	    SyncSession syncSession = syncOrchMgr.createSession();
-
-	    syncSession.doSync();
-
-	    // TODO: Verify the state of both databases.
-
-	} catch (Exception ex) {
-	    ex.printStackTrace();
 	}
-    }
 
-    // SyncConnection connectionA = null;
-    // SyncConnection connectionB = null;
-    //
-    // connectionA = new JvmSyncConnection(peerA);
-    // connectionB = new JvmSyncConnection(peerB);
-    //
-    // connectionA.setOtherConnection(connectionB);
-    // connectionB.setOtherConnection(connectionA);
-    //
-    // peerA = new SyncManagerImpl("A", connectionA);
-    // peerB = new SyncManagerImpl("B", connectionB);
+	@Test
+	public void firstTest() {
 
-    // peerA.initiate();
-    // peerB.initiate();
-    //
-    // SyncMessage beginsync = new SyncMessage("", 1,
-    // SyncMessageType.BEGIN_SYNC.toString(), null, null,
-    // System.currentTimeMillis());
-    // SyncMessage beginseed = new SyncMessage("", 1,
-    // SyncMessageType.BEGIN_SEED.toString(), null, null,
-    // System.currentTimeMillis());
-    //
-    // peerA.send(beginsync);
-    // peerB.send(beginsync);
-    //
-    // peerA.send(beginseed);
-    // peerB.send(beginseed);
+		try {
+			logger.info("first test...");
+			SyncSession syncSession = syncOrchMgr.createSession();
+
+			syncSession.doSync();
+
+			// TODO: Verify the state of both databases.
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
 }

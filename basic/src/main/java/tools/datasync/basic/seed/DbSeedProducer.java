@@ -75,9 +75,14 @@ public class DbSeedProducer implements SeedProducer {
         this.isRunning = true;
     }
     
+    @Override
     public void setGenericDao(GenericDao genericDao){
         this.genericDao = genericDao;
     }
+    @Override
+	public GenericDao getGenericDao() {
+		return this.genericDao;
+	}
 
     @Override
     public SeedRecord getNextSeed() throws SeedOverException, SeedException {

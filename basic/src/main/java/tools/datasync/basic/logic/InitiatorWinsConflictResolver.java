@@ -21,6 +21,22 @@
 */
 package tools.datasync.basic.logic;
 
+import tools.datasync.basic.model.JSON;
+
 public class InitiatorWinsConflictResolver implements ConflictResolver {
 
+	boolean isInitiator = false;
+	public InitiatorWinsConflictResolver(boolean isInitiator) {
+		
+		this.isInitiator = isInitiator;
+	}
+	
+	@Override
+	public JSON resolve(JSON my, JSON theirs) throws ConflictException {
+
+		if(isInitiator){
+			return null;
+		}
+		return theirs;
+	}
 }

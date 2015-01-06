@@ -32,6 +32,7 @@ import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 
+import tools.datasync.basic.model.Ids;
 import tools.datasync.basic.model.JSON;
 import tools.datasync.basic.util.SQLGenUtil;
 
@@ -40,14 +41,14 @@ public class GenericJDBCDao implements GenericDao {
 	private DataSource dataSource;
 	private Logger logger = Logger.getLogger(GenericJDBCDao.class.getName());
 
-    public GenericJDBCDao() {
-        // TODO: create instance of data source
-    }
-    
-    public void setDataSource(DataSource dataSource){
-        this.dataSource = dataSource;
-    }
-    
+	public GenericJDBCDao() {
+		// TODO: create instance of data source
+	}
+
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+
 	// Returning result set linked iterator because size of database can cause
 	// out of memory error.
 	public Iterator<JSON> selectAll(final String entityName) throws SQLException {
@@ -60,13 +61,13 @@ public class GenericJDBCDao implements GenericDao {
 			final ResultSet result = statement.executeQuery(query);
 
 			return new Iterator<JSON>() {
-			    private Logger logger = Logger.getLogger(Iterator.class.getName());
+				private Logger logger = Logger.getLogger(Iterator.class.getName());
 				boolean hasMore = false;
 
 				public boolean hasNext() {
 					try {
-					    hasMore = result.next();
-					    return hasMore;
+						hasMore = result.next();
+						return hasMore;
 					} catch (SQLException e) {
 						logger.info("result set error - hasNext().", e);
 						return false;
@@ -75,13 +76,13 @@ public class GenericJDBCDao implements GenericDao {
 
 				public JSON next() {
 					try {
-						
+
 						JSON json = new JSON(entityName);
 						int count = result.getMetaData().getColumnCount();
 						for (int index = 1; index <= count; index++) {
 							String columnName = result.getMetaData().getColumnName(index);
 							Object value = result.getObject(index);
-							
+
 							json.set(columnName.toUpperCase(), value);
 						}
 						count++;
@@ -92,7 +93,7 @@ public class GenericJDBCDao implements GenericDao {
 						throw new RuntimeException(e);
 					} finally {
 						try {
-							if (! hasMore) {
+							if (!hasMore) {
 								logger.debug("selectAll() - closing resultset");
 								result.close();
 								statement.close();
@@ -103,9 +104,9 @@ public class GenericJDBCDao implements GenericDao {
 						}
 					}
 				}
-				
+
 				public void remove() {
-					//TODO: implement;
+					// TODO: implement;
 				}
 			};
 
@@ -114,35 +115,112 @@ public class GenericJDBCDao implements GenericDao {
 			throw e;
 		}
 	}
+
+	public JSON select(final String entityName, String id) throws SQLException {
+
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet result = null;
+		try {
+			String query = "select * from " + entityName + " where " + Ids.KeyColumn.get(entityName) + "='" + id + "'";
+			connection = dataSource.getConnection();
+			statement = connection.createStatement();
+			logger.debug(query);
+			result = statement.executeQuery(query);
+
+			if (result.next()) {
+
+				JSON json = new JSON(entityName);
+				int count = result.getMetaData().getColumnCount();
+				for (int index = 1; index <= count; index++) {
+					String columnName = result.getMetaData().getColumnName(index);
+					Object value = result.getObject(index);
+
+					json.set(columnName.toUpperCase(), value);
+				}
+
+				return json;
+			} else {
+				return null;
+			}
+
+		} catch (SQLException e) {
+			logger.warn("result set error - select().", e);
+			throw new RuntimeException(e);
+		} finally {
+			result.close();
+			statement.close();
+			connection.close();
+		}
+
+	}
 	
+	public JSON selectState(String entityId, String recordId) throws SQLException {
+
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet result = null;
+		try {
+			String query = "select * from " + Ids.Table.SYNC_STATE + " where EntityId='" + entityId + "' and RecordId='"+recordId+"'";
+			connection = dataSource.getConnection();
+			statement = connection.createStatement();
+			logger.debug(query);
+			result = statement.executeQuery(query);
+
+			if (result.next()) {
+
+				JSON json = new JSON(Ids.Table.SYNC_STATE);
+				int count = result.getMetaData().getColumnCount();
+				for (int index = 1; index <= count; index++) {
+					String columnName = result.getMetaData().getColumnName(index);
+					Object value = result.getObject(index);
+
+					json.set(columnName.toUpperCase(), value);
+				}
+
+				return json;
+			} else {
+				return null;
+			}
+
+		} catch (SQLException e) {
+			logger.warn("result set error - select().", e);
+			throw new RuntimeException(e);
+		} finally {
+			result.close();
+			statement.close();
+			connection.close();
+		}
+
+	}
+
 	public void save(String entityName, JSON json) throws SQLException {
 
-        logger.debug("entityName=" + entityName + ", json=" + json);
-        Connection connection = null;
-        Statement statement = null;
-        try {
-            // Try insert statement...
-            String insert = SQLGenUtil.getInsertStatement(entityName, json);
-            connection = dataSource.getConnection();
-            statement = connection.createStatement();
-            logger.info(insert);
-            statement.execute(insert);
-            logger.debug("commiting changes.");
-            connection.commit();
-        } finally {
-            if (statement != null) {
-                try {
-                    statement.close();
-                    connection.close();
-                } catch (SQLException e) {
-                    logger.warn("Failed to close connection.", e);
-                }
-            }
-        }
-    }
+		// logger.debug("entityName=" + entityName + ", json=" + json);
+		Connection connection = null;
+		Statement statement = null;
+		try {
+			// Try insert statement...
+			String insert = SQLGenUtil.getInsertStatement(entityName, json);
+			connection = dataSource.getConnection();
+			statement = connection.createStatement();
+			logger.info(insert);
+			statement.execute(insert);
+			logger.debug("commiting insert...");
+			connection.commit();
+		} finally {
+			if (statement != null) {
+				try {
+					statement.close();
+					connection.close();
+				} catch (SQLException e) {
+					logger.warn("Failed to close connection.", e);
+				}
+			}
+		}
+	}
 
-	public void saveOrUpdate(String entityName, JSON json, String keyColumn) 
-	throws SQLException {
+	public void saveOrUpdate(String entityName, JSON json, String keyColumn) throws SQLException {
 
 		logger.debug("saveOrUpdate() - entityName=" + entityName + ", json=" + json + ", keyColumn=" + keyColumn);
 		Connection connection = null;

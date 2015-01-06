@@ -21,6 +21,7 @@
 */
 package tools.datasync.basic.seed;
 
+import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.model.SeedRecord;
 
 public interface SeedProducer {
@@ -28,4 +29,8 @@ public interface SeedProducer {
 	public SeedRecord getNextSeed() throws SeedOverException, SeedException;
 	
 	public boolean isRunning();
+	
+	public void setGenericDao(GenericDao genericDao);
+	
+	public GenericDao getGenericDao();
 }

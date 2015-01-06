@@ -46,110 +46,110 @@ import tools.datasync.basic.util.Md5HashGenerator;
  */
 public class JvmSyncPumpSender implements Runnable {
 
-    BlockingQueue<String> sendQueue;
-    AtomicBoolean isRunning;
+	BlockingQueue<String> sendQueue;
+	AtomicBoolean isRunning;
 
-    SyncStateInitializer syncStateInitializer = new JDBCSyncStateInitializer();
+	SyncStateInitializer syncStateInitializer;
 
-    SeedProducer seedProducer = null;
-    JSONMapperBean jsonMapper = null;
-    HashGenerator hashGen = null;
-    int messageNumber = 0;
+	SeedProducer seedProducer = null;
+	JSONMapperBean jsonMapper = null;
+	HashGenerator hashGen = null;
+	int messageNumber = 0;
 
-    CountDownLatch beginSeedLatch;
+	CountDownLatch beginSeedLatch;
 
-    Logger logger = Logger.getLogger(JvmSyncPumpSender.class.getName());
+	Logger logger = Logger.getLogger(JvmSyncPumpSender.class.getName());
 
-    public JvmSyncPumpSender(BlockingQueue<String> sendQueue) {
+	public JvmSyncPumpSender(BlockingQueue<String> sendQueue) {
 
-	this.sendQueue = sendQueue;
-	this.isRunning = new AtomicBoolean(true);
-	this.jsonMapper = JSONMapperBean.getInstance();
-	this.hashGen = Md5HashGenerator.getInstance();
-    }
-
-    public void setSeedProducer(SeedProducer seedProducer) {
-	this.seedProducer = seedProducer;
-    }
-
-    @Override
-    public void run() {
-	isRunning.set(true);
-
-	logger.info("Started JvmSyncPumpSender...");
-
-	syncStateInitializer.setIsRunning(isRunning);
-	syncStateInitializer.doSeed();
-	// TODO: Send message to the other Peer's receiver "Begin seed"
-	SyncMessage syncMessage = new SyncMessage(null, messageNumber++,
-		SyncMessageType.BEGIN_SEED.toString(), null, null,
-		System.currentTimeMillis());
-	String message;
-	try {
-	    message = jsonMapper.writeValueAsString(syncMessage);
-	    this.sendQueue.put(message);
-	    logger.info("Completed seeding, send message to the peer that we're ready to receive");
-
-	    // TODO: Wait for "Begin Seed" message from other peer
-	    logger.info("Waiting for received message from peer that we're ready to send");
-	    beginSeedLatch.await();
-	    logger.info("Peer sent begin seed, ready to send messages");
-
-	} catch (Exception e1) {
-	    // TODO Auto-generated catch block
-	    e1.printStackTrace();
+		this.sendQueue = sendQueue;
+		this.isRunning = new AtomicBoolean(true);
+		this.jsonMapper = JSONMapperBean.getInstance();
+		this.hashGen = Md5HashGenerator.getInstance();
+		this.syncStateInitializer = new JDBCSyncStateInitializer();
 	}
 
-	while ((!Thread.currentThread().isInterrupted()) && isRunning.get()) {
-	    try {
-		SeedRecord seed = seedProducer.getNextSeed();
-		String payloadJson = jsonMapper.writeValueAsString(seed);
-		String paloadHash = hashGen.generate(payloadJson);
-		syncMessage = new SyncMessage(seed.getOrigin(),
-			messageNumber++, SyncMessageType.SEED.toString(),
-			payloadJson, paloadHash, System.currentTimeMillis());
-		message = jsonMapper.writeValueAsString(syncMessage);
-
-		logger.info("Sending - " + message);
-		this.sendQueue.put(message);
-
-	    } catch (SeedOverException soe) {
-		logger.warn(
-			"Seed phase is over... Terminating the sender process logic.",
-			soe);
-		break;
-	    } catch (SeedException se) {
-		logger.warn("Error while creating seed record.", se);
-		break;
-	    } catch (JsonGenerationException | JsonMappingException jme) {
-		logger.warn("Error while creating JSON.", jme);
-		break;
-	    } catch (IOException | InterruptedException ioe) {
-		logger.warn("Error while creating JSON.", ioe);
-		break;
-	    }
+	public void setSeedProducer(SeedProducer seedProducer) {
+		this.seedProducer = seedProducer;
 	}
 
-	try {
-	    syncMessage = new SyncMessage(null, messageNumber++,
-		    SyncMessageType.SYNC_OVER.toString(), null, null,
-		    System.currentTimeMillis());
-	    message = jsonMapper.writeValueAsString(syncMessage);
+	@Override
+	public void run() {
+		isRunning.set(true);
 
-	    logger.info("Sending - " + message);
-	    this.sendQueue.put(message);
-	} catch (IOException | InterruptedException e) {
-	    e.printStackTrace();
+		logger.info("Started JvmSyncPumpSender...");
+
+		try {
+			// Populate the SyncState table from all data tables...
+			syncStateInitializer.setGenericDao(seedProducer.getGenericDao());
+			syncStateInitializer.setIsRunning(true);
+			syncStateInitializer.doSeed();
+			syncStateInitializer.setIsRunning(false);
+			
+			
+			// TODO: Send message to the other Peer's receiver "Begin seed"
+			SyncMessage syncMessage = new SyncMessage(null, messageNumber++, SyncMessageType.BEGIN_SEED.toString(), null, null,
+					System.currentTimeMillis());
+			String message = jsonMapper.writeValueAsString(syncMessage);
+			this.sendQueue.put(message);
+			logger.info("Completed seeding, send message to the peer that we're ready to receive");
+
+			// TODO: Wait for "Begin Seed" message from other peer
+			logger.info("Waiting for received message from peer that we're ready to send");
+			beginSeedLatch.await();
+			logger.info("Peer sent begin seed, ready to send messages");
+
+		} catch (Exception e1) {
+			logger.warn("Exception while begin seed...", e1);
+			isRunning.set(false);
+		}
+
+		while ((!Thread.currentThread().isInterrupted()) && isRunning.get()) {
+			try {
+				SeedRecord seed = seedProducer.getNextSeed();
+				String payloadJson = jsonMapper.writeValueAsString(seed);
+				String paloadHash = hashGen.generate(payloadJson);
+				SyncMessage syncMessage = new SyncMessage(seed.getOrigin(), messageNumber++, SyncMessageType.SEED.toString(), payloadJson, paloadHash,
+						System.currentTimeMillis());
+				String message = jsonMapper.writeValueAsString(syncMessage);
+
+				logger.info("Sending - " + message);
+				this.sendQueue.put(message);
+
+			} catch (SeedOverException soe) {
+				logger.warn("Seed phase is over... Terminating the sender process logic.", soe);
+				break;
+			} catch (SeedException se) {
+				logger.warn("Error while creating seed record.", se);
+				break;
+			} catch (JsonGenerationException | JsonMappingException jme) {
+				logger.warn("Error while creating JSON.", jme);
+				break;
+			} catch (IOException | InterruptedException ioe) {
+				logger.warn("Error while creating JSON.", ioe);
+				break;
+			}
+		}
+
+		try {
+			SyncMessage syncMessage = new SyncMessage(null, messageNumber++, SyncMessageType.SYNC_OVER.toString(), null, null,
+					System.currentTimeMillis());
+			String message = jsonMapper.writeValueAsString(syncMessage);
+
+			logger.info("Sending - " + message);
+			this.sendQueue.put(message);
+		} catch (IOException | InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		isRunning.set(false);
 	}
 
-	isRunning.set(false);
-    }
+	public void setBeginSeedLatch(CountDownLatch beginSeedLatch) {
+		this.beginSeedLatch = beginSeedLatch;
+	}
 
-    public void setBeginSeedLatch(CountDownLatch beginSeedLatch) {
-	this.beginSeedLatch = beginSeedLatch;
-    }
-
-    public AtomicBoolean isRunning() {
-	return isRunning;
-    }
+	public AtomicBoolean isRunning() {
+		return isRunning;
+	}
 }

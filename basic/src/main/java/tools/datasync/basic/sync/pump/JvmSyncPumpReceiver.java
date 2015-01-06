@@ -40,78 +40,74 @@ import tools.datasync.basic.util.JSONMapperBean;
  */
 public class JvmSyncPumpReceiver implements Runnable {
 
-    BlockingQueue<String> receiveQueue;
-    Logger logger = Logger.getLogger(JvmSyncPumpReceiver.class.getName());
-    AtomicBoolean isRunning;
-    JSONMapperBean jsonMapper;
-    SeedConsumer seedConsumer;
+	BlockingQueue<String> receiveQueue;
+	Logger logger = Logger.getLogger(JvmSyncPumpReceiver.class.getName());
+	AtomicBoolean isRunning;
+	JSONMapperBean jsonMapper;
+	SeedConsumer seedConsumer;
 
-    CountDownLatch beginSeedLatch;
+	CountDownLatch beginSeedLatch;
 
-    public JvmSyncPumpReceiver(BlockingQueue<String> receiveQueue) {
+	public JvmSyncPumpReceiver(BlockingQueue<String> receiveQueue) {
 
-	this.receiveQueue = receiveQueue;
-	this.isRunning = new AtomicBoolean(true);
-	this.jsonMapper = JSONMapperBean.getInstance();
-    }
-
-    public void setSeedConsumer(SeedConsumer seedConsumer) {
-	this.seedConsumer = seedConsumer;
-    }
-
-    @Override
-    public void run() {
-	while ((!Thread.currentThread().isInterrupted()) && isRunning.get()) {
-	    String message = this.receiveQueue.poll();
-	    if (message == null) {
-		// TODO: Try sleep for 100 ms later
-		continue;
-	    }
-
-	    logger.info("Received Seed " + message);
-
-	    try {
-		SyncMessage syncMessage = jsonMapper.readValue(message,
-			SyncMessage.class);
-
-		if (SyncMessageType.SEED.equals(syncMessage.getMessageType())) {
-
-		    // TODO: process this seed message
-		    SeedRecord seed = jsonMapper.readValue(
-			    syncMessage.getPayloadJson(), SeedRecord.class);
-		    seedConsumer.consume(seed);
-
-		} else if (SyncMessageType.SYNC_OVER.equals(syncMessage
-			.getMessageType())) {
-		    break;
-		} else if (SyncMessageType.BEGIN_SEED.equals(syncMessage
-			.getMessageType())) {
-		    // TODO: signal the sender to start sending
-		    beginSeedLatch.countDown();
-		    logger.info("Received begin seed from the sending peer.");
-		}
-	    } catch (IOException ex) {
-		logger.warn("Error while consuming message." + ex);
-		isRunning.set(false);
-	    } catch (SeedException ex) {
-		logger.warn("Error while parsing message." + ex);
-		isRunning.set(false);
-	    }
+		this.receiveQueue = receiveQueue;
+		this.isRunning = new AtomicBoolean(true);
+		this.jsonMapper = JSONMapperBean.getInstance();
 	}
 
-	logger.info("Finished sync receiver");
-	isRunning.set(false);
-    }
+	public void setSeedConsumer(SeedConsumer seedConsumer) {
+		this.seedConsumer = seedConsumer;
+	}
 
-    public AtomicBoolean isRunning() {
-	return isRunning;
-    }
+	@Override
+	public void run() {
+		while ((!Thread.currentThread().isInterrupted()) && isRunning.get()) {
+			String message = this.receiveQueue.poll();
+			if (message == null) {
+				// TODO: Try sleep for 100 ms later
+				continue;
+			}
 
-    public void setBeginSeedLatch(CountDownLatch beginSeedLatch) {
-	this.beginSeedLatch = beginSeedLatch;
-    }
+			logger.info("Received Sync Message: " + message);
 
-    public BlockingQueue<String> getQueue() {
-	return this.receiveQueue;
-    }
+			try {
+				SyncMessage syncMessage = jsonMapper.readValue(message, SyncMessage.class);
+
+				if (SyncMessageType.SEED.equals(syncMessage.getMessageType())) {
+
+					// TODO: process this seed message
+					SeedRecord seed = jsonMapper.readValue(syncMessage.getPayloadJson(), SeedRecord.class);
+					seedConsumer.consume(seed);
+
+				} else if (SyncMessageType.SYNC_OVER.equals(syncMessage.getMessageType())) {
+					break;
+				} else if (SyncMessageType.BEGIN_SEED.equals(syncMessage.getMessageType())) {
+					// TODO: signal the sender to start sending
+					beginSeedLatch.countDown();
+					logger.info("Received begin seed from the sending peer.");
+				}
+			} catch (IOException ex) {
+				logger.warn("Error while consuming message." + ex);
+				isRunning.set(false);
+			} catch (SeedException ex) {
+				logger.warn("Error while parsing message." + ex);
+				isRunning.set(false);
+			}
+		}
+
+		logger.info("Finished sync receiver");
+		isRunning.set(false);
+	}
+
+	public AtomicBoolean isRunning() {
+		return isRunning;
+	}
+
+	public void setBeginSeedLatch(CountDownLatch beginSeedLatch) {
+		this.beginSeedLatch = beginSeedLatch;
+	}
+
+	public BlockingQueue<String> getQueue() {
+		return this.receiveQueue;
+	}
 }
