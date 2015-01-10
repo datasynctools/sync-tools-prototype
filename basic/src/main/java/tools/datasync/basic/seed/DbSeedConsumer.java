@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 
 import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.dao.SyncDao;
+import tools.datasync.basic.logic.ConflictException;
 import tools.datasync.basic.logic.ConflictResolver;
 import tools.datasync.basic.logic.InitiatorWinsConflictResolver;
 import tools.datasync.basic.model.Ids;
@@ -89,15 +90,17 @@ public class DbSeedConsumer implements SeedConsumer {
         	
         	if(stateRecord != null){
         		//If the record exists in the SyncState table, check if the hashes match.
-        		if(seed.getRecordHash().equals(stateRecord.get("RecordHash"))){
+        		logger.info(stateRecord);
+        		if(seed.getRecordHash().equals(stateRecord.get("RECORDHASH"))){
         			//If the record exists in the SyncState table and the hashes match, break and go to next message
         			return true;
         		} else {
         			//If the record exists in the SyncState table and the hash does not match:
         			
-        			JSON myJSON = jsonMapper.readValue(stateRecord.get("RecordData"), JSON.class);
+        			JSON myJSON = jsonMapper.readValue(String.valueOf(stateRecord.get("RECORDDATA")),
+        					JSON.class);
         			//1. run the standard merge logic (a MergeStrategy class) using the existing record in the User table and the newly received message (there are some error conditions here for advanced conflicts)
-        			JSON resolvedJSON = conflictResolver.resolve(, json);
+        			JSON resolvedJSON = conflictResolver.resolve(myJSON, json);
         			
         			if(resolvedJSON == null){
         				return true;
@@ -113,7 +116,7 @@ public class DbSeedConsumer implements SeedConsumer {
         		genericDao.save(entityName, json);
         	}
             
-        } catch (SQLException e) {
+        } catch (SQLException | ConflictException e) {
             throw new IOException(e.getMessage(), e);
         }
 

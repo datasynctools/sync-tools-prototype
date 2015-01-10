@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
-import tools.datasync.basic.sync.SyncManager;
 import tools.datasync.basic.sync.SyncOrchestrationManager;
 import tools.datasync.basic.sync.SyncPeer;
 import tools.datasync.basic.sync.SyncSession;
@@ -41,8 +40,6 @@ public class SeedIntegrationTest {
 
 	SyncOrchestrationManager syncOrchMgr;
 
-	SyncManager peerA = null;
-	SyncManager peerB = null;
 	Logger logger = Logger.getLogger(SeedIntegrationTest.class.getName());
 
 	@Before

@@ -39,7 +39,6 @@ public class SyncOrchestrationManager {
         this.pumpFactoryB2A = pumpFactoryB2A;
     }
 
-    SyncManager manager = null;
     
     public SyncSession createSession() throws InstantiationException {
         SyncPump pumpA2B = pumpFactoryA2B.getInstance(PeerMode.A2B);

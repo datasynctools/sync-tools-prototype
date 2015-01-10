@@ -22,6 +22,6 @@ create table seed.SyncState (
 	EntityId		varchar(36)		not null,
 	RecordId		varchar(36)		not null,
 	RecordHash		varchar(100)	not null,
-	RecordData		clob			not null
+	RecordData		varchar(2000)	not null
 --FOREIGN KEY (EntityId) REFERENCES seed.SyncEntity(EntityId)
 );
