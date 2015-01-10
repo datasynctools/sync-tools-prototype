@@ -107,8 +107,17 @@ public class DbSeedConsumer implements SeedConsumer {
         			}
         			else{
         				//2. update the User table with the new value
-            	        //3. update the SyncState table with the newly calculated hash
         				genericDao.save(entityName, resolvedJSON);
+        				
+        				//3. update the SyncState table with the newly calculated hash
+        				JSON syncState = new JSON(Ids.Table.SYNC_STATE);
+        				syncState.set("EntityId", Ids.EntityId.get(entityName));
+        				syncState.set("RecordId", resolvedJSON.get(Ids.KeyColumn.get(entityName)));
+        				String recordJson = jsonMapper.writeValueAsString(resolvedJSON);
+        				syncState.set("RecordData", recordJson);
+        				syncState.set("RecordHash", hashGenerator.generate(recordJson));
+        				
+        				genericDao.save(Ids.Table.SYNC_STATE, syncState);
         			}
         		}
         		

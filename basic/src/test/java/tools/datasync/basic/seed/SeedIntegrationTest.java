@@ -72,6 +72,8 @@ public class SeedIntegrationTest {
 			syncSession.doSync();
 
 			// TODO: Verify the state of both databases.
+			// Verify the state in A and B for User and State tables.
+			
 
 		} catch (Exception ex) {
 			ex.printStackTrace();

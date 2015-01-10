@@ -118,4 +118,21 @@ public class JSON implements Cloneable, Serializable {
 	public String toString() {
 		return String.valueOf(props);
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((entity == null) ? 0 : entity.hashCode());
+		result = prime * result + ((props == null) ? 0 : props.hashCode());
+		result = prime * result + ((types == null) ? 0 : types.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return false;
+	}
+	
+	
 }
