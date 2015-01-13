@@ -35,7 +35,7 @@ public class JDBCSyncStateInitializer implements SyncStateInitializer {
 		for(int tab=0; tab<tables.length; tab++){
 			
 			logger.info("Populating SyncState table for ["+tables[tab]+"] records...");
-			Iterator<JSON> jsonIterator = genericDao.selectAll(tables[tab]);
+			Iterator<JSON> jsonIterator = genericDao.selectAll(tables[tab], true);
 			
 			while(jsonIterator.hasNext()){
 				JSON record = jsonIterator.next();

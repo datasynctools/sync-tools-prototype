@@ -93,7 +93,7 @@ public class DbSeedProducer implements SeedProducer {
 
                 String tableName = this.tableNameIterator.next();
                 try {
-                    this.currentJsonIterator = genericDao.selectAll(tableName);
+                    this.currentJsonIterator = genericDao.selectAll(tableName, true);
                 } catch (SQLException e) {
                     throw new SeedException(e);
                 }

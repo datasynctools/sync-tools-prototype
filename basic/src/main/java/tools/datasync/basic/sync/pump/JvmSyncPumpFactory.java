@@ -17,6 +17,7 @@ import javax.sql.DataSource;
 import org.apache.derby.jdbc.EmbeddedDataSource;
 import org.apache.log4j.Logger;
 
+import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.dao.GenericJDBCDao;
 import tools.datasync.basic.logic.ConflictResolver;
 import tools.datasync.basic.logic.InitiatorWinsConflictResolver;
@@ -52,6 +53,9 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
 	SyncPeer syncPeerOther = null;
 	BlockingQueue<String> queueA2B = null;
 	BlockingQueue<String> queueB2A = null;
+	
+	GenericJDBCDao sourceDao = null;
+	GenericJDBCDao targetDao = null;
 
 	// TODO: initiate single beginSeedLatch with count = 2
 	CountDownLatch beginSeedLatchA = new CountDownLatch(1);
@@ -100,7 +104,7 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
 			JvmSyncPumpSender sender = new JvmSyncPumpSender(queue);
 			{
 				DataSource sourceDataSource = createDataSource(sourceDb, true);
-				GenericJDBCDao sourceDao = new GenericJDBCDao();
+				sourceDao = new GenericJDBCDao();
 				sourceDao.setDataSource(sourceDataSource);
 				prepareDatabase(sourceDataSource);
 
@@ -114,7 +118,7 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
 			JvmSyncPumpReceiver receiver = new JvmSyncPumpReceiver(queue);
 			{
 				DataSource targetDataSource = createDataSource(targetDb, true);
-				GenericJDBCDao targetDao = new GenericJDBCDao();
+				targetDao = new GenericJDBCDao();
 				targetDao.setDataSource(targetDataSource);
 
 				DbSeedConsumer seedConsumer = new DbSeedConsumer(conflictResolver);
@@ -188,5 +192,13 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
 		}
 		sc.close();
 		logger.info("Executed " + path + " successfully.");
+	}
+	
+	public GenericDao getSourceDao(){
+		return sourceDao;
+	}
+	
+	public GenericDao getTargetDao(){
+		return targetDao;
 	}
 }

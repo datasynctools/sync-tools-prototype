@@ -51,10 +51,13 @@ public class GenericJDBCDao implements GenericDao {
 
 	// Returning result set linked iterator because size of database can cause
 	// out of memory error.
-	public Iterator<JSON> selectAll(final String entityName) throws SQLException {
+	public Iterator<JSON> selectAll(final String entityName, boolean sorted) throws SQLException {
 
 		try {
 			String query = "select * from " + entityName;
+			if(sorted){
+				query = query + " order by " + Ids.KeyColumn.get(entityName);
+			}
 			final Connection connection = dataSource.getConnection();
 			final Statement statement = connection.createStatement();
 			logger.debug(query);

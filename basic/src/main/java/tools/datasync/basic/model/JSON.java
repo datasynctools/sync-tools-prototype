@@ -125,14 +125,31 @@ public class JSON implements Cloneable, Serializable {
 		int result = 1;
 		result = prime * result + ((entity == null) ? 0 : entity.hashCode());
 		result = prime * result + ((props == null) ? 0 : props.hashCode());
-		result = prime * result + ((types == null) ? 0 : types.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return false;
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		JSON other = (JSON) obj;
+		if (entity == null) {
+			if (other.entity != null)
+				return false;
+		} else if (!entity.equals(other.entity))
+			return false;
+		if (props == null) {
+			if (other.props != null)
+				return false;
+		} else if (!props.equals(other.props))
+			return false;
+		return true;
 	}
+
 	
 	
 }

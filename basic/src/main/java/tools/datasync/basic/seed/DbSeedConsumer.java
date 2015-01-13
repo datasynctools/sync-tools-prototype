@@ -90,9 +90,10 @@ public class DbSeedConsumer implements SeedConsumer {
         	
         	if(stateRecord != null){
         		//If the record exists in the SyncState table, check if the hashes match.
-        		logger.info(stateRecord);
+        		logger.info("Record exists in the SyncState table" + stateRecord);
         		if(seed.getRecordHash().equals(stateRecord.get("RECORDHASH"))){
         			//If the record exists in the SyncState table and the hashes match, break and go to next message
+        			logger.debug("Hashes match, break and go to next message");
         			return true;
         		} else {
         			//If the record exists in the SyncState table and the hash does not match:
@@ -100,14 +101,17 @@ public class DbSeedConsumer implements SeedConsumer {
         			JSON myJSON = jsonMapper.readValue(String.valueOf(stateRecord.get("RECORDDATA")),
         					JSON.class);
         			//1. run the standard merge logic (a MergeStrategy class) using the existing record in the User table and the newly received message (there are some error conditions here for advanced conflicts)
+        			logger.info("Hash does not match, run the standard merge logic");
         			JSON resolvedJSON = conflictResolver.resolve(myJSON, json);
         			
         			if(resolvedJSON == null){
+        				logger.debug("Record is up to date.");
         				return true;
         			}
         			else{
         				//2. update the User table with the new value
-        				genericDao.save(entityName, resolvedJSON);
+        				logger.info("Update the User table with the new value");
+        				genericDao.saveOrUpdate(entityName, resolvedJSON, Ids.KeyColumn.get(entityName));
         				
         				//3. update the SyncState table with the newly calculated hash
         				JSON syncState = new JSON(Ids.Table.SYNC_STATE);
@@ -117,12 +121,27 @@ public class DbSeedConsumer implements SeedConsumer {
         				syncState.set("RecordData", recordJson);
         				syncState.set("RecordHash", hashGenerator.generate(recordJson));
         				
+        				logger.info("Update the SyncState table with the newly calculated hash.");
         				genericDao.save(Ids.Table.SYNC_STATE, syncState);
         			}
         		}
         		
         	} else {
+        		//If the record DOES NOT exist in the SyncState table:
+                //1. insert the User table with the new value
+        		logger.info("Record DOES NOT exist in the SyncState table, inserting the User table with the new value");
         		genericDao.save(entityName, json);
+        		
+        		//2. insert the SyncState table with the new value
+				JSON syncState = new JSON(Ids.Table.SYNC_STATE);
+				syncState.set("EntityId", Ids.EntityId.get(entityName));
+				syncState.set("RecordId", json.get(Ids.KeyColumn.get(entityName)));
+				String recordJson = jsonMapper.writeValueAsString(json);
+				syncState.set("RecordData", recordJson);
+				syncState.set("RecordHash", hashGenerator.generate(recordJson));
+				
+				logger.info("inserting the SyncState table with the new value");
+				genericDao.save(Ids.Table.SYNC_STATE, syncState);
         	}
             
         } catch (SQLException | ConflictException e) {

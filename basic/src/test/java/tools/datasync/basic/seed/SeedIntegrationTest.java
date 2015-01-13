@@ -9,6 +9,9 @@ import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
+import tools.datasync.basic.dao.DbTableComparator;
+import tools.datasync.basic.dao.GenericDao;
+import tools.datasync.basic.model.Ids;
 import tools.datasync.basic.sync.SyncOrchestrationManager;
 import tools.datasync.basic.sync.SyncPeer;
 import tools.datasync.basic.sync.SyncSession;
@@ -38,8 +41,9 @@ import tools.datasync.basic.sync.pump.SyncPumpFactory;
  */
 public class SeedIntegrationTest {
 
-	SyncOrchestrationManager syncOrchMgr;
-
+	private SyncOrchestrationManager syncOrchMgr;
+	private SyncPumpFactory pumpFactoryA;
+	private SyncPumpFactory pumpFactoryB;
 	Logger logger = Logger.getLogger(SeedIntegrationTest.class.getName());
 
 	@Before
@@ -56,10 +60,11 @@ public class SeedIntegrationTest {
 		BlockingQueue<String> a2bQueue = new LinkedBlockingQueue<String>();
 		BlockingQueue<String> b2aQueue = new LinkedBlockingQueue<String>();
 
-		SyncPumpFactory pumpFactoryA = new JvmSyncPumpFactory(syncPeerA, syncPeerB, a2bQueue, b2aQueue);
-		SyncPumpFactory pumpFactoryB = new JvmSyncPumpFactory(syncPeerB, syncPeerA, b2aQueue, a2bQueue);
+		pumpFactoryA = new JvmSyncPumpFactory(syncPeerA, syncPeerB, a2bQueue, b2aQueue);
+		pumpFactoryB = new JvmSyncPumpFactory(syncPeerB, syncPeerA, b2aQueue, a2bQueue);
 		syncOrchMgr = new SyncOrchestrationManager(pumpFactoryA, pumpFactoryB);
 
+		
 	}
 
 	@Test
@@ -73,7 +78,14 @@ public class SeedIntegrationTest {
 
 			// TODO: Verify the state of both databases.
 			// Verify the state in A and B for User and State tables.
+			GenericDao sourceDao = ((JvmSyncPumpFactory)pumpFactoryA).getSourceDao();
+			GenericDao targetDao = ((JvmSyncPumpFactory)pumpFactoryA).getTargetDao();
+			DbTableComparator comparator = new DbTableComparator(sourceDao, targetDao);
 			
+			comparator.compare(Ids.Table.CONTACT);
+			comparator.compare(Ids.Table.CONTACT_LINK);
+			comparator.compare(Ids.Table.WORK_HISTORY);
+			comparator.compare(Ids.Table.SYNC_STATE);
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
