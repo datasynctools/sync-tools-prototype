@@ -1,4 +1,4 @@
-package tools.datasync.basic.dao;
+package tools.datasync.basic.logic;
 
 import java.sql.SQLException;
 import java.util.InputMismatchException;
@@ -6,6 +6,7 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
+import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.model.JSON;
 
 public class DbTableComparator {

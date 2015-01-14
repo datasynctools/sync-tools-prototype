@@ -48,7 +48,7 @@ public class JSON implements Cloneable, Serializable {
 	
 	public void set(String name, Object value){
 		
-	    if(value == null){
+	    if(value == null || "".equals(value)){
 	        return;
 	    }
 	    if(value instanceof Date){

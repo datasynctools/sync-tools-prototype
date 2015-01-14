@@ -44,7 +44,7 @@ public class Ids {
 
 		public static final String PK_SYNC_ENTITY = "ENTITYID";
 		public static final String PK_SYNC_PEER = "PEERID";
-		public static final String PK_SYNC_STATE = "STATEID";
+		public static final String PK_SYNC_STATE = "ENTITYID, RECORDID";
 		
 		public static String get(String entityName) {
 			if (Table.CONTACT.equalsIgnoreCase(entityName)) {

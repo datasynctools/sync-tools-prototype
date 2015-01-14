@@ -9,8 +9,8 @@ import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
-import tools.datasync.basic.dao.DbTableComparator;
 import tools.datasync.basic.dao.GenericDao;
+import tools.datasync.basic.logic.DbTableComparator;
 import tools.datasync.basic.model.Ids;
 import tools.datasync.basic.sync.SyncOrchestrationManager;
 import tools.datasync.basic.sync.SyncPeer;
