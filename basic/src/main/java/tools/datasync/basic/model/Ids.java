@@ -39,7 +39,7 @@ public class Ids {
 	public static class KeyColumn {
 
 		public static final String PK_CONTACT = "CONTACTID";
-		public static final String PK_CONTACT_LINK = "CONTACTLINKID";
+		public static final String PK_CONTACT_LINK = "SOURCECONTACTID, TARGETCONTACTID, WORKHISTORYID";
 		public static final String PK_WORK_HISTORY = "WORKHISTORYID";
 
 		public static final String PK_SYNC_ENTITY = "ENTITYID";

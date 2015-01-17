@@ -34,11 +34,10 @@ create table org.WorkHistory (
 );
 
 create table org.ContactLink (
-	ContactLinkId		varchar(36)		not null,
 	SourceContactId		varchar(36)		not null,
 	TargetContactId		varchar(36)		not null,
 	WorkHistoryId		varchar(36)		not null,
-	primary key (ContactLinkId),
+	primary key (SourceContactId, TargetContactId, WorkHistoryId),
 	FOREIGN KEY (SourceContactId) REFERENCES org.Contact(ContactId),
 	FOREIGN KEY (TargetContactId) REFERENCES org.Contact(ContactId),
 	FOREIGN KEY (WorkHistoryId) REFERENCES org.WorkHistory(WorkHistoryId)

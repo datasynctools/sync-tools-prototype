@@ -22,9 +22,12 @@
 package tools.datasync.basic.dao;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -59,10 +62,19 @@ public class GenericJDBCDao implements GenericDao {
 				query = query + " order by " + Ids.KeyColumn.get(entityName);
 			}
 			final Connection connection = dataSource.getConnection();
+			
 			final Statement statement = connection.createStatement();
 			logger.debug(query);
 			final ResultSet result = statement.executeQuery(query);
-
+			
+			String primaryKey = Ids.KeyColumn.get(entityName);
+			String[] keys = primaryKey.split(",");
+			final List<String> primaryKeyColumns = new ArrayList<String>();
+			for(String key : keys){
+				primaryKeyColumns.add(key.trim());
+			}
+			Collections.sort(primaryKeyColumns);
+			
 			return new Iterator<JSON>() {
 				private Logger logger = Logger.getLogger(Iterator.class.getName());
 				boolean hasMore = false;
@@ -81,6 +93,19 @@ public class GenericJDBCDao implements GenericDao {
 					try {
 
 						JSON json = new JSON(entityName);
+						
+						StringBuffer sbPrimaryKey = new StringBuffer();
+						for(String pkColumn : primaryKeyColumns){
+							String key = result.getString(pkColumn);
+							sbPrimaryKey.append(key);
+							sbPrimaryKey.append("->");
+						}
+						if(sbPrimaryKey.length() > 2){
+							sbPrimaryKey.setLength(sbPrimaryKey.length() - 2);
+						}
+						json.setCalculatedPrimaryKey(sbPrimaryKey.toString());
+						logger.info("ResultSet.next() - calculated primary key: "+json.getCalculatedPrimaryKey());
+						
 						int count = result.getMetaData().getColumnCount();
 						for (int index = 1; index <= count; index++) {
 							String columnName = result.getMetaData().getColumnName(index);
@@ -271,4 +296,12 @@ public class GenericJDBCDao implements GenericDao {
 		}
 	}
 
+	public String getSyncRecordId(JSON json) {
+		
+		String entityName = json.getEntity();
+		
+		
+		//TODO: Implement...
+		return null;
+	}
 }

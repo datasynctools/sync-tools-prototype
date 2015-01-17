@@ -121,7 +121,7 @@ public class DbSeedProducer implements SeedProducer {
         SeedRecord seed = null;
         try {
             String entityId = Ids.EntityId.get(record.getEntity());
-            String recordId = String.valueOf(record.get(Ids.KeyColumn.get(record.getEntity())));
+            String recordId = String.valueOf(record.getCalculatedPrimaryKey());
             String recordJson = jsonMapper.writeValueAsString(record);
             String recordHash = hashGenerator.generate(recordJson);
             // TODO: get peer id from database

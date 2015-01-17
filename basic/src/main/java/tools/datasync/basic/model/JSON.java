@@ -32,6 +32,7 @@ public class JSON implements Cloneable, Serializable {
 
 	private static final long serialVersionUID = 1052072136660446741L;
 	private String entity;
+	private String calculatedPrimaryKey;
 	private Map<String, Object> props;
 	private Map<String, String> types;
 	
@@ -94,6 +95,14 @@ public class JSON implements Cloneable, Serializable {
 
     public void setEntity(String entity) {
         this.entity = entity;
+    }
+    
+    public String getCalculatedPrimaryKey() {
+        return calculatedPrimaryKey;
+    }
+
+    public void setCalculatedPrimaryKey(String calculatedPrimaryKey) {
+        this.calculatedPrimaryKey = calculatedPrimaryKey;
     }
     
 	public Map<String, Object> getData(){

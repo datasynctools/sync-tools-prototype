@@ -42,7 +42,7 @@ public class JDBCSyncStateInitializer implements SyncStateInitializer {
 				
 				JSON syncState = new JSON(Ids.Table.SYNC_STATE);
 				syncState.set("EntityId", Ids.EntityId.get(tables[tab]));
-				syncState.set("RecordId", record.get(Ids.KeyColumn.get(tables[tab])));
+				syncState.set("RecordId", record.getCalculatedPrimaryKey());
 				String recordJson = jsonMapper.writeValueAsString(record);
 				syncState.set("RecordData", recordJson);
 				syncState.set("RecordHash", hashGenerator.generate(recordJson));
