@@ -28,58 +28,35 @@ import org.apache.log4j.Logger;
  */
 public class JvmSyncPump implements SyncPump {
 
-    // threading
-    // fetching data
-    // constructing messages
-    // send messages
-    // indication of completeness
-    
     PeerMode peerMode;
     JvmSyncPumpSender sender = null;
     JvmSyncPumpReceiver receiver = null;
     Logger logger = Logger.getLogger(JvmSyncPump.class.getName());
-    
-    boolean isPumping = false;
-    
-    public JvmSyncPump(PeerMode peerMode,
-            JvmSyncPumpSender sender, JvmSyncPumpReceiver receiver) {
-        super();
-        
-        this.peerMode = peerMode;
-        this.sender = sender;
-        this.receiver = receiver;
-        this.isPumping = false;
+
+    public JvmSyncPump(PeerMode peerMode, JvmSyncPumpSender sender,
+	    JvmSyncPumpReceiver receiver) {
+	super();
+	this.peerMode = peerMode;
+	this.sender = sender;
+	this.receiver = receiver;
     }
 
     @Override
     public void beginPump() {
-        
-        Thread senderThread = new Thread(sender, "Sender-"+this.peerMode.name());
-        Thread receiverThread = new Thread(receiver, "Receiver-"+this.peerMode.name());
-        
-        senderThread.start();
-        receiverThread.start();
-        
-        this.isPumping = true;
-        
-        while(sender.isRunning().get()
-                || receiver.isRunning().get()){
-            try {
-                Thread.sleep(100);
-                
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        
-        this.isPumping = false;
-        logger.info("Finished JvmSyncPump.");
-        //throw (new RuntimeException("Not implemented"));
+	Thread senderThread = new Thread(sender, "Sender-"
+		+ this.peerMode.name());
+	Thread receiverThread = new Thread(receiver, "Receiver-"
+		+ this.peerMode.name());
+
+	senderThread.start();
+	receiverThread.start();
+
+	logger.info("Started JvmSyncPump sender and receiver");
     }
 
     @Override
     public boolean isPumping() {
-        return this.isPumping;
+	return sender.isRunning().get() || receiver.isRunning().get();
     }
 
 }
