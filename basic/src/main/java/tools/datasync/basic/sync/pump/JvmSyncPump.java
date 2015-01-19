@@ -45,9 +45,10 @@ public class JvmSyncPump implements SyncPump {
     public void beginPump() {
 	Thread senderThread = new Thread(sender, "Sender-"
 		+ this.peerMode.name());
+	senderThread.setUncaughtExceptionHandler(sender);
 	Thread receiverThread = new Thread(receiver, "Receiver-"
 		+ this.peerMode.name());
-
+	receiverThread.setUncaughtExceptionHandler(receiver);
 	senderThread.start();
 	receiverThread.start();
 

@@ -44,96 +44,103 @@ public class DbSeedProducer implements SeedProducer {
 
     Logger logger = Logger.getLogger(DbSeedProducer.class.getName());
     boolean stop = false;
-    
+
     Iterator<JSON> currentJsonIterator = null;
     Iterator<String> tableNameIterator = new Iterator<String>() {
-        String[] tables = { Ids.Table.CONTACT, Ids.Table.WORK_HISTORY, Ids.Table.CONTACT_LINK };
-        int index = 0;
+	String[] tables = { Ids.Table.CONTACT, Ids.Table.WORK_HISTORY,
+		Ids.Table.CONTACT_LINK };
+	int index = 0;
 
-        @Override
-        public String next() {
-            if (index < tables.length) {
-                return tables[index++];
-            }
-            return null;
-        }
+	@Override
+	public String next() {
+	    if (index < tables.length) {
+		return tables[index++];
+	    }
+	    return null;
+	}
 
-        @Override
-        public boolean hasNext() {
-            return (index < tables.length);
-        }
-        
-        public void remove() {
-            // do nothing...
-        };
+	@Override
+	public boolean hasNext() {
+	    return (index < tables.length);
+	}
+
+	public void remove() {
+	    // do nothing...
+	};
     };
 
     public DbSeedProducer() {
-        
-        this.jsonMapper = JSONMapperBean.getInstance();
-        this.hashGenerator = Md5HashGenerator.getInstance();
-        this.isRunning = true;
+
+	this.jsonMapper = JSONMapperBean.getInstance();
+	this.hashGenerator = Md5HashGenerator.getInstance();
+	this.isRunning = true;
     }
-    
+
     @Override
-    public void setGenericDao(GenericDao genericDao){
-        this.genericDao = genericDao;
+    public void setGenericDao(GenericDao genericDao) {
+	this.genericDao = genericDao;
     }
+
     @Override
-	public GenericDao getGenericDao() {
-		return this.genericDao;
-	}
+    public GenericDao getGenericDao() {
+	return this.genericDao;
+    }
 
     @Override
     public SeedRecord getNextSeed() throws SeedOverException, SeedException {
 
-        if (this.currentJsonIterator == null || !this.currentJsonIterator.hasNext()) {
+	if (this.currentJsonIterator == null
+		|| !this.currentJsonIterator.hasNext()) {
 
-            if (this.tableNameIterator.hasNext()) {
+	    if (this.tableNameIterator.hasNext()) {
 
-                String tableName = this.tableNameIterator.next();
-                try {
-                    this.currentJsonIterator = genericDao.selectAll(tableName, true);
-                } catch (SQLException e) {
-                    throw new SeedException(e);
-                }
-                // Invoke for the first time...
-                currentJsonIterator.hasNext();
-            } else {
+		String tableName = this.tableNameIterator.next();
+		try {
+		    this.currentJsonIterator = genericDao.selectAll(tableName,
+			    true);
+		} catch (SQLException e) {
+		    throw new SeedException(e);
+		}
+		// Invoke for the first time...
+		currentJsonIterator.hasNext();
 
-                this.isRunning = false;
-                throw new SeedOverException("No more tables to seed from.");
-            }
-        }
+		isRunning = tableNameIterator.hasNext();
+	    } else {
 
-        JSON json = this.currentJsonIterator.next();
-        SeedRecord seed = this.createSeed(json);
-        return seed;
+		this.isRunning = false;
+		throw new SeedOverException("No more tables to seed from.");
+	    }
+	}
+
+	JSON json = this.currentJsonIterator.next();
+	SeedRecord seed = this.createSeed(json);
+	return seed;
     }
 
     @Override
     public boolean isRunning() {
-        return this.isRunning;
+	return this.isRunning;
     }
 
     private SeedRecord createSeed(JSON record) throws SeedException {
 
-        SeedRecord seed = null;
-        try {
-            String entityId = Ids.EntityId.get(record.getEntity());
-            String recordId = String.valueOf(record.getCalculatedPrimaryKey());
-            String recordJson = jsonMapper.writeValueAsString(record);
-            String recordHash = hashGenerator.generate(recordJson);
-            // TODO: get peer id from database
-            String origin = "";//me.getPeerId();
-            seed = new SeedRecord(entityId, recordId, recordHash, recordJson, origin);
-            logger.debug("generated seed record: " + seed);
+	SeedRecord seed = null;
+	try {
+	    String entityId = Ids.EntityId.get(record.getEntity());
+	    String recordId = String.valueOf(record.getCalculatedPrimaryKey());
+	    String recordJson = jsonMapper.writeValueAsString(record);
+	    String recordHash = hashGenerator.generate(recordJson);
+	    // TODO: get peer id from database
+	    String origin = "";// me.getPeerId();
+	    seed = new SeedRecord(entityId, recordId, recordHash, recordJson,
+		    origin);
+	    logger.debug("generated seed record: " + seed);
 
-        } catch (IOException e) {
-            logger.warn("Error while JSON Serialization", e);
-            throw new SeedException("Error while JSON Serialization", e);
-        }
+	} catch (IOException e) {
+	    logger.warn("Error while JSON Serialization", e);
+	    throw new SeedException("Error while JSON Serialization", e);
+	}
 
-        return seed;
+	return seed;
     }
 }

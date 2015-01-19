@@ -1,5 +1,7 @@
 package tools.datasync.basic.sync;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.log4j.Logger;
 
 import tools.datasync.basic.comm.SyncConnection;
@@ -59,9 +61,11 @@ public class SyncSession {
 	pumpB2A.beginPump();
 	while (pumpA2B.isPumping() || pumpB2A.isPumping()) {
 	    try {
-		Thread.sleep(100);
+		TimeUnit.MILLISECONDS.sleep(100);
+		// Thread.sleep(100);
 	    } catch (InterruptedException e) {
 		e.printStackTrace();
+		return;
 	    }
 	}
 

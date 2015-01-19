@@ -3,9 +3,11 @@ package tools.datasync.basic.seed;
 import java.io.File;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,55 +43,66 @@ import tools.datasync.basic.sync.pump.SyncPumpFactory;
  */
 public class SeedIntegrationTest {
 
-	private SyncOrchestrationManager syncOrchMgr;
-	private SyncPumpFactory pumpFactoryA;
-	private SyncPumpFactory pumpFactoryB;
-	Logger logger = Logger.getLogger(SeedIntegrationTest.class.getName());
+    private SyncOrchestrationManager syncOrchMgr;
+    private SyncPumpFactory pumpFactoryA;
+    private SyncPumpFactory pumpFactoryB;
+    private AtomicBoolean stopper = new AtomicBoolean(false);
+    Logger logger = Logger.getLogger(SeedIntegrationTest.class.getName());
 
-	@Before
-	public void init() {
+    @Before
+    public void init() {
 
-		FileUtils.deleteQuietly(new File("db-A"));
-		FileUtils.deleteQuietly(new File("db-B"));
+	FileUtils.deleteQuietly(new File("db-A"));
+	FileUtils.deleteQuietly(new File("db-B"));
 
-		logger.info("init...");
-		System.out.println("Test print sysout....");
-		SyncPeer syncPeerA = new SyncPeer("A");
-		SyncPeer syncPeerB = new SyncPeer("B");
+	logger.info("init...");
+	System.out.println("Test print sysout....");
+	SyncPeer syncPeerA = new SyncPeer("A");
+	SyncPeer syncPeerB = new SyncPeer("B");
 
-		BlockingQueue<String> a2bQueue = new LinkedBlockingQueue<String>();
-		BlockingQueue<String> b2aQueue = new LinkedBlockingQueue<String>();
+	BlockingQueue<String> a2bQueue = new LinkedBlockingQueue<String>();
+	BlockingQueue<String> b2aQueue = new LinkedBlockingQueue<String>();
 
-		pumpFactoryA = new JvmSyncPumpFactory(syncPeerA, syncPeerB, a2bQueue, b2aQueue);
-		pumpFactoryB = new JvmSyncPumpFactory(syncPeerB, syncPeerA, b2aQueue, a2bQueue);
-		syncOrchMgr = new SyncOrchestrationManager(pumpFactoryA, pumpFactoryB);
+	pumpFactoryA = new JvmSyncPumpFactory(syncPeerA, syncPeerB, a2bQueue,
+		b2aQueue, stopper);
+	pumpFactoryB = new JvmSyncPumpFactory(syncPeerB, syncPeerA, b2aQueue,
+		a2bQueue, stopper);
+	syncOrchMgr = new SyncOrchestrationManager(pumpFactoryA, pumpFactoryB);
 
-		
+    }
+
+    @Test
+    public void firstTest() {
+
+	// for (int i = 1; i < 3; i++) {
+
+	try {
+	    logger.info("first test...");
+	    SyncSession syncSession = syncOrchMgr.createSession();
+
+	    syncSession.doSync();
+
+	    // TODO: Verify the state of both databases.
+	    // Verify the state in A and B for User and State tables.
+	    GenericDao sourceDao = ((JvmSyncPumpFactory) pumpFactoryA)
+		    .getSourceDao();
+	    GenericDao targetDao = ((JvmSyncPumpFactory) pumpFactoryA)
+		    .getTargetDao();
+	    DbTableComparator comparator = new DbTableComparator(sourceDao,
+		    targetDao);
+
+	    comparator.compare(Ids.Table.CONTACT);
+	    comparator.compare(Ids.Table.CONTACT_LINK);
+	    comparator.compare(Ids.Table.WORK_HISTORY);
+	    comparator.compare(Ids.Table.SYNC_STATE);
+
+	} catch (Exception ex) {
+	    ex.printStackTrace();
+	    Assert.fail("Exception: " + ex.getMessage());
 	}
 
-	@Test
-	public void firstTest() {
-
-		try {
-			logger.info("first test...");
-			SyncSession syncSession = syncOrchMgr.createSession();
-
-			syncSession.doSync();
-
-			// TODO: Verify the state of both databases.
-			// Verify the state in A and B for User and State tables.
-			GenericDao sourceDao = ((JvmSyncPumpFactory)pumpFactoryA).getSourceDao();
-			GenericDao targetDao = ((JvmSyncPumpFactory)pumpFactoryA).getTargetDao();
-			DbTableComparator comparator = new DbTableComparator(sourceDao, targetDao);
-			
-			comparator.compare(Ids.Table.CONTACT);
-			comparator.compare(Ids.Table.CONTACT_LINK);
-			comparator.compare(Ids.Table.WORK_HISTORY);
-			comparator.compare(Ids.Table.SYNC_STATE);
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
+	// init();
+	// }
+    }
 
 }
