@@ -1,0 +1,51 @@
+Code Metrics
+
+[Complexity]
+McCabe's Cyclomatic Complexity and Related Metrics
+  Preferred Upper Bounds
+    Preferred upper Bounds
+      Cyclomatic Complexity:       4
+      Weighted Methods Per Class: 40
+    Options
+      Include 'case' and 'default' statements: true
+      Include 'catch' clauses:                 true
+      Include ternary operator:                true
+
+[Feature Envy]
+  Perferred Uper Bounds
+    Feature Envy: 8
+  Options
+    Only envy types with source: false
+    Envy superclasses:           false
+
+[Cohesion]
+  Lack of Cohesion in Methods Metrics
+    Preferred Upper Bounds
+      Chidamber and Kimerer:         not enabled
+      Henderson-Sellers (%):         not enabled
+      Total Correlation (%):         not enabled
+      Pairwise Field Irrelation (%): not enabled
+
+[LoC]
+  Lines of Code Metrics
+    Preferred upper Bounds
+      Lines of Code: 30
+    Options
+      Include JavaDoc:                     false
+      Ignore blank and comment-only lines: false
+
+[LoP]
+  Number of Parameters Metrics
+    Preferred upper Bounds
+      Number of Parameters: 4
+    Options
+      Include methods declared in supertype: true
+
+[Miscellaneous]
+  Simple Metrics
+    Preferred Upper Bounds
+      Efferent Coupling:         25
+      Number of Fields:          10
+      Number of Levels:           4
+      Number of Locals in Scope:  4
+      Number of Statements:      20
