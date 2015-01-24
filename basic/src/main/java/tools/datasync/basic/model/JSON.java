@@ -145,17 +145,14 @@ public class JSON implements Cloneable, Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
+		
 		JSON other = (JSON) obj;
-		if (entity == null) {
-			if (other.entity != null)
-				return false;
-		} else if (!entity.equals(other.entity))
-			return false;
 		if (props == null) {
 			if (other.props != null)
 				return false;
 		} else if (!props.equals(other.props))
 			return false;
+		
 		return true;
 	}
 
