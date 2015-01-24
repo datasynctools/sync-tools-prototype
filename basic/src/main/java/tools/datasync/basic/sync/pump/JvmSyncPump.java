@@ -57,7 +57,7 @@ public class JvmSyncPump implements SyncPump {
 
     @Override
     public boolean isPumping() {
-	return sender.isRunning().get() || receiver.isRunning().get();
+	return sender.isRunning().get() && receiver.isRunning().get();
     }
 
 }
