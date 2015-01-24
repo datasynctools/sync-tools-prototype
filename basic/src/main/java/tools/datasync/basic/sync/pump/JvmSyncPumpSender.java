@@ -139,6 +139,11 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
 				
 				// Get next seed
 				SeedRecord seed = seedProducer.getNextSeed();
+				if(seed == null){
+					logger.info(">>> Seed phase is over... Terminating the sender process logic.");
+					isRunning.set(false);
+					break;
+				}
 				
 				String payloadJson = jsonMapper.writeValueAsString(seed);
 				String paloadHash = hashGen.generate(payloadJson);
