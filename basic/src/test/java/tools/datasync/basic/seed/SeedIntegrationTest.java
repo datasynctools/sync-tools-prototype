@@ -2,6 +2,7 @@ package tools.datasync.basic.seed;
 
 import java.io.File;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -59,14 +60,16 @@ public class SeedIntegrationTest {
 	System.out.println("Test print sysout....");
 	SyncPeer syncPeerA = new SyncPeer("A");
 	SyncPeer syncPeerB = new SyncPeer("B");
+	
+	CountDownLatch beginSenderLatch = new CountDownLatch(2);
 
 	BlockingQueue<String> a2bQueue = new LinkedBlockingQueue<String>();
 	BlockingQueue<String> b2aQueue = new LinkedBlockingQueue<String>();
 
 	pumpFactoryA = new JvmSyncPumpFactory(syncPeerA, syncPeerB, a2bQueue,
-		b2aQueue, stopper);
+		b2aQueue, stopper, beginSenderLatch);
 	pumpFactoryB = new JvmSyncPumpFactory(syncPeerB, syncPeerA, b2aQueue,
-		a2bQueue, stopper);
+		a2bQueue, stopper, beginSenderLatch);
 	syncOrchMgr = new SyncOrchestrationManager(pumpFactoryA, pumpFactoryB);
 
     }

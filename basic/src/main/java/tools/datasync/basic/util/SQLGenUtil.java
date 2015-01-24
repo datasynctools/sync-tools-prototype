@@ -130,10 +130,22 @@ public class SQLGenUtil {
 			if(value == null || "null".equals(value) || "NULL".equals(value)){
 				continue;
 			}
+			String type = json.getType(name);
+			
 			update.append(name);
-			update.append("='");
-			update.append(value);
-			update.append("' ");
+			update.append("=");
+			if("String".equalsIgnoreCase(type)){
+				update.append("'");
+				update.append(value);
+				update.append("'");
+			} else if("Date".equalsIgnoreCase(type) || "Long".equalsIgnoreCase(type)){
+				update.append("'");
+				update.append(dateFormat.format(new Date((Long)value)));
+				update.append("'");
+            } else {
+            	update.append(value);
+			}
+			
 			if (keys.hasNext()) {
 				update.append(", ");
 			}
