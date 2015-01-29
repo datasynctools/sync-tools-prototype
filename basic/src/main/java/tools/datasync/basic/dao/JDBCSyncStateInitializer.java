@@ -45,7 +45,7 @@ public class JDBCSyncStateInitializer implements SyncStateInitializer {
 				syncState.set("RecordId", record.getCalculatedPrimaryKey());
 				String recordJson = jsonMapper.writeValueAsString(record);
 				syncState.set("RecordData", recordJson);
-				syncState.set("RecordHash", hashGenerator.generate(recordJson));
+				syncState.set("RecordHash", record.generateHash());
 				
 				genericDao.save(Ids.Table.SYNC_STATE, syncState);
 			}

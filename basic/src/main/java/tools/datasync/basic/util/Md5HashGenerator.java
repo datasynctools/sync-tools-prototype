@@ -22,9 +22,11 @@
 package tools.datasync.basic.util;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
+
 import org.apache.log4j.Logger;
 
 public class Md5HashGenerator implements HashGenerator {
@@ -51,9 +53,13 @@ public class Md5HashGenerator implements HashGenerator {
     public String generate(String data) {
         try {
             byte[] input = toBytes(data);
-            messageDigest.update(input);
+            messageDigest.update(input, 0, input.length);
             byte[] digest = messageDigest.digest();
-            String checksum = toHexString1(digest);
+            BigInteger bigInt = new BigInteger(1, digest);
+            String checksum = bigInt.toString(16);
+            while ( checksum.length() < 32 ) {
+            	checksum = "0"+checksum;
+            }
             return checksum;
         } catch (UnsupportedEncodingException e) {
             logger.warn("Error while generating checksum", e);
@@ -67,7 +73,7 @@ public class Md5HashGenerator implements HashGenerator {
     }
 
     private byte[] toBytes(String string) throws UnsupportedEncodingException {
-        return string.getBytes("UTF-8");
+        return string.getBytes();
     }
 
     private String toHexString1(byte[] bytes) {

@@ -32,6 +32,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import tools.datasync.basic.util.HashGenerator;
 import tools.datasync.basic.util.Md5HashGenerator;
 
@@ -39,6 +41,7 @@ public class JSON implements Cloneable, Serializable {
 
 	private static final long serialVersionUID = 1052072136660446741L;
 	private static final HashGenerator hashGenerator = Md5HashGenerator.getInstance();
+	private static final Logger logger = Logger.getLogger(JSON.class);
 	
 	private String entity;
 	private String calculatedPrimaryKey;
@@ -179,9 +182,11 @@ public class JSON implements Cloneable, Serializable {
 		for(String key1 : keys){
 			Object value = props.get(key1);
 			sbValue.append(String.valueOf(value));
-			sbValue.append('|');
+			sbValue.append(',');
 		}
-		return hashGenerator.generate(sbValue.toString());
+		String hash = hashGenerator.generate(sbValue.toString());
+		logger.debug("Generated hash: " + hash +", for data: [" + sbValue.toString() + "]");
+		return hash;
 	}
 	
 }

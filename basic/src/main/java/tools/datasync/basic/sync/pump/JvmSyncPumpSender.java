@@ -146,7 +146,7 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
 				}
 				
 				String payloadJson = jsonMapper.writeValueAsString(seed);
-				String paloadHash = hashGen.generate(payloadJson);
+				String paloadHash = seed.getRecordHash();
 				syncMessage = new SyncMessage(seed.getOrigin(), messageNumber++, SyncMessageType.SEED.toString(), payloadJson, paloadHash,
 						System.currentTimeMillis());
 				message = jsonMapper.writeValueAsString(syncMessage);

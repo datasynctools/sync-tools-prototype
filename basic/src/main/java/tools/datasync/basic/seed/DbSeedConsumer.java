@@ -126,7 +126,7 @@ public class DbSeedConsumer implements SeedConsumer {
 						syncState.set("RecordId", resolvedJSON.get(Ids.KeyColumn.get(entityName)));
 						String recordJson = jsonMapper.writeValueAsString(resolvedJSON);
 						syncState.set("RecordData", recordJson);
-						syncState.set("RecordHash", hashGenerator.generate(recordJson));
+						syncState.set("RecordHash", resolvedJSON.generateHash());
 
 						logger.info("Update the SyncState table with the newly calculated hash.");
 						genericDao.save(Ids.Table.SYNC_STATE, syncState);
@@ -145,7 +145,7 @@ public class DbSeedConsumer implements SeedConsumer {
 				syncState.set("RecordId", json.getCalculatedPrimaryKey());
 				String recordJson = jsonMapper.writeValueAsString(json);
 				syncState.set("RecordData", recordJson);
-				syncState.set("RecordHash", hashGenerator.generate(recordJson));
+				syncState.set("RecordHash", json.generateHash());
 
 				logger.info("inserting the SyncState table with the new value");
 				genericDao.save(Ids.Table.SYNC_STATE, syncState);
