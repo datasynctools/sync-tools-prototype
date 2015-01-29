@@ -68,8 +68,8 @@ public class SeedIntegrationTest {
 
 	pumpFactoryA = new JvmSyncPumpFactory(syncPeerA, syncPeerB, a2bQueue,
 		b2aQueue, stopper, beginSenderLatch);
-	pumpFactoryB = new JvmSyncPumpFactory(syncPeerB, syncPeerA, b2aQueue,
-		a2bQueue, stopper, beginSenderLatch);
+	pumpFactoryB = new JvmSyncPumpFactory(syncPeerB, syncPeerA, a2bQueue,
+		b2aQueue, stopper, beginSenderLatch);
 	syncOrchMgr = new SyncOrchestrationManager(pumpFactoryA, pumpFactoryB);
 
     }
@@ -95,8 +95,8 @@ public class SeedIntegrationTest {
 		    targetDao);
 
 	    comparator.compare(Ids.Table.CONTACT);
-	    comparator.compare(Ids.Table.CONTACT_LINK);
 	    comparator.compare(Ids.Table.WORK_HISTORY);
+	    comparator.compare(Ids.Table.CONTACT_LINK);
 	    comparator.compare(Ids.Table.SYNC_STATE);
 
 	} catch (Exception ex) {

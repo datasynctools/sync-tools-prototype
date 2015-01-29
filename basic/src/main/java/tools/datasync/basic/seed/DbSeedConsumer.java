@@ -142,7 +142,7 @@ public class DbSeedConsumer implements SeedConsumer {
 				// 2. insert the SyncState table with the new value
 				JSON syncState = new JSON(Ids.Table.SYNC_STATE);
 				syncState.set("EntityId", Ids.EntityId.get(entityName));
-				syncState.set("RecordId", json.get(Ids.KeyColumn.get(entityName)));
+				syncState.set("RecordId", json.getCalculatedPrimaryKey());
 				String recordJson = jsonMapper.writeValueAsString(json);
 				syncState.set("RecordData", recordJson);
 				syncState.set("RecordHash", hashGenerator.generate(recordJson));

@@ -24,13 +24,22 @@
 package tools.datasync.basic.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+
+import tools.datasync.basic.util.HashGenerator;
+import tools.datasync.basic.util.Md5HashGenerator;
 
 public class JSON implements Cloneable, Serializable {
 
 	private static final long serialVersionUID = 1052072136660446741L;
+	private static final HashGenerator hashGenerator = Md5HashGenerator.getInstance();
+	
 	private String entity;
 	private String calculatedPrimaryKey;
 	private Map<String, Object> props;
@@ -156,6 +165,23 @@ public class JSON implements Cloneable, Serializable {
 		return true;
 	}
 
-	
+	public String generateHash() {
+
+		if(props == null || props.size() == 0){
+			return "NO_DATA:NO_HASH";
+		}
+		
+		List<String> keys = new ArrayList<String>();
+		keys.addAll(props.keySet());
+		Collections.sort(keys);
+		
+		StringBuffer sbValue = new StringBuffer();
+		for(String key1 : keys){
+			Object value = props.get(key1);
+			sbValue.append(String.valueOf(value));
+			sbValue.append('|');
+		}
+		return hashGenerator.generate(sbValue.toString());
+	}
 	
 }
