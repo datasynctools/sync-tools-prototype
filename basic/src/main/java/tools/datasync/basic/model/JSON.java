@@ -184,6 +184,9 @@ public class JSON implements Cloneable, Serializable {
 			sbValue.append(String.valueOf(value));
 			sbValue.append(',');
 		}
+		if(sbValue.length()>0){
+			sbValue.setLength(sbValue.length()-1);
+		}
 		String hash = hashGenerator.generate(sbValue.toString());
 		logger.debug("Generated hash: " + hash +", for data: [" + sbValue.toString() + "]");
 		return hash;
