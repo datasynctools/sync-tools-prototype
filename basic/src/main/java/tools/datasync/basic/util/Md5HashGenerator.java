@@ -21,7 +21,6 @@
  */
 package tools.datasync.basic.util;
 
-import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -51,21 +50,30 @@ public class Md5HashGenerator implements HashGenerator {
     public String generate(String data) {
 	try {
 	    byte[] input = toBytes(data);
+	    logger.debug("Generating Hash for bytes: " + convertByteArrayToHexString(input));
+	    messageDigest.update(input);
 	    byte[] digest = messageDigest.digest(input);
 	    return (convertByteArrayToHexString(digest));
-	} catch (UnsupportedEncodingException e) {
+	} catch (Exception e) {
 	    logger.warn("Error while generating checksum", e);
 	    return null;
 	}
     }
-
+    
     public boolean validate(String data, String hash) {
 	String newHash = generate(data);
 	return newHash.equals(hash);
     }
-
-    private byte[] toBytes(String string) throws UnsupportedEncodingException {
-	return string.getBytes();
+    
+    public static byte[] toBytes(String str) {
+		char[] buffer = str.toCharArray();
+		byte[] b = new byte[buffer.length << 1];
+		for(int i = 0; i < buffer.length; i++) {
+			int bpos = i << 1;
+			b[bpos] = (byte) ((buffer[i] & 0xFF00) >> 8);
+			b[bpos + 1] = (byte) (buffer[i] & 0x00FF);
+		}
+    	return b;
     }
 
     private static String convertByteArrayToHexString(byte[] arrayBytes) {

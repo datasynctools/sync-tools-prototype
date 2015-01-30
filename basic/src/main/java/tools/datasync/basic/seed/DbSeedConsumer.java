@@ -122,14 +122,14 @@ public class DbSeedConsumer implements SeedConsumer {
 						// 3. update the SyncState table with the newly
 						// calculated hash
 						JSON syncState = new JSON(Ids.Table.SYNC_STATE);
-						syncState.set("EntityId", Ids.EntityId.get(entityName));
-						syncState.set("RecordId", resolvedJSON.get(Ids.KeyColumn.get(entityName)));
+						syncState.set("ENTITYID", Ids.EntityId.get(entityName));
+						syncState.set("RECORDID", resolvedJSON.get(Ids.KeyColumn.get(entityName)));
 						String recordJson = jsonMapper.writeValueAsString(resolvedJSON);
-						syncState.set("RecordData", recordJson);
-						syncState.set("RecordHash", resolvedJSON.generateHash());
+						syncState.set("RECORDDATA", recordJson);
+						syncState.set("RECORDHASH", resolvedJSON.generateHash());
 
 						logger.info("Update the SyncState table with the newly calculated hash.");
-						genericDao.save(Ids.Table.SYNC_STATE, syncState);
+						genericDao.update(Ids.Table.SYNC_STATE, syncState, Ids.KeyColumn.get(Ids.Table.SYNC_STATE));
 					}
 				}
 
@@ -141,17 +141,18 @@ public class DbSeedConsumer implements SeedConsumer {
 
 				// 2. insert the SyncState table with the new value
 				JSON syncState = new JSON(Ids.Table.SYNC_STATE);
-				syncState.set("EntityId", Ids.EntityId.get(entityName));
-				syncState.set("RecordId", json.getCalculatedPrimaryKey());
+				syncState.set("ENTITYID", Ids.EntityId.get(entityName));
+				syncState.set("RECORDID", json.getCalculatedPrimaryKey());
 				String recordJson = jsonMapper.writeValueAsString(json);
-				syncState.set("RecordData", recordJson);
-				syncState.set("RecordHash", json.generateHash());
+				syncState.set("RECORDDATA", recordJson);
+				syncState.set("RECORDHASH", json.generateHash());
 
 				logger.info("inserting the SyncState table with the new value");
 				genericDao.save(Ids.Table.SYNC_STATE, syncState);
 			}
 
 		} catch (SQLException | ConflictException e) {
+			logger.error("Error while consuming record: ", e);
 			throw new IOException(e.getMessage(), e);
 		}
 

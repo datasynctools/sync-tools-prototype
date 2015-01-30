@@ -41,11 +41,11 @@ public class JDBCSyncStateInitializer implements SyncStateInitializer {
 				JSON record = jsonIterator.next();
 				
 				JSON syncState = new JSON(Ids.Table.SYNC_STATE);
-				syncState.set("EntityId", Ids.EntityId.get(tables[tab]));
-				syncState.set("RecordId", record.getCalculatedPrimaryKey());
+				syncState.set("ENTITYID", Ids.EntityId.get(tables[tab]));
+				syncState.set("RECORDID", record.getCalculatedPrimaryKey());
 				String recordJson = jsonMapper.writeValueAsString(record);
-				syncState.set("RecordData", recordJson);
-				syncState.set("RecordHash", record.generateHash());
+				syncState.set("RECORDDATA", recordJson);
+				syncState.set("RECORDHASH", record.generateHash());
 				
 				genericDao.save(Ids.Table.SYNC_STATE, syncState);
 			}

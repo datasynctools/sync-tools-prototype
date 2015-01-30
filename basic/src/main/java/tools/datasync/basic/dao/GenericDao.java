@@ -36,6 +36,8 @@ public interface GenericDao {
 	public void saveOrUpdate(String entityName, JSON json, String keyColumn) throws SQLException;
 
     public void save(String entityName, JSON json) throws SQLException;
+    
+    public void update(String entityName, JSON json, String keyColumn) throws SQLException;
 
 	public JSON select(String tableName, String recordId) throws SQLException;
 	

@@ -249,6 +249,33 @@ public class GenericJDBCDao implements GenericDao {
 			}
 		}
 	}
+	
+	public void update(String entityName, JSON json, String keyColumn) throws SQLException {
+
+		logger.debug(dbName + ": update() - entityName=" + entityName + ", json=" + json + ", keyColumn=" + keyColumn);
+		Connection connection = null;
+		Statement statement = null;
+		try {
+			// Try update statement...
+			String update = SQLGenUtil.getUpdateStatement(entityName, json, keyColumn);
+			logger.debug(dbName + ": update() - " + update);
+			connection = dataSource.getConnection();
+			statement = connection.createStatement();
+			statement.executeUpdate(update);
+			
+			logger.debug(dbName + ": " + "commiting update...");
+			connection.commit();
+		} finally {
+			if (statement != null) {
+				try {
+					statement.close();
+					connection.close();
+				} catch (SQLException e) {
+					logger.warn(dbName + ": " + "Failed to close connection.", e);
+				}
+			}
+		}
+	}
 
 	public void saveOrUpdate(String entityName, JSON json, String keyColumn) throws SQLException {
 

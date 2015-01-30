@@ -25,7 +25,6 @@ package tools.datasync.basic.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -90,7 +89,7 @@ public class JSON implements Cloneable, Serializable {
         } else if("Date".equalsIgnoreCase(type)){
             ret = new Date(Long.valueOf(value));
         } else {
-            throw new IllegalArgumentException("Type not supported "+type+" for value "+value);
+            throw new IllegalArgumentException("Type not supported "+type+" for value "+value + ", for name " + name);
         }
 	    
 		return ret;

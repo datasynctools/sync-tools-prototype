@@ -120,6 +120,7 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 
 		} catch (Throwable e) {
 			logger.fatal("Error while receiving messages: " + e);
+			e.printStackTrace();
 			isRunning.set(false);
 			stop();
 		}

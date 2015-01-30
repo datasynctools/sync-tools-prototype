@@ -152,10 +152,17 @@ public class SQLGenUtil {
 		}
 		
 		update.append(" where ");
-		update.append(keyColumn);
-		update.append("='");
-		update.append(json.get(keyColumn));
-		update.append("'");
+		String[] keyColumns = keyColumn.split(", ");
+		for(int colIndex=0; colIndex<keyColumns.length; colIndex++){
+			update.append(keyColumns[colIndex]);
+			update.append("='");
+			update.append(json.get(keyColumns[colIndex]));
+			update.append("'");
+			if(colIndex+1 < keyColumns.length){
+				update.append(" and ");
+			}
+		}
+		
 
 		logger.debug(update.toString());
 		return update.toString();
