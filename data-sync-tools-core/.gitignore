@@ -4,3 +4,7 @@
 /db-B/
 /logs/
 /derby.log
+/.DS_Store
+/.classpath
+/.project
+/.springBeans

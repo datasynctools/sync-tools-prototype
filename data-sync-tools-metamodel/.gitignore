@@ -2,3 +2,6 @@
 /target/
 /derby-tmp/
 /logs/
+/.classpath
+/.project
+/derby.log
