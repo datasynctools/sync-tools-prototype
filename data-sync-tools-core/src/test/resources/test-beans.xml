@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+
+	<bean id="syncPeerA" class="tools.datasync.basic.sync.SyncPeer"><constructor-arg value="A" /></bean>
+	<bean id="syncPeerB" class="tools.datasync.basic.sync.SyncPeer"><constructor-arg value="B" /></bean>
+
+	<bean id="dataSourceA" class="org.apache.derby.jdbc.EmbeddedDataSource">
+		<property name="databaseName" value="db-A" />
+	</bean>
+	<bean id="dataSourceB" class="org.apache.derby.jdbc.EmbeddedDataSource">
+		<property name="databaseName" value="db-B" />
+	</bean>
+
+	<bean id="beginSenderLatch" class="java.util.concurrent.CountDownLatch">
+		<constructor-arg value="2"/>
+	</bean>
+	
+	<bean id="a2bQueue" class="java.util.concurrent.LinkedBlockingQueue" />
+	<bean id="b2aQueue" class="java.util.concurrent.LinkedBlockingQueue" />
+
+	<bean id="peerMe" class="tools.datasync.basic.sync.pump.JvmSyncPeerParms">
+		<constructor-arg ref="syncPeerA"/>
+		<constructor-arg ref="a2bQueue"/>
+	</bean>
+	<bean id="peerOther" class="tools.datasync.basic.sync.pump.JvmSyncPeerParms">
+		<constructor-arg ref="syncPeerB"/>
+		<constructor-arg ref="b2aQueue"/>
+	</bean>
+
+	<bean id="pairA" class="tools.datasync.basic.sync.pump.JvmSyncPair">
+		<constructor-arg ref="peerMe"/>
+		<constructor-arg ref="peerOther"/>	
+	</bean>
+	<bean id="pairB" class="tools.datasync.basic.sync.pump.JvmSyncPair">
+		<constructor-arg ref="peerOther"/>
+		<constructor-arg ref="peerMe"/>		
+	</bean>
+	
+	<bean id="sampleAppTableNameGetter" class="tools.datasync.core.sampleapp.SampleAppTableNameGetter" />
+	
+	<bean id="sourceDao" class="tools.datasync.basic.dao.GenericJDBCDao">
+		<constructor-arg ref="dataSourceA"/>
+		<constructor-arg value="db-A"/>
+		<constructor-arg ref="sampleAppTableNameGetter"/>
+	</bean>
+	
+	<bean id="targetDao" class="tools.datasync.basic.dao.GenericJDBCDao">
+		<constructor-arg ref="dataSourceB"/>
+		<constructor-arg value="db-B"/>
+		<constructor-arg ref="sampleAppTableNameGetter"/>
+	</bean>
+	
+	<bean id="seedConsumerFactory" class="tools.datasync.basic.seed.DbSeedConsumerFactory">
+		<constructor-arg ref="sampleAppTableNameGetter"/>	
+	</bean>
+	
+	<bean id="initiatorWinsConflictResolverFactor" class="tools.datasync.basic.logic.InitiatorWinsConflictResolverFactory" />
+	
+	<bean id="daoPairA" class="tools.datasync.basic.dao.SyncPairConfig">
+		<constructor-arg ref="sourceDao" />
+		<constructor-arg ref="targetDao" />
+		<constructor-arg ref="seedConsumerFactory" />
+		<constructor-arg ref="initiatorWinsConflictResolverFactor" />		
+	</bean>
+	<bean id="daoPairB" class="tools.datasync.basic.dao.SyncPairConfig">
+		<constructor-arg ref="targetDao" />
+		<constructor-arg ref="sourceDao" />
+		<constructor-arg ref="seedConsumerFactory" />
+		<constructor-arg ref="initiatorWinsConflictResolverFactor" />		
+	</bean>
+
+	<bean id="stopper" class="java.util.concurrent.atomic.AtomicBoolean">
+		<constructor-arg value="false" />
+	</bean>
+
+	<bean id="concurArgs" class="tools.datasync.basic.sync.pump.JvmSyncConcurArgs">
+		<constructor-arg ref="stopper" />
+		<constructor-arg ref="beginSenderLatch" />
+	</bean>
+
+	<util:list id="tables">
+	    <value>org.Contact</value>
+<!-- 	    <value>org.Organization</value>  -->
+	    <value>org.WorkHistory</value>
+	    <value>org.ContactLink</value>
+	</util:list>
+	
+	<bean id="sampleSyncIdGetter" class="tools.datasync.core.sampleapp.SampleSyncIdGetter" />
+	
+	<bean id="syncStateInitializerA" class="tools.datasync.basic.dao.JDBCSyncStateInitializer">
+		<constructor-arg ref="tables"/>
+		<constructor-arg ref="sampleSyncIdGetter"/>		
+		<constructor-arg ref="sourceDao"/>
+	</bean>
+
+	<bean id="syncStateInitializerB" class="tools.datasync.basic.dao.JDBCSyncStateInitializer">
+		<constructor-arg ref="tables"/>
+		<constructor-arg ref="sampleSyncIdGetter"/>		
+		<constructor-arg ref="targetDao"/>
+	</bean>
+
+	<bean id="pumpFactoryA" class="tools.datasync.basic.sync.pump.JvmSyncPumpFactory">
+		<constructor-arg ref="pairA"/>
+		<constructor-arg ref="daoPairA"/>
+		<constructor-arg ref="syncStateInitializerA"/>
+		<constructor-arg ref="concurArgs"/>
+	</bean>
+
+	<bean id="pumpFactoryB" class="tools.datasync.basic.sync.pump.JvmSyncPumpFactory">
+		<constructor-arg ref="pairB"/>
+		<constructor-arg ref="daoPairB"/>
+		<constructor-arg ref="syncStateInitializerB"/>
+		<constructor-arg ref="concurArgs"/>
+	</bean>
+
+	<bean id="syncOrchMgr" class="tools.datasync.basic.sync.SyncOrchestrationManager">
+		<constructor-arg ref="pumpFactoryA"/>
+		<constructor-arg ref="pumpFactoryB"/>
+	</bean>
+
+</beans>
