@@ -6,3 +6,6 @@
 derby.log
 
 /bin/
+/db-A/
+/db-B/
+/logs/
