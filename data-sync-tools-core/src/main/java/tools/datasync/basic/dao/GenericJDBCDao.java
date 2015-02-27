@@ -363,7 +363,7 @@ public class GenericJDBCDao implements GenericDao {
 
     public String getSyncRecordId(JSON json) {
 
-	String entityName = json.getEntity();
+	// String entityName = json.getEntity();
 
 	// TODO: Implement...
 	return null;

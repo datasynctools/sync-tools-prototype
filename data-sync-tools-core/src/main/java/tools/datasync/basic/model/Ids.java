@@ -46,30 +46,30 @@ public class Ids {
 	public static final String PK_SYNC_PEER = "PEERID";
 	public static final String PK_SYNC_STATE = "ENTITYID, RECORDID";
 
-	private static String get(String entityName) {
-	    if (Table.CONTACT.equalsIgnoreCase(entityName)) {
-		return PK_CONTACT;
-
-	    } else if (Table.CONTACT_LINK.equalsIgnoreCase(entityName)) {
-		return PK_CONTACT_LINK;
-
-	    } else if (Table.WORK_HISTORY.equalsIgnoreCase(entityName)) {
-		return PK_WORK_HISTORY;
-
-	    } else if (Table.SYNC_ENTITY.equalsIgnoreCase(entityName)) {
-		return PK_SYNC_ENTITY;
-
-	    } else if (Table.SYNC_PEER.equalsIgnoreCase(entityName)) {
-		return PK_SYNC_PEER;
-
-	    } else if (Table.SYNC_STATE.equalsIgnoreCase(entityName)) {
-		return PK_SYNC_STATE;
-
-	    }
-	    throw (new RuntimeException("No entity name of [" + entityName
-		    + "]"));
-	    // return null;
-	}
+	// private static String get(String entityName) {
+	// if (Table.CONTACT.equalsIgnoreCase(entityName)) {
+	// return PK_CONTACT;
+	//
+	// } else if (Table.CONTACT_LINK.equalsIgnoreCase(entityName)) {
+	// return PK_CONTACT_LINK;
+	//
+	// } else if (Table.WORK_HISTORY.equalsIgnoreCase(entityName)) {
+	// return PK_WORK_HISTORY;
+	//
+	// } else if (Table.SYNC_ENTITY.equalsIgnoreCase(entityName)) {
+	// return PK_SYNC_ENTITY;
+	//
+	// } else if (Table.SYNC_PEER.equalsIgnoreCase(entityName)) {
+	// return PK_SYNC_PEER;
+	//
+	// } else if (Table.SYNC_STATE.equalsIgnoreCase(entityName)) {
+	// return PK_SYNC_STATE;
+	//
+	// }
+	// throw (new RuntimeException("No entity name of [" + entityName
+	// + "]"));
+	// // return null;
+	// }
     }
 
     public static class EntityId {

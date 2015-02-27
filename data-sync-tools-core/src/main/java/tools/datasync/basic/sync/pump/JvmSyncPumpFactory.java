@@ -5,9 +5,6 @@ package tools.datasync.basic.sync.pump;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.dao.GenericJDBCDao;
 import tools.datasync.basic.dao.SyncPairConfig;
@@ -38,8 +35,8 @@ import tools.datasync.basic.seed.SeedConsumer;
  */
 public class JvmSyncPumpFactory implements SyncPumpFactory {
 
-    private final static Logger LOG = LoggerFactory
-	    .getLogger(JvmSyncPumpFactory.class);
+    // private final static Logger LOG = LoggerFactory
+    // .getLogger(JvmSyncPumpFactory.class);
 
     // private AtomicBoolean stopper;
 
