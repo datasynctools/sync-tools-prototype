@@ -176,7 +176,6 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
 	return true;
     }
 
-    // @Override
     public void run() {
 	isRunning.set(true);
 
@@ -205,7 +204,6 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
     public void setAckPairReceiverLatch(CountDownLatch ackPairReceiverLatch) {
 	receiverPresentAcknolwedger
 		.setAckPairReceiverLatch(ackPairReceiverLatch);
-	// this.ackPairReceiverLatch = ackPairReceiverLatch;
     }
 
     public void setAckPeerSenderLatch(CountDownLatch ackPeerSenderLatch) {
@@ -225,7 +223,6 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
 	isRunning.set(false);
     }
 
-    // @Override
     public void uncaughtException(Thread t, Throwable e) {
 	LOG.error("Error on thread " + t.getName() + " with " + e.getMessage());
 	LOG.info("Initiating Stopper, shutting down");
