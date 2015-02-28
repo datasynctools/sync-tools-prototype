@@ -27,12 +27,20 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import tools.datasync.basic.model.convert.BooleanConverter;
+import tools.datasync.basic.model.convert.Converter;
+import tools.datasync.basic.model.convert.DateConverter;
+import tools.datasync.basic.model.convert.DoubleConverter;
+import tools.datasync.basic.model.convert.IntegerConverter;
+import tools.datasync.basic.model.convert.LongConverter;
+import tools.datasync.basic.model.convert.StringConverter;
 import tools.datasync.basic.util.HashGenerator;
 import tools.datasync.basic.util.Md5HashGenerator;
 
@@ -48,7 +56,10 @@ public class JSON implements Cloneable, Serializable {
     private Map<String, Object> props;
     private Map<String, String> types;
 
+    private final static Map<String, Converter> converters = new HashMap<String, Converter>();
+
     public JSON() {
+	setupConverters();
     }
 
     public JSON(String entity) {
@@ -57,6 +68,19 @@ public class JSON implements Cloneable, Serializable {
 	// Linked hash map to keep the order.
 	this.props = new LinkedHashMap<String, Object>();
 	this.types = new LinkedHashMap<String, String>();
+
+	setupConverters();
+    }
+
+    private void setupConverters() {
+	if (converters.size() == 0) {
+	    converters.put("string", new StringConverter());
+	    converters.put("integer", new IntegerConverter());
+	    converters.put("long", new LongConverter());
+	    converters.put("double", new DoubleConverter());
+	    converters.put("boolean", new BooleanConverter());
+	    converters.put("date", new DateConverter());
+	}
     }
 
     public void set(String name, Object value) {
@@ -74,27 +98,17 @@ public class JSON implements Cloneable, Serializable {
     public Object get(String name) {
 
 	String type = this.types.get(name);
-	Object ret = null;
 	String value = String.valueOf(this.props.get(name));
 
-	if ("String".equalsIgnoreCase(type)) {
-	    ret = value;
-	} else if ("Integer".equalsIgnoreCase(type)) {
-	    ret = Integer.valueOf(value);
-	} else if ("Long".equalsIgnoreCase(type)) {
-	    ret = Long.valueOf(value);
-	} else if ("Double".equalsIgnoreCase(type)) {
-	    ret = Double.valueOf(value);
-	} else if ("Boolean".equalsIgnoreCase(type)) {
-	    ret = Boolean.valueOf(value);
-	} else if ("Date".equalsIgnoreCase(type)) {
-	    ret = new Date(Long.valueOf(value));
-	} else {
-	    throw new IllegalArgumentException("Type not supported " + type
-		    + " for value " + value + ", for name " + name);
+	Converter converter = converters.get(type.toLowerCase());
+
+	if (converter != null) {
+	    return converter.convert(value);
 	}
 
-	return ret;
+	throw new IllegalArgumentException("Type not supported " + type
+		+ " for value " + value + ", for name " + name);
+
     }
 
     public String getType(String name) {
@@ -160,15 +174,38 @@ public class JSON implements Cloneable, Serializable {
 	    return false;
 
 	JSON other = (JSON) obj;
-	if (props == null) {
+	return equals(this, other);
+    }
+
+    private boolean equals(JSON me, JSON other) {
+	if (me.props == null) {
 	    if (other.props != null) {
 		return false;
 	    }
 	} else if (!props.equals(other.props)) {
 	    return false;
 	}
-
 	return true;
+    }
+
+    private List<String> sortProps() {
+	List<String> keys = new ArrayList<String>();
+	keys.addAll(props.keySet());
+	Collections.sort(keys);
+	return keys;
+    }
+
+    private StringBuffer flattenProps(List<String> sortedKeys) {
+	StringBuffer sbValue = new StringBuffer();
+	for (String key : sortedKeys) {
+	    Object value = props.get(key);
+	    sbValue.append(String.valueOf(value));
+	    sbValue.append(',');
+	}
+	if (sbValue.length() > 0) {
+	    sbValue.setLength(sbValue.length() - 1);
+	}
+	return sbValue;
     }
 
     public String generateHash() {
@@ -177,19 +214,10 @@ public class JSON implements Cloneable, Serializable {
 	    return "NO_DATA:NO_HASH";
 	}
 
-	List<String> keys = new ArrayList<String>();
-	keys.addAll(props.keySet());
-	Collections.sort(keys);
+	List<String> keys = sortProps();
 
-	StringBuffer sbValue = new StringBuffer();
-	for (String key1 : keys) {
-	    Object value = props.get(key1);
-	    sbValue.append(String.valueOf(value));
-	    sbValue.append(',');
-	}
-	if (sbValue.length() > 0) {
-	    sbValue.setLength(sbValue.length() - 1);
-	}
+	StringBuffer sbValue = flattenProps(keys);
+
 	String hash = hashGenerator.generate(sbValue.toString());
 	logger.debug("Generated hash: " + hash + ", for data: ["
 		+ sbValue.toString() + "]");
