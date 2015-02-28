@@ -3,17 +3,21 @@
  */
 package tools.datasync.basic.sync.pump;
 
+import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.sql.SQLException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 
 import tools.datasync.basic.comm.SyncMessage;
 import tools.datasync.basic.comm.SyncMessageType;
 import tools.datasync.basic.model.SeedRecord;
+import tools.datasync.basic.seed.SeedException;
 import tools.datasync.basic.seed.SeedOverException;
 import tools.datasync.basic.seed.SeedProducer;
 import tools.datasync.basic.util.JSONMapperBean;
@@ -41,6 +45,9 @@ import tools.datasync.basic.util.JSONMapperBean;
  */
 public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
 
+    private static final Logger LOG = Logger.getLogger(JvmSyncPumpSender.class
+	    .getName());
+
     private BlockingQueue<String> sendQueue;
     private AtomicBoolean isRunning;
 
@@ -50,14 +57,11 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
 
     private SeedProducer seedProducer = null;
     private JSONMapperBean jsonMapper = null;
-    // private HashGenerator hashGen = null;
     private int messageNumber = 0;
 
-    private CountDownLatch ackPairReceiverLatch;
-    private CountDownLatch ackPeerSenderLatch;
-    private CountDownLatch beginSenderLatch;
-
-    Logger logger = Logger.getLogger(JvmSyncPumpSender.class.getName());
+    private SenderPresentAcknolwedger senderPresentAcknolwedger = new SenderPresentAcknolwedger();
+    private ReceiverPresentAcknolwedger receiverPresentAcknolwedger = new ReceiverPresentAcknolwedger();
+    private BothSendersPresentAcknowledger bothSendersPresentAcknowledger = new BothSendersPresentAcknowledger();
 
     public JvmSyncPumpSender(BlockingQueue<String> sendQueue,
 	    SyncStateInitializer syncStateInitializer, AtomicBoolean stopper) {
@@ -66,7 +70,6 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
 	this.stopper = stopper;
 	this.isRunning = new AtomicBoolean(true);
 	this.jsonMapper = JSONMapperBean.getInstance();
-	// this.hashGen = Md5HashGenerator.getInstance();
 	this.syncStateInitializer = syncStateInitializer;
     }
 
@@ -74,134 +77,124 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
 	this.seedProducer = seedProducer;
     }
 
-    // @Override
-    public void run() {
-	isRunning.set(true);
+    private void initialze() throws SQLException, IOException,
+	    InterruptedException {
+	syncStateInitializer.setIsRunning(true);
+	syncStateInitializer.doSeed();
+	syncStateInitializer.setIsRunning(false);
 
-	logger.info("Started JvmSyncPumpSender...");
-	try {
+	// Send message to the other Peer's receiver "Begin seed"
+	SyncMessage syncMessage = new SyncMessage(null, messageNumber++,
+		SyncMessageType.BEGIN_SEED.toString(), null, null,
+		System.currentTimeMillis());
+	String message = jsonMapper.writeValueAsString(syncMessage);
+	this.sendQueue.put(message);
+	LOG.info("Completed seeding, send message to the peer that we're ready to receive");
 
-	    // try {
-	    // Populate the SyncState table from all data tables...
-	    // syncStateInitializer.setGenericDao(seedProducer.getGenericDao());
-	    syncStateInitializer.setIsRunning(true);
-	    syncStateInitializer.doSeed();
-	    syncStateInitializer.setIsRunning(false);
+    }
 
-	    // TODO: Send message to the other Peer's receiver "Begin seed"
-	    SyncMessage syncMessage = new SyncMessage(null, messageNumber++,
-		    SyncMessageType.BEGIN_SEED.toString(), null, null,
-		    System.currentTimeMillis());
-	    String message = jsonMapper.writeValueAsString(syncMessage);
-	    this.sendQueue.put(message);
-	    logger.info("Completed seeding, send message to the peer that we're ready to receive");
+    private boolean activeMessages() {
+	boolean active = (!Thread.currentThread().isInterrupted())
+		&& isRunning.get() && !stopper.get()
+		&& seedProducer.isRunning();
+	return (active);
+    }
 
-	    // Confirm pair receiver is up-and-running
-	    while (!ackPairReceiverLatch.await(500, TimeUnit.MILLISECONDS)) {
-		logger.info("Stop requested, shutting down");
+    private void sendSyncMessage(SeedRecord seed, SyncMessage syncMessage,
+	    String message) throws InterruptedException,
+	    JsonGenerationException, JsonMappingException, IOException {
+	String payloadJson = jsonMapper.writeValueAsString(seed);
+	String paloadHash = seed.getRecordHash();
+	syncMessage = new SyncMessage(seed.getOrigin(), messageNumber++,
+		SyncMessageType.SEED.toString(), payloadJson, paloadHash,
+		System.currentTimeMillis());
+	message = jsonMapper.writeValueAsString(syncMessage);
+
+	LOG.info("Sending - " + message);
+	this.sendQueue.put(message);
+
+    }
+
+    private void sendSyncMessages(SyncMessage syncMessage, String message)
+	    throws SeedOverException, SeedException, JsonGenerationException,
+	    JsonMappingException, IOException, InterruptedException {
+	while (activeMessages()) {
+
+	    // Get next seed
+	    SeedRecord seed = seedProducer.getNextSeed();
+	    if (seed == null) {
+		LOG.info(">>> Seed phase is over... Terminating the sender process logic.");
 		isRunning.set(false);
 		return;
 	    }
 
-	    // TODO: Wait for "Begin Seed" message from other peer
-	    logger.info("Waiting for peer sender message so we can send using ackPeerSenderLatch "
-		    + ackPeerSenderLatch);
-	    while (!ackPeerSenderLatch.await(500, TimeUnit.MILLISECONDS)) {
-		if (stopper.get()) {
-		    logger.info("Stop requested, shutting down");
-		    isRunning.set(false);
-		    return;
-		}
-		logger.info("No acknowledge received on waiting for beginSeedLatch "
-			+ ackPeerSenderLatch);
-		logger.info("No sender acknowledge on ackPeerSenderLatch "
-			+ ackPeerSenderLatch);
+	    sendSyncMessage(seed, syncMessage, message);
+
+	}
+
+    }
+
+    private void runPostAckMain() throws SeedOverException, SeedException,
+	    JsonGenerationException, JsonMappingException, IOException,
+	    InterruptedException {
+	SyncMessage syncMessage = null;
+	String message = null;
+
+	sendSyncMessages(syncMessage, message);
+
+	LOG.info("Flag state: Thread interrupted="
+		+ Thread.currentThread().isInterrupted() + ", isRunning="
+		+ isRunning.get() + ", stopper=" + stopper.get()
+		+ ", seedProducer.isRunning=" + seedProducer.isRunning());
+	syncMessage = new SyncMessage(null, messageNumber++,
+		SyncMessageType.SYNC_OVER.toString(), null, null,
+		System.currentTimeMillis());
+	message = jsonMapper.writeValueAsString(syncMessage);
+
+	LOG.info("Sending - " + message);
+	this.sendQueue.put(message);
+    }
+
+    private boolean preAckMain() throws SQLException, IOException,
+	    InterruptedException {
+
+	initialze();
+
+	if (!receiverPresentAcknolwedger.waitForReceiverAck(isRunning)) {
+	    return false;
+	}
+
+	if (!senderPresentAcknolwedger.waitForSenderAck(isRunning, stopper)) {
+	    return false;
+	}
+
+	if (!bothSendersPresentAcknowledger.waitForBothSendersAck(isRunning,
+		stopper)) {
+	    return false;
+	}
+
+	return true;
+    }
+
+    // @Override
+    public void run() {
+	isRunning.set(true);
+
+	LOG.info("Started JvmSyncPumpSender...");
+	try {
+
+	    if (!preAckMain()) {
+		return;
 	    }
-	    logger.info("Peersender sent begin seed, ready to send messages");
+	    runPostAckMain();
 
-	    // Count down beginSenderLatch indicating this sender is ready.
-	    logger.info(">>> Counting down beginSenderLatch indicating this sender is ready");
-	    beginSenderLatch.countDown();
-
-	    // Wait on beginSenderLatch until both senders are ready.
-	    logger.info(">>> Waiting on beginSenderLatch until both senders are ready");
-	    while (!beginSenderLatch.await(500, TimeUnit.MICROSECONDS)) {
-		if (stopper.get()) {
-		    logger.info("Shut down issued, shutting down");
-		    isRunning.set(false);
-		    return;
-		}
-	    }
-
-	    // } catch (Exception e1) {
-	    // logger.warn("Exception while begin seed...", e1);
-	    // isRunning.set(false);
-	    // stopper.set(true);
-	    // }
-
-	    while ((!Thread.currentThread().isInterrupted()) && isRunning.get()
-		    && !stopper.get() && seedProducer.isRunning()) {
-		// try {
-
-		// Get next seed
-		SeedRecord seed = seedProducer.getNextSeed();
-		if (seed == null) {
-		    logger.info(">>> Seed phase is over... Terminating the sender process logic.");
-		    isRunning.set(false);
-		    break;
-		}
-
-		String payloadJson = jsonMapper.writeValueAsString(seed);
-		String paloadHash = seed.getRecordHash();
-		syncMessage = new SyncMessage(seed.getOrigin(),
-			messageNumber++, SyncMessageType.SEED.toString(),
-			payloadJson, paloadHash, System.currentTimeMillis());
-		message = jsonMapper.writeValueAsString(syncMessage);
-
-		logger.info("Sending - " + message);
-		this.sendQueue.put(message);
-
-		// } catch (SeedOverException soe) {
-		// logger.warn(
-		// "Seed phase is over... Terminating the sender process logic.",
-		// soe);
-		// break;
-		// } catch (SeedException se) {
-		// logger.warn("Error while creating seed record.", se);
-		// break;
-		// } catch (JsonGenerationException | JsonMappingException jme)
-		// {
-		// logger.warn("Error while creating JSON.", jme);
-		// break;
-		// } catch (IOException | InterruptedException ioe) {
-		// logger.warn("Error while creating JSON.", ioe);
-		// break;
-		// }
-	    }
-
-	    logger.info("Flag state: Thread interrupted="
-		    + Thread.currentThread().isInterrupted() + ", isRunning="
-		    + isRunning.get() + ", stopper=" + stopper.get()
-		    + ", seedProducer.isRunning=" + seedProducer.isRunning());
-	    // try {
-	    syncMessage = new SyncMessage(null, messageNumber++,
-		    SyncMessageType.SYNC_OVER.toString(), null, null,
-		    System.currentTimeMillis());
-	    message = jsonMapper.writeValueAsString(syncMessage);
-
-	    logger.info("Sending - " + message);
-	    this.sendQueue.put(message);
-
-	    // } catch (IOException | InterruptedException e) {
-	    // e.printStackTrace();
-	    // }
 	} catch (SeedOverException e) {
-	    logger.info("Seed Over from Seed Producer", e);
+	    LOG.info("Seed Over from Seed Producer", e);
 	    isRunning.set(false);
 	    // TODO: Should we throw here ?
 	    // throw (new RuntimeException(e));
 	} catch (Exception e) {
-	    logger.error("Error in Sender", e);
+	    LOG.error("Error in Sender", e);
 	    isRunning.set(false);
 	    throw (new RuntimeException(e));
 	}
@@ -210,15 +203,17 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
     }
 
     public void setAckPairReceiverLatch(CountDownLatch ackPairReceiverLatch) {
-	this.ackPairReceiverLatch = ackPairReceiverLatch;
+	receiverPresentAcknolwedger
+		.setAckPairReceiverLatch(ackPairReceiverLatch);
+	// this.ackPairReceiverLatch = ackPairReceiverLatch;
     }
 
     public void setAckPeerSenderLatch(CountDownLatch ackPeerSenderLatch) {
-	this.ackPeerSenderLatch = ackPeerSenderLatch;
+	senderPresentAcknolwedger.setAckPeerSenderLatch(ackPeerSenderLatch);
     }
 
     public void setBeginSenderLatch(CountDownLatch beginSenderLatch) {
-	this.beginSenderLatch = beginSenderLatch;
+	bothSendersPresentAcknowledger.setBeginSenderLatch(beginSenderLatch);
     }
 
     public AtomicBoolean isRunning() {
@@ -232,9 +227,8 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
 
     // @Override
     public void uncaughtException(Thread t, Throwable e) {
-	logger.error("Error on thread " + t.getName() + " with "
-		+ e.getMessage());
-	logger.info("Initiating Stopper, shutting down");
+	LOG.error("Error on thread " + t.getName() + " with " + e.getMessage());
+	LOG.info("Initiating Stopper, shutting down");
 	stop();
     }
 }
