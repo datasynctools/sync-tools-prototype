@@ -31,54 +31,59 @@ public class SyncPeer {
     private String peerName = null;
 
     public SyncPeer(String peerName) {
-        this.peerId = UUID.randomUUID().toString();
-        this.peerName = peerName;
+	this.peerId = UUID.randomUUID().toString();
+	this.peerName = peerName;
     }
 
     public SyncPeer(String peerName, String peerId) {
-        this.setPeerId(peerId);
-        this.peerName = peerName;
+	this.setPeerId(peerId);
+	this.peerName = peerName;
     }
 
     public String getPeerId() {
-        return peerId;
+	return peerId;
     }
 
     public void setPeerId(String peerId) {
-        this.peerId = peerId;
+	this.peerId = peerId;
     }
 
     public String getPeerName() {
-        return peerName;
+	return peerName;
     }
 
     public void setPeerName(String peerName) {
-        this.peerName = peerName;
+	this.peerName = peerName;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((peerId == null) ? 0 : peerId.hashCode());
-        return result;
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + ((peerId == null) ? 0 : peerId.hashCode());
+	return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        SyncPeer other = (SyncPeer) obj;
-        if (peerId == null) {
-            if (other.peerId != null)
-                return false;
-        } else if (!peerId.equals(other.peerId))
-            return false;
-        return true;
+	if (this == obj)
+	    return true;
+	if (obj == null)
+	    return false;
+	if (getClass() != obj.getClass())
+	    return false;
+	SyncPeer other = (SyncPeer) obj;
+	return (equals(this, other));
+    }
+
+    private static boolean equals(SyncPeer me, SyncPeer other) {
+	if (me.peerId == null) {
+	    if (other.peerId != null)
+		return false;
+	} else if (!me.peerId.equals(other.peerId))
+	    return false;
+	return true;
+
     }
 
 }

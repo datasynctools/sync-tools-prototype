@@ -49,44 +49,82 @@ public class SyncStateConfig {
     private boolean initiated = false;
 
     public SyncStateConfig() {
-        init();
-        initiated = true;
+	init();
+	initiated = true;
     }
 
     public boolean isReady() {
-        return initiated;
+	return initiated;
+    }
+
+    private void initReady() {
+	READY.addTransition(new SyncStateTransition(READY, BEGIN_SYNC, READY));
+	READY.addTransition(new SyncStateTransition(READY, BEGIN_SEED, SEEDING));
+	READY.addTransition(new SyncStateTransition(READY, UNKNOWN, READY));
+    }
+
+    private void initSeeding() {
+	SEEDING.addTransition(new SyncStateTransition(SEEDING, SEED, SEEDING));
+	SEEDING.addTransition(new SyncStateTransition(SEEDING, ACK, SEEDING));
+	SEEDING.addTransition(new SyncStateTransition(SEEDING, NACK, SEEDING));
+	SEEDING.addTransition(new SyncStateTransition(SEEDING, SEED_OVER_INIT,
+		WAITING));
+	SEEDING.addTransition(new SyncStateTransition(SEEDING,
+		SEED_OVER_FOLLOW, ANALYZING));
+	SEEDING.addTransition(new SyncStateTransition(SEEDING, UNKNOWN, INVALID));
+    }
+
+    private void initWaiting() {
+	WAITING.addTransition(new SyncStateTransition(WAITING, ANALYSIS_OVER,
+		WAITING));
+	WAITING.addTransition(new SyncStateTransition(WAITING,
+		CONFLICT_RESOLUTION, WAITING));
+	WAITING.addTransition(new SyncStateTransition(WAITING, APPLY_CHANGES,
+		SYNCING));
+	WAITING.addTransition(new SyncStateTransition(WAITING, UNKNOWN, INVALID));
+    }
+
+    private void initResolving() {
+	RESOLVING.addTransition(new SyncStateTransition(RESOLVING, ACK,
+		RESOLVING));
+	RESOLVING.addTransition(new SyncStateTransition(RESOLVING, NACK,
+		RESOLVING));
+	RESOLVING.addTransition(new SyncStateTransition(RESOLVING,
+		APPLY_CHANGES, SYNCING));
+	RESOLVING.addTransition(new SyncStateTransition(RESOLVING, UNKNOWN,
+		INVALID));
+
+    }
+
+    private void initSyncing() {
+	SYNCING.addTransition(new SyncStateTransition(SYNCING,
+		APPLY_CHANGES_OVER, SYNCING));
+	SYNCING.addTransition(new SyncStateTransition(SYNCING, SYNC_OVER, READY));
+	SYNCING.addTransition(new SyncStateTransition(SYNCING, UNKNOWN, INVALID));
+    }
+
+    private void initAnalyzing() {
+	ANALYZING.addTransition(new SyncStateTransition(ANALYZING,
+		ANALYSIS_OVER, RESOLVING));
+	ANALYZING.addTransition(new SyncStateTransition(ANALYZING, UNKNOWN,
+		INVALID));
     }
 
     public void init() {
 
-        READY.addTransition(new SyncStateTransition(READY, BEGIN_SYNC, READY));
-        READY.addTransition(new SyncStateTransition(READY, BEGIN_SEED, SEEDING));
+	initReady();
 
-        SEEDING.addTransition(new SyncStateTransition(SEEDING, SEED, SEEDING));
-        SEEDING.addTransition(new SyncStateTransition(SEEDING, ACK, SEEDING));
-        SEEDING.addTransition(new SyncStateTransition(SEEDING, NACK, SEEDING));
-        SEEDING.addTransition(new SyncStateTransition(SEEDING, SEED_OVER_INIT, WAITING));
-        SEEDING.addTransition(new SyncStateTransition(SEEDING, SEED_OVER_FOLLOW, ANALYZING));
+	initSeeding();
 
-        WAITING.addTransition(new SyncStateTransition(WAITING, ANALYSIS_OVER, WAITING));
-        WAITING.addTransition(new SyncStateTransition(WAITING, CONFLICT_RESOLUTION, WAITING));
-        WAITING.addTransition(new SyncStateTransition(WAITING, APPLY_CHANGES, SYNCING));
+	initWaiting();
 
-        ANALYZING.addTransition(new SyncStateTransition(ANALYZING, ANALYSIS_OVER, RESOLVING));
+	initResolving();
 
-        RESOLVING.addTransition(new SyncStateTransition(RESOLVING, ACK, RESOLVING));
-        RESOLVING.addTransition(new SyncStateTransition(RESOLVING, NACK, RESOLVING));
-        RESOLVING.addTransition(new SyncStateTransition(RESOLVING, APPLY_CHANGES, SYNCING));
+	initAnalyzing();
 
-        SYNCING.addTransition(new SyncStateTransition(SYNCING, APPLY_CHANGES_OVER, SYNCING));
-        SYNCING.addTransition(new SyncStateTransition(SYNCING, SYNC_OVER, READY));
+	initSyncing();
 
-        READY.addTransition(new SyncStateTransition(READY, UNKNOWN, READY));
-        SEEDING.addTransition(new SyncStateTransition(SEEDING, UNKNOWN, INVALID));
-        WAITING.addTransition(new SyncStateTransition(WAITING, UNKNOWN, INVALID));
-        ANALYZING.addTransition(new SyncStateTransition(ANALYZING, UNKNOWN, INVALID));
-        RESOLVING.addTransition(new SyncStateTransition(RESOLVING, UNKNOWN, INVALID));
-        SYNCING.addTransition(new SyncStateTransition(SYNCING, UNKNOWN, INVALID));
-        INVALID.addTransition(new SyncStateTransition(INVALID, SYNC_OVER, READY));
+	// TODO Is this necessary to have an invalid state? How is this used?
+	INVALID.addTransition(new SyncStateTransition(INVALID, SYNC_OVER, READY));
     }
 }
