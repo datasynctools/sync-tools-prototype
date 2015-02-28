@@ -6,7 +6,6 @@
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-
 	<bean id="syncPeerA" class="tools.datasync.basic.sync.SyncPeer"><constructor-arg value="A" /></bean>
 	<bean id="syncPeerB" class="tools.datasync.basic.sync.SyncPeer"><constructor-arg value="B" /></bean>
 
@@ -105,7 +104,9 @@
 	    <value>org.ContactLink</value>
 	</util:list>
 	
-	<bean id="sampleSyncIdGetter" class="tools.datasync.core.sampleapp.SampleSyncIdGetter" />
+	<bean id="sampleSyncIdGetter" class="tools.datasync.core.sampleapp.SampleSyncIdGetter">
+		<constructor-arg ref="entityGetter" />
+	</bean>
 	
 	<bean id="syncStateInitializerA" class="tools.datasync.basic.dao.JDBCSyncStateInitializer">
 		<constructor-arg ref="tables"/>

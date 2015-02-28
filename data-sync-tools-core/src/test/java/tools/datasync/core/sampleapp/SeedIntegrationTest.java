@@ -16,7 +16,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.logic.DbTableComparator;
-import tools.datasync.basic.model.Ids;
 import tools.datasync.basic.sync.SyncOrchestrationManager;
 import tools.datasync.basic.sync.SyncSession;
 
@@ -100,10 +99,10 @@ public class SeedIntegrationTest {
 	    DbTableComparator comparator = new DbTableComparator(sourceDao,
 		    targetDao);
 
-	    comparator.compare(Ids.Table.CONTACT);
-	    comparator.compare(Ids.Table.WORK_HISTORY);
-	    comparator.compare(Ids.Table.CONTACT_LINK);
-	    comparator.compare(Ids.Table.SYNC_STATE);
+	    comparator.compare("org.Contact");
+	    comparator.compare("org.WorkHistory");
+	    comparator.compare("org.ContactLink");
+	    comparator.compare("seed.SyncState");
 
 	} catch (Exception ex) {
 	    ex.printStackTrace();
