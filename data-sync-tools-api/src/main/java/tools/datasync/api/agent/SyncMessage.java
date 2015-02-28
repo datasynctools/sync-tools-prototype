@@ -23,33 +23,30 @@
 
 package tools.datasync.api.agent;
 
-
 public interface SyncMessage {
 
     String getOriginId();
 
-    // void setOriginId(String originId);
+    void setOriginId(String originId);
 
     long getMessageNumber();
 
-    // void setMessageNumber(long messageNumber) ;
+    void setMessageNumber(long messageNumber);
 
     String getMessageType();
 
-    // void setMessageType(String messageType);
+    void setMessageType(String messageType);
 
     String getPayloadJson();
 
-    // void setPayloadJson(String payloadJson);
+    void setPayloadData(String payloadData);
 
     String getPayloadHash();
 
-    // void setPaloadHash(String paloadHash) ;
+    void setPayloadHash(String paloadHash);
 
     long getTimestamp();
 
-    // void setTimestamp(long timestamp);
-
-    // long getSerialversionuid() {
+    void setTimestamp(long timestamp);
 
 }
