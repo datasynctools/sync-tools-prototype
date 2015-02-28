@@ -35,11 +35,6 @@ import tools.datasync.basic.seed.SeedConsumer;
  */
 public class JvmSyncPumpFactory implements SyncPumpFactory {
 
-    // private final static Logger LOG = LoggerFactory
-    // .getLogger(JvmSyncPumpFactory.class);
-
-    // private AtomicBoolean stopper;
-
     private JvmSyncPair syncPair;
     private SyncPairConfig syncPairConfig;
     private JvmSyncConcurArgs concurArgs;
@@ -48,8 +43,6 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
     private GenericJDBCDao sourceDao = null;
     private GenericJDBCDao targetDao = null;
 
-    // private CountDownLatch beginSenderLatch = null;
-
     public JvmSyncPumpFactory(JvmSyncPair pair, SyncPairConfig syncPairConfig,
 	    SyncStateInitializer syncStateInitializer,
 	    JvmSyncConcurArgs concurArgs) {
@@ -57,19 +50,14 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
 	this.syncPairConfig = syncPairConfig;
 	this.syncStateInitializer = syncStateInitializer;
 	this.concurArgs = concurArgs;
-	// this.stopper = stopper;
-	// this.beginSenderLatch = beginSenderLatch;
     }
 
     private static JvmSyncPumpSender createSender(JvmSyncPeerParms peer,
 	    GenericDao sourceDao, SyncStateInitializer syncStateInitializer,
 	    JvmSyncConcurArgs concurArgs) {
-	// sourceDao.setDataSource(peer.getDbParms().getDataSource(), peer
-	// .getDbParms().getSourceDb());
 
 	DbSeedProducer seedProducer = new DbSeedProducer(sourceDao,
 		syncStateInitializer.getTables());
-	// seedProducer.setGenericDao(sourceDao);
 
 	JvmSyncPumpSender sender = new JvmSyncPumpSender(peer.getQueue(),
 		syncStateInitializer, concurArgs.getStopper());
@@ -87,12 +75,8 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
 	JvmSyncPumpReceiver receiver = new JvmSyncPumpReceiver(peer.getQueue(),
 		stopper);
 
-	// targetDao.setDataSource(peer.getDbParms().getDataSource(), peer
-	// .getDbParms().getTargetDb());
-
 	SeedConsumer seedConsumer = syncPairConfig.getSeedConsumerFactory()
 		.create(conflictResolver, targetDao);
-	// seedConsumer.setGenericDao(targetDao);
 
 	receiver.setSeedConsumer(seedConsumer);
 	receiver.setAckPairReceiverLatch(peer.getAckPairReceiverLatch());
@@ -101,29 +85,9 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
 	return (receiver);
     }
 
-    // private SyncPump createSyncPumpFromA2B(PeerMode peerMode) {
-    // JvmSyncPumpSender sender = createSender(syncPair.getPeerMe(),
-    // daoPair.getSourceDao(), syncStateInitializer, concurArgs);
-    // JvmSyncPumpReceiver receiver = createReceiver(syncPair.getPeerMe(),
-    // daoPair.getTargetDao(),
-    // new InitiatorWinsConflictResolver(false),
-    // concurArgs.getStopper());
-    // return new JvmSyncPump(peerMode, sender, receiver);
-    // }
-    //
-    // private SyncPump createSyncPumpFromB2A(PeerMode peerMode) {
-    // JvmSyncPumpSender sender = createSender(syncPair.getPeerOther(),
-    // daoPair.getTargetDao(), syncStateInitializer, concurArgs);
-    // JvmSyncPumpReceiver receiver = createReceiver(syncPair.getPeerOther(),
-    // daoPair.getSourceDao(),
-    // new InitiatorWinsConflictResolver(false),
-    // concurArgs.getStopper());
-    // return new JvmSyncPump(peerMode, sender, receiver);
-    //
-    // }
-
     public SyncPump getInstance(PeerMode peerMode)
 	    throws InstantiationException {
+
 	JvmSyncPumpSender sender = createSender(syncPair.getPeerMe(),
 		syncPairConfig.getSourceDao(), syncStateInitializer, concurArgs);
 	JvmSyncPumpReceiver receiver = createReceiver(syncPair.getPeerMe(),
@@ -132,30 +96,14 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
 		concurArgs.getStopper());
 	return new JvmSyncPump(peerMode, sender, receiver);
 
-	// try {
-	// if (PeerMode.A2B.equals(peerMode)) {
-	//
-	// return (createSyncPumpFromA2B(peerMode));
-	//
-	// } else {
-	//
-	// return (createSyncPumpFromB2A(peerMode));
-	// }
-	//
-	// } catch (Exception ex) {
-	// LOG.error("Cannot instantiate JvmSyncPump", ex);
-	// throw new InstantiationException(ex.getMessage());
-	// }
     }
 
     public GenericDao getSourceDao() {
 	return sourceDao;
-	// return null;
     }
 
     public GenericDao getTargetDao() {
 	return targetDao;
-	// return null;
     }
 
 }

@@ -35,7 +35,8 @@ import tools.datasync.basic.model.JSON;
 
 public class SQLGenUtil {
 
-    private static Logger logger = Logger.getLogger(SQLGenUtil.class.getName());
+    private static final Logger LOG = Logger.getLogger(SQLGenUtil.class
+	    .getName());
     private static final DateFormat dateFormat = new SimpleDateFormat(
 	    "yyyy-MM-dd hh:mm:ss");
 
@@ -63,7 +64,7 @@ public class SQLGenUtil {
 	insert.append(values);
 	insert.append(")");
 
-	logger.debug(insert.toString());
+	LOG.debug(insert.toString());
 	return insert.toString();
     }
 
@@ -78,15 +79,16 @@ public class SQLGenUtil {
 	    names.append(name);
 	    String type = json.getType(name);
 
-	    handleType(new Tuple<String, String>(name, type), json, names,
-		    values);
+	    handleType(new Tuple<String, String>(name, type), json, values);
 
-	    appendNextIfAvailable(keys, names, values);
+	    appendNextIfAvailable(keys, names);
+	    appendNextIfAvailable(keys, values);
 	}
     }
 
     private static void handleType(Tuple<String, String> nameValue, JSON json,
-	    StringBuffer names, StringBuffer values) {
+	    StringBuffer values) {
+
 	if ("String".equalsIgnoreCase(nameValue.y)) {
 	    values.append("'");
 	    values.append(json.get(nameValue.x));
@@ -102,11 +104,30 @@ public class SQLGenUtil {
 	}
     }
 
+    private static void handleUpdateType(String name, Object value,
+	    String type, StringBuffer sql) {
+
+	sql.append(name);
+	sql.append("=");
+	if ("String".equalsIgnoreCase(type)) {
+	    sql.append("'");
+	    sql.append(value);
+	    sql.append("'");
+	} else if ("Date".equalsIgnoreCase(type)
+		|| "Long".equalsIgnoreCase(type)) {
+	    sql.append("'");
+	    sql.append(dateFormat.format(new Date((Long) value)));
+	    sql.append("'");
+	} else {
+	    sql.append(value);
+	}
+
+    }
+
     private static void appendNextIfAvailable(Iterator<String> keys,
-	    StringBuffer names, StringBuffer values) {
+	    StringBuffer buffer) {
 	if (keys.hasNext()) {
-	    names.append(", ");
-	    values.append(", ");
+	    buffer.append(", ");
 	}
     }
 
@@ -128,7 +149,7 @@ public class SQLGenUtil {
 	insertps.append(values);
 	insertps.append(")");
 
-	logger.debug(insertps.toString());
+	LOG.debug(insertps.toString());
 	return insertps.toString();
     }
 
@@ -149,12 +170,39 @@ public class SQLGenUtil {
     public static String getUpdateStatement(String tableName, JSON json,
 	    String keyColumn) {
 
-	StringBuffer update = new StringBuffer();
-	update.append("update ");
-	update.append(tableName);
-	update.append(" set ");
+	StringBuffer sql = new StringBuffer();
+	sql.append("update ");
+	sql.append(tableName);
+	sql.append(" set ");
 
 	Iterator<String> keys = json.getData().keySet().iterator();
+
+	handleUpdateKeys(keys, json, sql);
+
+	handleUpdateWhere(sql, keyColumn, json);
+
+	LOG.debug(sql.toString());
+	return sql.toString();
+    }
+
+    private static void handleUpdateWhere(StringBuffer sql, String keyColumn,
+	    JSON json) {
+	sql.append(" where ");
+	String[] keyColumns = keyColumn.split(", ");
+	for (int colIndex = 0; colIndex < keyColumns.length; colIndex++) {
+	    sql.append(keyColumns[colIndex]);
+	    sql.append("='");
+	    sql.append(json.get(keyColumns[colIndex]));
+	    sql.append("'");
+	    if (colIndex + 1 < keyColumns.length) {
+		sql.append(" and ");
+	    }
+	}
+
+    }
+
+    private static void handleUpdateKeys(Iterator<String> keys, JSON json,
+	    StringBuffer sql) {
 	while (keys.hasNext()) {
 	    String name = keys.next();
 	    Object value = json.get(name);
@@ -163,44 +211,10 @@ public class SQLGenUtil {
 	    }
 	    String type = json.getType(name);
 
-	    update.append(name);
-	    update.append("=");
-	    if ("String".equalsIgnoreCase(type)) {
-		update.append("'");
-		update.append(value);
-		update.append("'");
-	    } else if ("Date".equalsIgnoreCase(type)
-		    || "Long".equalsIgnoreCase(type)) {
-		update.append("'");
-		update.append(dateFormat.format(new Date((Long) value)));
-		update.append("'");
-	    } else {
-		update.append(value);
-	    }
+	    handleUpdateType(name, value, type, sql);
 
-	    if (keys.hasNext()) {
-		update.append(", ");
-	    }
+	    appendNextIfAvailable(keys, sql);
 	}
-
-	update.append(" where ");
-	String[] keyColumns = keyColumn.split(", ");
-	for (int colIndex = 0; colIndex < keyColumns.length; colIndex++) {
-	    update.append(keyColumns[colIndex]);
-	    update.append("='");
-	    update.append(json.get(keyColumns[colIndex]));
-	    update.append("'");
-	    if (colIndex + 1 < keyColumns.length) {
-		update.append(" and ");
-	    }
-	}
-
-	logger.debug(update.toString());
-	return update.toString();
-    }
-
-    private static void handleUpdateKeys(Iterator<String> keys, JSON json,
-	    StringBuffer names, StringBuffer values) {
 
     }
 
@@ -217,7 +231,7 @@ public class SQLGenUtil {
 	delete.append(json.get(keyColumn));
 	delete.append("'");
 
-	logger.debug(delete.toString());
+	LOG.debug(delete.toString());
 	return delete.toString();
     }
 

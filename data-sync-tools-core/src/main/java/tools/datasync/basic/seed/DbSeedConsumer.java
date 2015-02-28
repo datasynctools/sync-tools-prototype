@@ -36,139 +36,143 @@ import tools.datasync.basic.util.Md5HashGenerator;
 
 public class DbSeedConsumer implements SeedConsumer {
 
-    // private SyncDao syncDao;
-    Logger logger = Logger.getLogger(DbSeedConsumer.class);
-    private JSONMapperBean jsonMapper;
-    private Md5HashGenerator hashGenerator;
+    private static final Logger LOG = Logger.getLogger(DbSeedConsumer.class);
+
+    private JSONMapperBean jsonMapper = JSONMapperBean.getInstance();
+    private Md5HashGenerator hashGenerator = Md5HashGenerator.getInstance();
     private GenericDao genericDao;
     private ConflictResolver conflictResolver;
     private IdGetter idGetter;
 
     public DbSeedConsumer(ConflictResolver conflictResolver, IdGetter idGetter,
 	    GenericDao genericDao) {
-	this.jsonMapper = JSONMapperBean.getInstance();
-	this.hashGenerator = Md5HashGenerator.getInstance();
 	this.conflictResolver = conflictResolver;
 	this.idGetter = idGetter;
 	this.genericDao = genericDao;
     }
 
-    // public void setGenericDao(GenericDao genericDao) {
-    // this.genericDao = genericDao;
-    // }
+    private void validate(SeedRecord seed, String dbRecord) {
+	if (!hashGenerator.validate(dbRecord, seed.getRecordHash())) {
+	    // throw new
+	    // SeedException("Illegal message - Record does not match with its hash");
 
-    public boolean consume(SeedRecord seed) throws IOException, SeedException {
+	    // TODO Is this the right logic?
+	    LOG.warn("Illegal message - Record does not match with its hash\n"
+		    + dbRecord);
+	}
+    }
 
-	logger.debug("Consuming SEED Record: " + seed);
+    public void consume(SeedRecord seed) throws IOException, SeedException {
+
+	LOG.debug("Consuming SEED Record: " + seed);
 
 	String entityName = Ids.EntityId.getTableName(seed.getEntityId());
 	String dbRecord = seed.getRecordJson();
 	JSON json = jsonMapper.readValue(dbRecord, JSON.class);
 
-	if (!hashGenerator.validate(dbRecord, seed.getRecordHash())) {
-	    // throw new
-	    // SeedException("Illegal message - Record does not match with its hash");
-	    logger.warn("Illegal message - Record does not match with its hash\n"
-		    + dbRecord);
-	}
-
-	// If the record exists in the SyncState table, check if the hashes
-	// match.
-
-	// If the record exists in the SyncState table and the hashes match,
-	// break and go to next message
-
-	// If the record exists in the SyncState table and the hash does not
-	// match:
-	// 1. run the standard merge logic (a MergeStrategy class) using the
-	// existing record in the User table and the newly received message
-	// (there are some error conditions here for advanced conflicts)
-	// 2. update the User table with the new value
-	// 3. update the SyncState table with the newly calculated hash
-
-	// If the record DOES NOT exist in the SyncState table:
-	// 1. insert the User table with the new value
-	// 2. insert the SyncState table with the new value
+	validate(seed, dbRecord);
 
 	try {
-	    JSON stateRecord = genericDao.selectState(seed.getEntityId(),
-		    seed.getRecordId());
 
-	    if (stateRecord != null) {
-		// If the record exists in the SyncState table, check if the
-		// hashes match.
-		logger.info("Record exists in the SyncState table"
-			+ stateRecord);
-		if (seed.getRecordHash().equals(stateRecord.get("RECORDHASH"))) {
-		    // If the record exists in the SyncState table and the
-		    // hashes match, break and go to next message
-		    logger.debug("Hashes match, break and go to next message");
-		    return true;
-		} else {
-		    // If the record exists in the SyncState table and the hash
-		    // does not match:
-
-		    JSON myJSON = jsonMapper.readValue(
-			    String.valueOf(stateRecord.get("RECORDDATA")),
-			    JSON.class);
-		    // 1. run the standard merge logic (a MergeStrategy class)
-		    // using the existing record in the User table and the newly
-		    // received message (there are some error conditions here
-		    // for advanced conflicts)
-		    logger.info("Hash does not match, run the standard merge logic");
-		    JSON resolvedJSON = conflictResolver.resolve(myJSON, json);
-
-		    if (resolvedJSON == null) {
-			logger.debug("Record is up to date.");
-			return true;
-		    } else {
-			// 2. update the User table with the new value
-			logger.info("Update the User table with the new value");
-			genericDao.saveOrUpdate(entityName, resolvedJSON,
-				idGetter.get(entityName));
-
-			// 3. update the SyncState table with the newly
-			// calculated hash
-			JSON syncState = new JSON(Ids.Table.SYNC_STATE);
-			syncState.set("ENTITYID", Ids.EntityId.get(entityName));
-			syncState.set("RECORDID",
-				resolvedJSON.get(idGetter.get(entityName)));
-			String recordJson = jsonMapper
-				.writeValueAsString(resolvedJSON);
-			syncState.set("RECORDDATA", recordJson);
-			syncState
-				.set("RECORDHASH", resolvedJSON.generateHash());
-
-			logger.info("Update the SyncState table with the newly calculated hash.");
-			genericDao.update(Ids.Table.SYNC_STATE, syncState,
-				idGetter.get(Ids.Table.SYNC_STATE));
-		    }
-		}
-
-	    } else {
-		// If the record DOES NOT exist in the SyncState table:
-		// 1. insert the User table with the new value
-		logger.info("Record DOES NOT exist in the SyncState table, inserting the User table with the new value");
-		genericDao.save(entityName, json);
-
-		// 2. insert the SyncState table with the new value
-		JSON syncState = new JSON(Ids.Table.SYNC_STATE);
-		syncState.set("ENTITYID", Ids.EntityId.get(entityName));
-		syncState.set("RECORDID", json.getCalculatedPrimaryKey());
-		String recordJson = jsonMapper.writeValueAsString(json);
-		syncState.set("RECORDDATA", recordJson);
-		syncState.set("RECORDHASH", json.generateHash());
-
-		logger.info("inserting the SyncState table with the new value");
-		genericDao.save(Ids.Table.SYNC_STATE, syncState);
-	    }
+	    handle(seed, json, entityName);
 
 	} catch (Exception e) {
-	    logger.error("Error while consuming record: ", e);
+	    LOG.error("Error while consuming record: ", e);
 	    throw new IOException(e.getMessage(), e);
 	}
 
-	return true;
+    }
+
+    private void handle(SeedRecord seed, JSON json, String entityName)
+	    throws Exception {
+	JSON stateRecord = genericDao.selectState(seed.getEntityId(),
+		seed.getRecordId());
+
+	if (stateRecord != null) {
+
+	    handleNotNull(stateRecord, seed, json, entityName);
+
+	} else {
+	    handleNull(stateRecord, seed, json, entityName);
+	}
+
+    }
+
+    private void handleNull(JSON stateRecord, SeedRecord seed, JSON json,
+	    String entityName) throws Exception {
+	// If the record DOES NOT exist in the SyncState table:
+	// 1. insert the User table with the new value
+	LOG.info("Record DOES NOT exist in the SyncState table, inserting the User table with the new value");
+	genericDao.save(entityName, json);
+
+	// 2. insert the SyncState table with the new value
+	JSON syncState = new JSON(Ids.Table.SYNC_STATE);
+	syncState.set("ENTITYID", Ids.EntityId.get(entityName));
+	syncState.set("RECORDID", json.getCalculatedPrimaryKey());
+	String recordJson = jsonMapper.writeValueAsString(json);
+	syncState.set("RECORDDATA", recordJson);
+	syncState.set("RECORDHASH", json.generateHash());
+
+	LOG.info("inserting the SyncState table with the new value");
+	genericDao.save(Ids.Table.SYNC_STATE, syncState);
+    }
+
+    private void handleNotNull(JSON stateRecord, SeedRecord seed, JSON json,
+	    String entityName) throws Exception {
+	// If the record exists in the SyncState table, check if the
+	// hashes match.
+	LOG.info("Record exists in the SyncState table" + stateRecord);
+	if (seed.getRecordHash().equals(stateRecord.get("RECORDHASH"))) {
+	    // If the record exists in the SyncState table and the
+	    // hashes match, break and go to next message
+	    LOG.debug("Hashes match, break and go to next message");
+	    return;
+	} else {
+	    handleNotNullElse(stateRecord, seed, json, entityName);
+	}
+    }
+
+    private void handleNotNullElse(JSON stateRecord, SeedRecord seed,
+	    JSON json, String entityName) throws Exception {
+	// If the record exists in the SyncState table and the hash
+	// does not match:
+
+	JSON myJSON = jsonMapper.readValue(
+		String.valueOf(stateRecord.get("RECORDDATA")), JSON.class);
+	// 1. run the standard merge logic (a MergeStrategy class)
+	// using the existing record in the User table and the newly
+	// received message (there are some error conditions here
+	// for advanced conflicts)
+	LOG.info("Hash does not match, run the standard merge logic");
+	JSON resolvedJSON = conflictResolver.resolve(myJSON, json);
+
+	if (resolvedJSON == null) {
+	    LOG.debug("Record is up to date.");
+	    return;
+	} else {
+	    writeChangedRecord(resolvedJSON, seed, json, entityName);
+	}
+    }
+
+    private void writeChangedRecord(JSON resolvedJSON, SeedRecord seed,
+	    JSON json, String entityName) throws Exception {
+	// 2. update the User table with the new value
+	LOG.info("Update the User table with the new value");
+	genericDao.saveOrUpdate(entityName, resolvedJSON,
+		idGetter.get(entityName));
+
+	// 3. update the SyncState table with the newly
+	// calculated hash
+	JSON syncState = new JSON(Ids.Table.SYNC_STATE);
+	syncState.set("ENTITYID", Ids.EntityId.get(entityName));
+	syncState.set("RECORDID", resolvedJSON.get(idGetter.get(entityName)));
+	String recordJson = jsonMapper.writeValueAsString(resolvedJSON);
+	syncState.set("RECORDDATA", recordJson);
+	syncState.set("RECORDHASH", resolvedJSON.generateHash());
+
+	LOG.info("Update the SyncState table with the newly calculated hash.");
+	genericDao.update(Ids.Table.SYNC_STATE, syncState,
+		idGetter.get(Ids.Table.SYNC_STATE));
     }
 
 }
