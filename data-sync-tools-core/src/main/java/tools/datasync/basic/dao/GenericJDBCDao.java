@@ -50,8 +50,6 @@ public class GenericJDBCDao implements GenericDao {
     private JsonResultMapper jsonResultMapper = new JsonResultMapper();
     private JsonIteratorResultMapper jsonIteratorResultMapper;
 
-    // private JdbcJsonIterator jdbcJsonIterator;
-
     private JdbcMutationHelper jdbcMutator;
 
     public GenericJDBCDao(DataSource dataSource, String dbName,
@@ -85,97 +83,7 @@ public class GenericJDBCDao implements GenericDao {
 
 	return (allSelector.query(query, jsonIteratorResultMapper, entityName,
 		entityName));
-	//
-	// try {
-	//
-	// final Connection connection = dataSource.getConnection();
-	//
-	// final Statement statement = connection.createStatement();
-	// LOG.info(dbName + ": " + query);
-	// final ResultSet result = statement.executeQuery(query);
-	//
-	// // String primaryKey = Ids.KeyColumn.get(entityName);
-	// String primaryKey = idGetter.get(entityName);
-	// String[] keys = primaryKey.split(",");
-	// final List<String> primaryKeyColumns = new ArrayList<String>();
-	// for (String key : keys) {
-	// primaryKeyColumns.add(key.trim());
-	// }
-	// Collections.sort(primaryKeyColumns);
-	//
-	// return new Iterator<JSON>() {
-	// private Logger logger = Logger.getLogger("SelectAllIterator");
-	// boolean hasMore = false;
-	//
-	// public boolean hasNext() {
-	// try {
-	// hasMore = result.next();
-	// return hasMore;
-	// } catch (SQLException e) {
-	// logger.error(dbName + ": "
-	// + "result set error - hasNext().", e);
-	// return false;
-	// }
-	// }
-	//
-	// public JSON next() {
-	// try {
-	//
-	// JSON json = new JSON(entityName);
-	//
-	// StringBuffer sbPrimaryKey = new StringBuffer();
-	// for (String pkColumn : primaryKeyColumns) {
-	// String key = result.getString(pkColumn);
-	// sbPrimaryKey.append(key);
-	// sbPrimaryKey.append("->");
-	// }
-	// if (sbPrimaryKey.length() > 2) {
-	// sbPrimaryKey.setLength(sbPrimaryKey.length() - 2);
-	// }
-	// json.setCalculatedPrimaryKey(sbPrimaryKey.toString());
-	// // logger.debug("ResultSet.next() - calculated primary key: "
-	// // + json.getCalculatedPrimaryKey());
-	//
-	// int count = result.getMetaData().getColumnCount();
-	// for (int index = 1; index <= count; index++) {
-	// String columnName = result.getMetaData()
-	// .getColumnName(index);
-	// Object value = result.getObject(index);
-	//
-	// json.set(columnName.toUpperCase(), value);
-	// }
-	// count++;
-	// logger.debug(dbName + ": ResultSet.next() - returning "
-	// + entityName + " - " + json);
-	// return json;
-	// } catch (SQLException e) {
-	// logger.warn(dbName + ": result set error - next().", e);
-	// throw new RuntimeException(e);
-	// } finally {
-	// try {
-	// if (!hasMore) {
-	// logger.debug(dbName
-	// + ": selectAll() - closing resultset");
-	// result.close();
-	// statement.close();
-	// connection.close();
-	// }
-	// } catch (SQLException e) {
-	// logger.warn(dbName
-	// + ": error while closing result set.", e);
-	// }
-	// }
-	// }
-	//
-	// public void remove() {
-	// // TODO: implement;
-	// }
-	// };
-	//
-	// } catch (SQLException e) {
-	// LOG.warn(dbName + ": SQL error:", e);
-	// throw e;
-	// }
+
     }
 
     public JSON select(final String entityName, String id) throws SQLException {
