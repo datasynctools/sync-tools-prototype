@@ -32,4 +32,20 @@ public class SyncMessageHeader {
 	return timestamp;
     }
 
+    public void setOriginId(String originId) {
+	this.originId = originId;
+    }
+
+    public void setMessageNumber(long messageNumber) {
+	this.messageNumber = messageNumber;
+    }
+
+    public void setMessageType(String messageType) {
+	this.messageType = messageType;
+    }
+
+    public void setTimestamp(long timestamp) {
+	this.timestamp = timestamp;
+    }
+
 }

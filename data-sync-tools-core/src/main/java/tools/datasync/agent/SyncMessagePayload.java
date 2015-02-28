@@ -2,21 +2,29 @@ package tools.datasync.agent;
 
 public class SyncMessagePayload {
 
-    private String payloadJson;
+    private String payloadData;
     private String payloadHash;
 
-    public SyncMessagePayload(String payloadJson, String payloadHash) {
+    public SyncMessagePayload(String payloadData, String payloadHash) {
 	super();
-	this.payloadJson = payloadJson;
+	this.payloadData = payloadData;
 	this.payloadHash = payloadHash;
     }
 
     public String getPayloadJson() {
-	return payloadJson;
+	return payloadData;
     }
 
     public String getPayloadHash() {
 	return payloadHash;
+    }
+
+    public void setPayloadData(String payloadData) {
+	this.payloadData = payloadData;
+    }
+
+    public void setPayloadHash(String payloadHash) {
+	this.payloadHash = payloadHash;
     }
 
 }

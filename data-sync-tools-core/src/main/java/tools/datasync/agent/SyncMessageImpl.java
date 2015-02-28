@@ -64,6 +64,30 @@ public class SyncMessageImpl implements SyncMessage, Serializable, Cloneable {
 	return header.getTimestamp();
     }
 
+    public void setOriginId(String originId) {
+	header.setOriginId(originId);
+    }
+
+    public void setMessageNumber(long messageNumber) {
+	header.setMessageNumber(messageNumber);
+    }
+
+    public void setMessageType(String messageType) {
+	header.setMessageType(messageType);
+    }
+
+    public void setPayloadData(String payloadData) {
+	payload.setPayloadData(payloadData);
+    }
+
+    public void setPayloadHash(String payloadHash) {
+	payload.setPayloadHash(payloadHash);
+    }
+
+    public void setTimestamp(long timestamp) {
+	header.setTimestamp(timestamp);
+    }
+
     public String toString() {
 	return "SyncMessage [originId=" + header.getOriginId()
 		+ ", messageNumber=" + header.getMessageNumber()
@@ -72,4 +96,5 @@ public class SyncMessageImpl implements SyncMessage, Serializable, Cloneable {
 		+ payload.getPayloadHash() + ", timestamp="
 		+ header.getTimestamp() + "]";
     }
+
 }
