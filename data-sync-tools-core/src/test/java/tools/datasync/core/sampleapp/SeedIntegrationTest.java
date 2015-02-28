@@ -47,9 +47,6 @@ public class SeedIntegrationTest {
 	    .getLogger(SeedIntegrationTest.class);
 
     private SyncOrchestrationManager syncOrchMgr;
-    // private SyncPumpFactory pumpFactoryA;
-    // private SyncPumpFactory pumpFactoryB;
-    // private AtomicBoolean stopper = new AtomicBoolean(false);
 
     private GenericDao sourceDao = null;
     private GenericDao targetDao = null;
@@ -126,8 +123,6 @@ public class SeedIntegrationTest {
 
     private static Connection createConnection(String dbName, boolean create) {
 
-	// cleanupDir();
-
 	setupDerbyProps();
 
 	try {
@@ -139,7 +134,6 @@ public class SeedIntegrationTest {
 
 	Connection conn = null;
 	try {
-	    // jdbc:derby:derby/TrustyTask;create=true
 	    conn = DriverManager.getConnection("jdbc:derby:" + dbName
 		    + ";create=true");
 	} catch (SQLException e) {
@@ -149,70 +143,5 @@ public class SeedIntegrationTest {
 	return (conn);
 
     }
-
-    // public void init(){
-    // LOG.info("init...");
-    // SyncPeer syncPeerA = new SyncPeer("A");
-    // SyncPeer syncPeerB = new SyncPeer("B");
-    //
-    // String dbA = "db-A";
-    // String dbB = "db-B";
-    // EmbeddedDataSource dataSourceA = new EmbeddedDataSource();
-    // dataSourceA.setDatabaseName(dbA);
-    // EmbeddedDataSource dataSourceB = new EmbeddedDataSource();
-    // dataSourceB.setDatabaseName(dbB);
-    //
-    // CountDownLatch beginSenderLatch = new CountDownLatch(2);
-    //
-    // BlockingQueue<String> a2bQueue = new LinkedBlockingQueue<String>();
-    // BlockingQueue<String> b2aQueue = new LinkedBlockingQueue<String>();
-    //
-    // JvmSyncPeerParms peerMe = new JvmSyncPeerParms(syncPeerA, a2bQueue);
-    // JvmSyncPeerParms peerOther = new JvmSyncPeerParms(syncPeerB,
-    // b2aQueue);
-    // JvmSyncPair pairA = new JvmSyncPair(peerMe, peerOther);
-    // JvmSyncPair pairB = new JvmSyncPair(peerOther, peerMe);
-    //
-    // sourceDao = new GenericJDBCDao(dataSourceA, dbA,
-    // new SampleAppTableNameGetter());
-    // // sourceDao.setDataSource(dataSourceA, dbA);
-    //
-    // targetDao = new GenericJDBCDao(dataSourceB, dbB,
-    // new SampleAppTableNameGetter());
-    // // sourceDao.setDataSource(dataSourceB, dbB);
-    //
-    // SeedConsumerFactory seedConsumerFactory = new DbSeedConsumerFactory(
-    // new SampleAppTableNameGetter());
-    //
-    // GenericDaoPair daoPairA = new GenericDaoPair(sourceDao, targetDao,
-    // seedConsumerFactory);
-    //
-    // GenericDaoPair daoPairB = new GenericDaoPair(targetDao, sourceDao,
-    // seedConsumerFactory);
-    //
-    // JvmSyncConcurArgs concurArgs = new JvmSyncConcurArgs(stopper,
-    // beginSenderLatch);
-    // // String[] tables = { Ids.Table.CONTACT, Ids.Table.WORK_HISTORY,
-    // // Ids.Table.CONTACT_LINK };
-    // // String[] tables = { Ids.Table.CONTACT };
-    // List<String> tables = new ArrayList<String>();
-    // tables.add(Ids.Table.CONTACT);
-    // tables.add(Ids.Table.WORK_HISTORY);
-    // tables.add(Ids.Table.CONTACT_LINK);
-    //
-    // SyncStateInitializer syncStateInitializerA = new
-    // JDBCSyncStateInitializer(
-    // tables, new SampleSyncIdGetter(), sourceDao);
-    // SyncStateInitializer syncStateInitializerB = new
-    // JDBCSyncStateInitializer(
-    // tables, new SampleSyncIdGetter(), targetDao);
-    //
-    // pumpFactoryA = new JvmSyncPumpFactory(pairA, daoPairA,
-    // syncStateInitializerA, concurArgs);
-    // pumpFactoryB = new JvmSyncPumpFactory(pairB, daoPairB,
-    // syncStateInitializerB, concurArgs);
-    // syncOrchMgr = new SyncOrchestrationManager(pumpFactoryA,
-    // pumpFactoryB);
-    // }
 
 }
