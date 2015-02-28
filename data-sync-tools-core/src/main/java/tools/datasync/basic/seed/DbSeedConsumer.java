@@ -90,16 +90,16 @@ public class DbSeedConsumer implements SeedConsumer {
 
 	if (stateRecord != null) {
 
-	    handleNotNull(stateRecord, seed, json, entityName);
+	    handleRecordExists(stateRecord, seed, json, entityName);
 
 	} else {
-	    handleNull(stateRecord, seed, json, entityName);
+	    handleRecordDoesNotExist(stateRecord, seed, json, entityName);
 	}
 
     }
 
-    private void handleNull(JSON stateRecord, SeedRecord seed, JSON json,
-	    String entityName) throws Exception {
+    private void handleRecordDoesNotExist(JSON stateRecord, SeedRecord seed,
+	    JSON json, String entityName) throws Exception {
 	// If the record DOES NOT exist in the SyncState table:
 	// 1. insert the User table with the new value
 	LOG.info("Record DOES NOT exist in the SyncState table, inserting the User table with the new value");
@@ -117,8 +117,8 @@ public class DbSeedConsumer implements SeedConsumer {
 	genericDao.save(Ids.Table.SYNC_STATE, syncState);
     }
 
-    private void handleNotNull(JSON stateRecord, SeedRecord seed, JSON json,
-	    String entityName) throws Exception {
+    private void handleRecordExists(JSON stateRecord, SeedRecord seed,
+	    JSON json, String entityName) throws Exception {
 	// If the record exists in the SyncState table, check if the
 	// hashes match.
 	LOG.info("Record exists in the SyncState table" + stateRecord);
@@ -128,11 +128,11 @@ public class DbSeedConsumer implements SeedConsumer {
 	    LOG.debug("Hashes match, break and go to next message");
 	    return;
 	} else {
-	    handleNotNullElse(stateRecord, seed, json, entityName);
+	    handleRecordDoesNotMatch(stateRecord, seed, json, entityName);
 	}
     }
 
-    private void handleNotNullElse(JSON stateRecord, SeedRecord seed,
+    private void handleRecordDoesNotMatch(JSON stateRecord, SeedRecord seed,
 	    JSON json, String entityName) throws Exception {
 	// If the record exists in the SyncState table and the hash
 	// does not match:
@@ -147,7 +147,7 @@ public class DbSeedConsumer implements SeedConsumer {
 	JSON resolvedJSON = conflictResolver.resolve(myJSON, json);
 
 	if (resolvedJSON == null) {
-	    LOG.debug("Record is up to date.");
+	    LOG.debug("Conflict resolver did not have a record to write");
 	    return;
 	} else {
 	    writeChangedRecord(resolvedJSON, seed, json, entityName);

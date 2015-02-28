@@ -38,16 +38,28 @@ public class DbTableComparator {
 	    SQLException {
 
 	logger.info(">>> Comparing tables: " + entityName);
-	// Iterator<JSON> sourceIterator = sourceDao.selectAll(entityName,
-	// true);
 	Map<String, JSON> sourceMap = mapResults(sourceDao.selectAll(
 		entityName, true));
-	// Iterator<JSON> targetIterator = targetDao.selectAll(entityName,
-	// true);
 	Map<String, JSON> targetMap = mapResults(targetDao.selectAll(
 		entityName, true));
 
 	Iterator<String> sourceKeys = sourceMap.keySet().iterator();
+
+	compare(sourceKeys, sourceMap, targetMap, entityName);
+
+	if (targetMap.size() > 0) {
+	    String msg = "Target for entity "
+		    + entityName
+		    + " has extra records that are not found in source. records="
+		    + targetMap;
+	    logger.error("**>> " + msg);
+	    throw new InputMismatchException(msg);
+	}
+    }
+
+    private void compare(Iterator<String> sourceKeys,
+	    Map<String, JSON> sourceMap, Map<String, JSON> targetMap,
+	    String entityName) {
 	while (sourceKeys.hasNext()) {
 	    String sourceKey = sourceKeys.next();
 	    JSON source = sourceMap.get(sourceKey);
@@ -74,28 +86,5 @@ public class DbTableComparator {
 		throw new InputMismatchException(msg);
 	    }
 	}
-	if (targetMap.size() > 0) {
-	    String msg = "Target for entity "
-		    + entityName
-		    + " has extra records that are not found in source. records="
-		    + targetMap;
-	    logger.error("**>> " + msg);
-	    throw new InputMismatchException(msg);
-	}
-
-	// while (sourceIterator.hasNext() && targetIterator.hasNext()) {
-	//
-	// JSON source = sourceIterator.next();
-	// JSON target = targetIterator.next();
-	//
-	// if (source.equals(target)) {
-	// logger.info("Records match: " + source);
-	// } else {
-	// logger.info("**>> Records do not match: " + source
-	// + " ...and: " + target);
-	// throw new InputMismatchException(
-	// "Records do not match for entity: " + entityName);
-	// }
-	// }
     }
 }

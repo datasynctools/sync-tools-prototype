@@ -37,8 +37,7 @@ import tools.datasync.basic.util.JSONMapperBean;
 public class DbSeedProducer implements SeedProducer {
 
     private GenericDao genericDao;
-    // private HashGenerator hashGenerator;
-    private JSONMapperBean jsonMapper;
+    private JSONMapperBean jsonMapper = JSONMapperBean.getInstance();
     private boolean isRunning = false;
 
     private static Logger LOG = Logger.getLogger(DbSeedProducer.class);
@@ -48,11 +47,8 @@ public class DbSeedProducer implements SeedProducer {
 
     private Iterator<JSON> currentJsonIterator = null;
     private Iterator<String> tableNameIterator = new Iterator<String>() {
-	// String[] tables = { Ids.Table.CONTACT, Ids.Table.WORK_HISTORY,
-	// Ids.Table.CONTACT_LINK };
 	int index = 0;
 
-	// @Override
 	public String next() {
 	    if (index < tables.size()) {
 		return tables.get(index++);
@@ -60,7 +56,6 @@ public class DbSeedProducer implements SeedProducer {
 	    return null;
 	}
 
-	// @Override
 	public boolean hasNext() {
 	    return (index < tables.size());
 	}
@@ -74,17 +69,9 @@ public class DbSeedProducer implements SeedProducer {
 
 	this.genericDao = genericDao;
 	this.tables = tables;
-	this.jsonMapper = JSONMapperBean.getInstance();
-	// this.hashGenerator = Md5HashGenerator.getInstance();
 	this.isRunning = true;
     }
 
-    // @Override
-    // public void setGenericDao(GenericDao genericDao) {
-    // this.genericDao = genericDao;
-    // }
-
-    // @Override
     public GenericDao getGenericDao() {
 	return this.genericDao;
     }
@@ -96,6 +83,11 @@ public class DbSeedProducer implements SeedProducer {
 		return true;
 	    }
 	}
+
+	return (processTable());
+    }
+
+    private boolean processTable() throws SeedException {
 	while (this.tableNameIterator.hasNext()) {
 	    String tableName = this.tableNameIterator.next();
 	    try {
@@ -114,13 +106,10 @@ public class DbSeedProducer implements SeedProducer {
 	}
 	LOG.info("No more tables to process");
 	return false;
+
     }
 
-    // @Override
     public SeedRecord getNextSeed() throws SeedOverException, SeedException {
-
-	// if (this.currentJsonIterator == null
-	// || !this.currentJsonIterator.hasNext()) {
 
 	if (hasNextSeed()) {
 	    JSON json = this.currentJsonIterator.next();
@@ -138,11 +127,9 @@ public class DbSeedProducer implements SeedProducer {
 	    // throw (new RuntimeException(e));
 	    // throw new SeedOverException("No more tables to seed from.");
 	}
-	// }
 
     }
 
-    // @Override
     public boolean isRunning() {
 	return this.isRunning;
     }
@@ -151,6 +138,7 @@ public class DbSeedProducer implements SeedProducer {
 
 	SeedRecord seed = null;
 	try {
+	    // TODO Remove hard coding of Entity IDs
 	    String entityId = Ids.EntityId.get(record.getEntity());
 	    String recordId = String.valueOf(record.getCalculatedPrimaryKey());
 	    String recordJson = jsonMapper.writeValueAsString(record);
