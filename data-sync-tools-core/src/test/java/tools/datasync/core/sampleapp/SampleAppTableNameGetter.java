@@ -1,8 +1,23 @@
 package tools.datasync.core.sampleapp;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import tools.datasync.basic.model.IdGetter;
 
 public class SampleAppTableNameGetter implements IdGetter {
+
+    Map<String, String> entityNames = new HashMap<String, String>();
+
+    public SampleAppTableNameGetter() {
+	entityNames.put(Table.CONTACT, KeyColumn.PK_CONTACT);
+	entityNames.put(Table.CONTACT_LINK, KeyColumn.PK_CONTACT_LINK);
+	entityNames.put(Table.WORK_HISTORY, KeyColumn.PK_WORK_HISTORY);
+
+	entityNames.put(Table.SYNC_ENTITY, KeyColumn.PK_SYNC_ENTITY);
+	entityNames.put(Table.SYNC_PEER, KeyColumn.PK_SYNC_PEER);
+	entityNames.put(Table.SYNC_STATE, KeyColumn.PK_SYNC_STATE);
+    }
 
     public static interface Table {
 
@@ -28,26 +43,32 @@ public class SampleAppTableNameGetter implements IdGetter {
 
     public String get(String entityName) {
 
-	if (Table.CONTACT.equalsIgnoreCase(entityName)) {
-	    return KeyColumn.PK_CONTACT;
-
-	} else if (Table.CONTACT_LINK.equalsIgnoreCase(entityName)) {
-	    return KeyColumn.PK_CONTACT_LINK;
-
-	} else if (Table.WORK_HISTORY.equalsIgnoreCase(entityName)) {
-	    return KeyColumn.PK_WORK_HISTORY;
-
-	} else if (Table.SYNC_ENTITY.equalsIgnoreCase(entityName)) {
-	    return KeyColumn.PK_SYNC_ENTITY;
-
-	} else if (Table.SYNC_PEER.equalsIgnoreCase(entityName)) {
-	    return KeyColumn.PK_SYNC_PEER;
-
-	} else if (Table.SYNC_STATE.equalsIgnoreCase(entityName)) {
-	    return KeyColumn.PK_SYNC_STATE;
-
+	// String value = entityNames.get(entityName);
+	//
+	// if (Table.CONTACT.equalsIgnoreCase(entityName)) {
+	// return KeyColumn.PK_CONTACT;
+	//
+	// } else if (Table.CONTACT_LINK.equalsIgnoreCase(entityName)) {
+	// return KeyColumn.PK_CONTACT_LINK;
+	//
+	// } else if (Table.WORK_HISTORY.equalsIgnoreCase(entityName)) {
+	// return KeyColumn.PK_WORK_HISTORY;
+	//
+	// } else if (Table.SYNC_ENTITY.equalsIgnoreCase(entityName)) {
+	// return KeyColumn.PK_SYNC_ENTITY;
+	//
+	// } else if (Table.SYNC_PEER.equalsIgnoreCase(entityName)) {
+	// return KeyColumn.PK_SYNC_PEER;
+	//
+	// } else if (Table.SYNC_STATE.equalsIgnoreCase(entityName)) {
+	// return KeyColumn.PK_SYNC_STATE;
+	// }
+	if (!entityNames.containsKey(entityName)) {
+	    throw (new RuntimeException("No entity name of [" + entityName
+		    + "]"));
 	}
-	throw (new RuntimeException("No entity name of [" + entityName + "]"));
+	String value = entityNames.get(entityName);
+	return (value);
     }
 
 }
