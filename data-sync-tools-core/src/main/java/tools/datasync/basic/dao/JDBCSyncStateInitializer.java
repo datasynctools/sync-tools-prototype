@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 
+import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.IdGetter;
-import tools.datasync.basic.model.Ids;
 import tools.datasync.basic.model.JSON;
 import tools.datasync.basic.sync.pump.SyncStateInitializer;
 import tools.datasync.basic.util.JSONMapperBean;
@@ -23,16 +23,18 @@ public class JDBCSyncStateInitializer implements SyncStateInitializer {
 
     Logger logger = Logger.getLogger(JDBCSyncStateInitializer.class.getName());
     private List<String> tables;
+    private EntityGetter entityGetter;
     private IdGetter idGetter;
 
     // = { Ids.Table.CONTACT, Ids.Table.WORK_HISTORY,
     // Ids.Table.CONTACT_LINK };
 
-    public JDBCSyncStateInitializer(List<String> tables, IdGetter idGetter,
-	    GenericDao genericDao) {
+    public JDBCSyncStateInitializer(List<String> tables,
+	    EntityGetter entityGetter, IdGetter idGetter, GenericDao genericDao) {
 	this.isRunning = new AtomicBoolean(false);
 	this.jsonMapper = JSONMapperBean.getInstance();
 	this.tables = tables;
+	this.entityGetter = entityGetter;
 	this.idGetter = idGetter;
 	this.genericDao = genericDao;
 	// this.hashGenerator = Md5HashGenerator.getInstance();
@@ -61,7 +63,7 @@ public class JDBCSyncStateInitializer implements SyncStateInitializer {
 		syncState.set("RECORDDATA", recordJson);
 		syncState.set("RECORDHASH", record.generateHash());
 
-		genericDao.save(Ids.Table.SYNC_STATE, syncState);
+		genericDao.save(entityGetter.getSyncStateName(), syncState);
 	    }
 	}
     }
@@ -74,6 +76,10 @@ public class JDBCSyncStateInitializer implements SyncStateInitializer {
     // @Override
     public void setGenericDao(GenericDao genericDao) {
 	this.genericDao = genericDao;
+    }
+
+    public EntityGetter getEntityGetter() {
+	return entityGetter;
     }
 
 }

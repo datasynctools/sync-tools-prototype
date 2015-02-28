@@ -41,22 +41,36 @@
 		<constructor-arg ref="peerOther"/>
 		<constructor-arg ref="peerMe"/>		
 	</bean>
+
+	<util:map id="entityNameIdMap">
+		<entry key="org.Contact" value="A157CC02-CC87-4296-947B-613CAABBDB40" />
+		<entry key="org.ContactLink" value="38C11B8D-E4F8-410A-B009-0EF8654A4681" />
+		<entry key="org.WorkHistory" value="48E2F8D3-2A90-4A26-A198-ED649A4EFBA1" />
+	</util:map>
+
+	<bean id="entityGetter" class="tools.datasync.basic.model.EntityGetterImpl">
+		<constructor-arg value="seed.SyncState"/>	
+		<constructor-arg ref="entityNameIdMap"/>		
+	</bean>
 	
 	<bean id="sampleAppTableNameGetter" class="tools.datasync.core.sampleapp.SampleAppTableNameGetter" />
 	
 	<bean id="sourceDao" class="tools.datasync.basic.dao.GenericJDBCDao">
 		<constructor-arg ref="dataSourceA"/>
 		<constructor-arg value="db-A"/>
+		<constructor-arg ref="entityGetter" />
 		<constructor-arg ref="sampleAppTableNameGetter"/>
 	</bean>
 	
 	<bean id="targetDao" class="tools.datasync.basic.dao.GenericJDBCDao">
 		<constructor-arg ref="dataSourceB"/>
 		<constructor-arg value="db-B"/>
+		<constructor-arg ref="entityGetter" />
 		<constructor-arg ref="sampleAppTableNameGetter"/>
 	</bean>
 	
 	<bean id="seedConsumerFactory" class="tools.datasync.basic.seed.DbSeedConsumerFactory">
+		<constructor-arg ref="entityGetter" />
 		<constructor-arg ref="sampleAppTableNameGetter"/>	
 	</bean>
 	
@@ -95,12 +109,14 @@
 	
 	<bean id="syncStateInitializerA" class="tools.datasync.basic.dao.JDBCSyncStateInitializer">
 		<constructor-arg ref="tables"/>
+		<constructor-arg ref="entityGetter" />
 		<constructor-arg ref="sampleSyncIdGetter"/>		
 		<constructor-arg ref="sourceDao"/>
 	</bean>
 
 	<bean id="syncStateInitializerB" class="tools.datasync.basic.dao.JDBCSyncStateInitializer">
 		<constructor-arg ref="tables"/>
+		<constructor-arg ref="entityGetter" />
 		<constructor-arg ref="sampleSyncIdGetter"/>		
 		<constructor-arg ref="targetDao"/>
 	</bean>

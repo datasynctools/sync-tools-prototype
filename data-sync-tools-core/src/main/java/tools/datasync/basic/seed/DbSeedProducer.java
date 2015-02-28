@@ -29,18 +29,20 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import tools.datasync.basic.dao.GenericDao;
-import tools.datasync.basic.model.Ids;
+import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.JSON;
 import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.util.JSONMapperBean;
 
 public class DbSeedProducer implements SeedProducer {
 
+    private final static Logger LOG = Logger.getLogger(DbSeedProducer.class);
+
+    private EntityGetter entityGetter;
     private GenericDao genericDao;
     private JSONMapperBean jsonMapper = JSONMapperBean.getInstance();
     private boolean isRunning = false;
 
-    private static Logger LOG = Logger.getLogger(DbSeedProducer.class);
     boolean stop = false;
 
     private final List<String> tables;
@@ -65,10 +67,12 @@ public class DbSeedProducer implements SeedProducer {
 	};
     };
 
-    public DbSeedProducer(GenericDao genericDao, List<String> tables) {
+    public DbSeedProducer(GenericDao genericDao, List<String> tables,
+	    EntityGetter entityGetter) {
 
 	this.genericDao = genericDao;
 	this.tables = tables;
+	this.entityGetter = entityGetter;
 	this.isRunning = true;
     }
 
@@ -139,7 +143,7 @@ public class DbSeedProducer implements SeedProducer {
 	SeedRecord seed = null;
 	try {
 	    // TODO Remove hard coding of Entity IDs
-	    String entityId = Ids.EntityId.get(record.getEntity());
+	    String entityId = entityGetter.getId(record.getEntity());
 	    String recordId = String.valueOf(record.getCalculatedPrimaryKey());
 	    String recordJson = jsonMapper.writeValueAsString(record);
 	    String recordHash = record.generateHash();

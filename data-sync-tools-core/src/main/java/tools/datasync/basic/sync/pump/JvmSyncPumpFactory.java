@@ -57,7 +57,8 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
 	    JvmSyncConcurArgs concurArgs) {
 
 	DbSeedProducer seedProducer = new DbSeedProducer(sourceDao,
-		syncStateInitializer.getTables());
+		syncStateInitializer.getTables(),
+		syncStateInitializer.getEntityGetter());
 
 	JvmSyncPumpSender sender = new JvmSyncPumpSender(peer.getQueue(),
 		syncStateInitializer, concurArgs.getStopper());

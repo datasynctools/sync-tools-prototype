@@ -27,8 +27,8 @@ import org.apache.log4j.Logger;
 
 import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.logic.ConflictResolver;
+import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.IdGetter;
-import tools.datasync.basic.model.Ids;
 import tools.datasync.basic.model.JSON;
 import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.util.JSONMapperBean;
@@ -42,12 +42,15 @@ public class DbSeedConsumer implements SeedConsumer {
     private Md5HashGenerator hashGenerator = Md5HashGenerator.getInstance();
     private GenericDao genericDao;
     private ConflictResolver conflictResolver;
-    private IdGetter idGetter;
+    private EntityGetter entityGetter;
+    private IdGetter recordIdGetter;
 
-    public DbSeedConsumer(ConflictResolver conflictResolver, IdGetter idGetter,
+    public DbSeedConsumer(ConflictResolver conflictResolver,
+	    EntityGetter entityGetter, IdGetter recordIdGetter,
 	    GenericDao genericDao) {
 	this.conflictResolver = conflictResolver;
-	this.idGetter = idGetter;
+	this.entityGetter = entityGetter;
+	this.recordIdGetter = recordIdGetter;
 	this.genericDao = genericDao;
     }
 
@@ -66,7 +69,7 @@ public class DbSeedConsumer implements SeedConsumer {
 
 	LOG.debug("Consuming SEED Record: " + seed);
 
-	String entityName = Ids.EntityId.getTableName(seed.getEntityId());
+	String entityName = entityGetter.getName(seed.getEntityId());
 	String dbRecord = seed.getRecordJson();
 	JSON json = jsonMapper.readValue(dbRecord, JSON.class);
 
@@ -106,15 +109,16 @@ public class DbSeedConsumer implements SeedConsumer {
 	genericDao.save(entityName, json);
 
 	// 2. insert the SyncState table with the new value
-	JSON syncState = new JSON(Ids.Table.SYNC_STATE);
-	syncState.set("ENTITYID", Ids.EntityId.get(entityName));
+	JSON syncState = new JSON(entityGetter.getSyncStateName());
+	// TODO Remove hard coding of Entity IDs
+	syncState.set("ENTITYID", entityGetter.getId(entityName));
 	syncState.set("RECORDID", json.getCalculatedPrimaryKey());
 	String recordJson = jsonMapper.writeValueAsString(json);
 	syncState.set("RECORDDATA", recordJson);
 	syncState.set("RECORDHASH", json.generateHash());
 
 	LOG.info("inserting the SyncState table with the new value");
-	genericDao.save(Ids.Table.SYNC_STATE, syncState);
+	genericDao.save(entityGetter.getSyncStateName(), syncState);
     }
 
     private void handleRecordExists(JSON stateRecord, SeedRecord seed,
@@ -159,20 +163,22 @@ public class DbSeedConsumer implements SeedConsumer {
 	// 2. update the User table with the new value
 	LOG.info("Update the User table with the new value");
 	genericDao.saveOrUpdate(entityName, resolvedJSON,
-		idGetter.get(entityName));
+		recordIdGetter.get(entityName));
 
 	// 3. update the SyncState table with the newly
 	// calculated hash
-	JSON syncState = new JSON(Ids.Table.SYNC_STATE);
-	syncState.set("ENTITYID", Ids.EntityId.get(entityName));
-	syncState.set("RECORDID", resolvedJSON.get(idGetter.get(entityName)));
+	JSON syncState = new JSON(entityGetter.getSyncStateName());
+	// TODO Remove hard coding of Entity IDs
+	syncState.set("ENTITYID", entityGetter.getId(entityName));
+	syncState.set("RECORDID",
+		resolvedJSON.get(recordIdGetter.get(entityName)));
 	String recordJson = jsonMapper.writeValueAsString(resolvedJSON);
 	syncState.set("RECORDDATA", recordJson);
 	syncState.set("RECORDHASH", resolvedJSON.generateHash());
 
 	LOG.info("Update the SyncState table with the newly calculated hash.");
-	genericDao.update(Ids.Table.SYNC_STATE, syncState,
-		idGetter.get(Ids.Table.SYNC_STATE));
+	genericDao.update(entityGetter.getSyncStateName(), syncState,
+		recordIdGetter.get(entityGetter.getSyncStateName()));
     }
 
 }

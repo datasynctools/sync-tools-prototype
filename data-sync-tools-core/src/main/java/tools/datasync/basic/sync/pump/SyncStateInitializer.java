@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+import tools.datasync.basic.model.EntityGetter;
+
 public interface SyncStateInitializer {
 
     void doSeed() throws SQLException, IOException;
@@ -11,6 +13,8 @@ public interface SyncStateInitializer {
     void setIsRunning(boolean isRunning);
 
     List<String> getTables();
+
+    EntityGetter getEntityGetter();
 
     // void setGenericDao(GenericDao genericDao);
 

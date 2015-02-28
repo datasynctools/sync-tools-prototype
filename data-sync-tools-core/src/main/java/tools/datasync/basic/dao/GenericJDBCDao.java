@@ -32,8 +32,8 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.IdGetter;
-import tools.datasync.basic.model.Ids;
 import tools.datasync.basic.model.JSON;
 import tools.datasync.basic.util.SQLGenUtil;
 
@@ -44,6 +44,7 @@ public class GenericJDBCDao implements GenericDao {
 
     private DataSource dataSource;
     private String dbName;
+    private EntityGetter entityGetter;
     private IdGetter idGetter;
 
     private JdbcSelectionHelper<JSON> stateSelector;
@@ -55,9 +56,10 @@ public class GenericJDBCDao implements GenericDao {
     private JdbcMutationHelper jdbcMutator;
 
     public GenericJDBCDao(DataSource dataSource, String dbName,
-	    IdGetter idGetter) {
+	    EntityGetter entityGetter, IdGetter idGetter) {
 	this.dataSource = dataSource;
 	this.dbName = dbName;
+	this.entityGetter = entityGetter;
 	this.idGetter = idGetter;
 	stateSelector = new JdbcSelectionHelper<JSON>(dataSource);
 	allSelector = new JdbcSelectionHelper<Iterator<JSON>>(dataSource);
@@ -100,11 +102,11 @@ public class GenericJDBCDao implements GenericDao {
 	    throws SQLException {
 
 	// TODO remove hard coding of sync state table
-	String query = "select * from " + Ids.Table.SYNC_STATE
+	String query = "select * from " + entityGetter.getSyncStateName()
 		+ " where EntityId='" + entityId + "' and RecordId='"
 		+ recordId + "'";
 	return (stateSelector.query(query, jsonResultMapper, recordId,
-		Ids.Table.SYNC_STATE));
+		entityGetter.getSyncStateName()));
 
     }
 
