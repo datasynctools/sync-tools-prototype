@@ -34,6 +34,7 @@ public class BothSendersPresentAcknowledger {
 	    LOG.info("No acknowledge received on waiting for beginSeedLatch "
 		    + beginSenderLatch);
 	}
+	LOG.info("Both Senders acknowledged");
 	return true;
     }
 

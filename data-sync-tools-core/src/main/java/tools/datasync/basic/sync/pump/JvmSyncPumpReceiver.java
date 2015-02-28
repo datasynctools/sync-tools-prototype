@@ -10,9 +10,10 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.comm.SyncMessage;
 import tools.datasync.basic.comm.SyncMessageType;
@@ -44,7 +45,7 @@ import tools.datasync.basic.util.JSONMapperBean;
  */
 public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 
-    private static final Logger LOG = Logger
+    private static final Logger LOG = LoggerFactory
 	    .getLogger(JvmSyncPumpReceiver.class);
 
     private BlockingQueue<String> receiveQueue;
@@ -148,7 +149,6 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 	return false; // not finished
     }
 
-    // @Override
     public void run() {
 	try {
 
@@ -158,8 +158,7 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 	    mainLoop();
 
 	} catch (Throwable e) {
-	    LOG.fatal("Error while receiving messages: " + e);
-	    e.printStackTrace();
+	    LOG.error("Error while receiving messages: " + e);
 	    isRunning.set(false);
 	    stop();
 	}
@@ -189,7 +188,6 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 	isRunning.set(false);
     }
 
-    // @Override
     public void uncaughtException(Thread t, Throwable e) {
 	LOG.error("Error on thread " + t.getName() + " with " + e.getMessage());
 	stop();

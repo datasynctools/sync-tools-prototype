@@ -29,7 +29,8 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.model.IdGetter;
 import tools.datasync.basic.model.Ids;
@@ -38,9 +39,10 @@ import tools.datasync.basic.util.SQLGenUtil;
 
 public class GenericJDBCDao implements GenericDao {
 
+    private static final Logger LOG = LoggerFactory
+	    .getLogger(GenericJDBCDao.class);
+
     private DataSource dataSource;
-    private static Logger LOG = Logger
-	    .getLogger(GenericJDBCDao.class.getName());
     private String dbName;
     private IdGetter idGetter;
 
@@ -117,9 +119,10 @@ public class GenericJDBCDao implements GenericDao {
 	    connection = dataSource.getConnection();
 
 	    statement = connection.createStatement();
-	    LOG.info(dbName + ": " + insert);
+	    LOG.debug("db [{}] : {}", dbName, insert);
 	    statement.execute(insert);
-	    LOG.debug(dbName + ": " + "commiting insert...");
+	    // LOG.debug(dbName + ": " + "commiting insert...");
+	    // LOG.debug("db [{}] : {}", dbName, insert);
 	    connection.commit();
 	} finally {
 	    if (statement != null) {
