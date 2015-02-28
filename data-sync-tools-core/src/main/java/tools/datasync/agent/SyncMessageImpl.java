@@ -31,132 +31,45 @@ public class SyncMessageImpl implements SyncMessage, Serializable, Cloneable {
 
     private static final long serialVersionUID = -3180554612753110701L;
 
-    private String originId; // peer id
-    private long messageNumber; // required for ACK/ NACK
-    private String messageType;
-    private String payloadJson;
-    private String payloadHash;
-    private long timestamp;
+    private SyncMessageHeader header;
+    private SyncMessagePayload payload;
 
-    public SyncMessageImpl() {
-    }
-
-    /**
-     * @param originId
-     * @param messageNumber
-     * @param messageType
-     * @param payloadJson
-     * @param payloadHash
-     * @param timestamp
-     */
-    public SyncMessageImpl(String originId, long messageNumber,
-	    String messageType, String payloadJson, String payloadHash,
-	    long timestamp) {
+    public SyncMessageImpl(SyncMessageHeader header, SyncMessagePayload payload) {
 	super();
-	this.originId = originId;
-	this.messageNumber = messageNumber;
-	this.messageType = messageType;
-	this.payloadJson = payloadJson;
-	this.payloadHash = payloadHash;
-	this.timestamp = timestamp;
+	this.header = header;
+	this.payload = payload;
     }
 
-    /**
-     * @return the originId
-     */
     public String getOriginId() {
-	return originId;
+	return header.getOriginId();
     }
 
-    /**
-     * @param originId
-     *            the originId to set
-     */
-    public void setOriginId(String originId) {
-	this.originId = originId;
-    }
-
-    /**
-     * @return the messageNumber
-     */
     public long getMessageNumber() {
-	return messageNumber;
+	return header.getMessageNumber();
     }
 
-    /**
-     * @param messageNumber
-     *            the messageNumber to set
-     */
-    public void setMessageNumber(long messageNumber) {
-	this.messageNumber = messageNumber;
-    }
-
-    /**
-     * @return the messageType
-     */
     public String getMessageType() {
-	return messageType;
+	return header.getMessageType();
     }
 
-    /**
-     * @param messageType
-     *            the messageType to set
-     */
-    public void setMessageType(String messageType) {
-	this.messageType = messageType;
-    }
-
-    /**
-     * @return the recordJson
-     */
     public String getPayloadJson() {
-	return payloadJson;
+	return payload.getPayloadJson();
     }
 
-    /**
-     * @param recordJson
-     *            the recordJson to set
-     */
-    public void setPayloadJson(String payloadJson) {
-	this.payloadJson = payloadJson;
-    }
-
-    /**
-     * @return the paloadHash
-     */
     public String getPayloadHash() {
-	return payloadHash;
-    }
-
-    public void setPayloadHash(String payloadHash) {
-	this.payloadHash = payloadHash;
+	return payload.getPayloadHash();
     }
 
     public long getTimestamp() {
-	return timestamp;
+	return header.getTimestamp();
     }
 
-    public void setTimestamp(long timestamp) {
-	this.timestamp = timestamp;
-    }
-
-    // /**
-    // * @return the serialversionuid
-    // */
-    // public static long getSerialversionuid() {
-    // return serialVersionUID;
-    // }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    @Override
     public String toString() {
-	return "SyncMessage [originId=" + originId + ", messageNumber="
-		+ messageNumber + ", messageType=" + messageType
-		+ ", payloadJson=" + payloadJson + ", paloadHash="
-		+ payloadHash + ", timestamp=" + timestamp + "]";
+	return "SyncMessage [originId=" + header.getOriginId()
+		+ ", messageNumber=" + header.getMessageNumber()
+		+ ", messageType=" + header.getMessageType() + ", payloadJson="
+		+ payload.getPayloadJson() + ", paloadHash="
+		+ payload.getPayloadHash() + ", timestamp="
+		+ header.getTimestamp() + "]";
     }
 }
