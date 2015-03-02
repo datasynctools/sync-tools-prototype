@@ -6,9 +6,11 @@ import java.util.InputMismatchException;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.dao.GenericDao;
+import tools.datasync.basic.dao.GenericJDBCDao;
 import tools.datasync.basic.model.JSON;
 
 public class DbTableComparator {
@@ -16,13 +18,13 @@ public class DbTableComparator {
     private GenericDao sourceDao = null;
     private GenericDao targetDao = null;
 
-    private static final Logger logger = Logger
-	    .getLogger(DbTableComparator.class);
+    private static final Logger LOG = LoggerFactory
+	    .getLogger(GenericJDBCDao.class);
 
     public DbTableComparator(GenericDao sourceDao, GenericDao targetDao) {
 	this.sourceDao = sourceDao;
 	this.targetDao = targetDao;
-	logger.info("Creating comparator... " + sourceDao + targetDao);
+	LOG.info("Creating comparator... " + sourceDao + targetDao);
     }
 
     private Map<String, JSON> mapResults(Iterator<JSON> jsonIterator) {
@@ -37,7 +39,7 @@ public class DbTableComparator {
     public void compare(String entityName) throws InputMismatchException,
 	    SQLException {
 
-	logger.info(">>> Comparing tables: " + entityName);
+	LOG.info(">>> Comparing tables: " + entityName);
 	Map<String, JSON> sourceMap = mapResults(sourceDao.selectAll(
 		entityName, true));
 	Map<String, JSON> targetMap = mapResults(targetDao.selectAll(
@@ -52,7 +54,7 @@ public class DbTableComparator {
 		    + entityName
 		    + " has extra records that are not found in source. records="
 		    + targetMap;
-	    logger.error("**>> " + msg);
+	    LOG.error("**>> " + msg);
 	    throw new InputMismatchException(msg);
 	}
     }
@@ -66,7 +68,7 @@ public class DbTableComparator {
 	    if (targetMap.containsKey(sourceKey)) {
 		JSON target = targetMap.get(sourceKey);
 		if (source.equals(target)) {
-		    logger.info("Records match in entity " + entityName
+		    LOG.info("Records match in entity " + entityName
 			    + " and record " + sourceKey + ", json=" + source);
 		    // Remove the value from the target map (will use later to
 		    // make sure there aren't missing values in source)
@@ -75,14 +77,14 @@ public class DbTableComparator {
 		    String msg = "Records do not match in entity " + entityName
 			    + " record " + sourceKey + ", \nsource=" + source
 			    + "\ntarget=" + target;
-		    logger.error("**>> " + msg);
+		    LOG.error("**>> " + msg);
 		    throw new InputMismatchException(msg);
 		}
 	    } else {
 		String msg = "Source Record in entity " + entityName
 			+ " found in source but not target for record "
 			+ sourceKey + ", source json=" + source;
-		logger.error("**>> " + msg);
+		LOG.error("**>> " + msg);
 		throw new InputMismatchException(msg);
 	    }
 	}

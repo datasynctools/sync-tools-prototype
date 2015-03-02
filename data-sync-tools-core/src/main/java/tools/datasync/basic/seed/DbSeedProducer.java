@@ -26,7 +26,8 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.model.EntityGetter;
@@ -36,7 +37,8 @@ import tools.datasync.basic.util.JSONMapperBean;
 
 public class DbSeedProducer implements SeedProducer {
 
-    private final static Logger LOG = Logger.getLogger(DbSeedProducer.class);
+    private static final Logger LOG = LoggerFactory
+	    .getLogger(DbSeedProducer.class);
 
     private EntityGetter entityGetter;
     private GenericDao genericDao;

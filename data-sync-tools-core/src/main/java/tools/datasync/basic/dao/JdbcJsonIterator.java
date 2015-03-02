@@ -7,13 +7,15 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.model.JSON;
 
 public class JdbcJsonIterator implements Iterator<JSON> {
 
-    private static Logger LOG = Logger.getLogger(JdbcJsonIterator.class);
+    private static final Logger LOG = LoggerFactory
+	    .getLogger(JdbcJsonIterator.class);
 
     private final ResultSet result;
     private String entityName;
@@ -96,9 +98,7 @@ public class JdbcJsonIterator implements Iterator<JSON> {
 		    closable.close();
 		}
 	    } catch (IOException e) {
-		// logger.warn(dbName
-		// + ": error while closing result set.", e);
-		LOG.error(e);
+		LOG.error("Error closing on last message", e);
 		throw (new RuntimeException(e));
 	    }
 	}

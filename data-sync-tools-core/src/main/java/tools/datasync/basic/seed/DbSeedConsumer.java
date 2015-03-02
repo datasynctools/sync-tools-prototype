@@ -23,7 +23,8 @@ package tools.datasync.basic.seed;
 
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.logic.ConflictResolver;
@@ -36,7 +37,8 @@ import tools.datasync.basic.util.Md5HashGenerator;
 
 public class DbSeedConsumer implements SeedConsumer {
 
-    private static final Logger LOG = Logger.getLogger(DbSeedConsumer.class);
+    private static final Logger LOG = LoggerFactory
+	    .getLogger(DbSeedConsumer.class);
 
     private JSONMapperBean jsonMapper = JSONMapperBean.getInstance();
     private Md5HashGenerator hashGenerator = Md5HashGenerator.getInstance();
