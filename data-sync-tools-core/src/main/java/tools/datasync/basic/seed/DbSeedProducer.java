@@ -26,13 +26,15 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.model.EntityGetter;
-import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.basic.model.SeedRecord;
+import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.basic.util.JSONMapperBean;
 
 public class DbSeedProducer implements SeedProducer {
@@ -140,26 +142,39 @@ public class DbSeedProducer implements SeedProducer {
 	return this.isRunning;
     }
 
-    private SeedRecord createSeed(SyncEntityMessage record) throws SeedException {
+    private SeedRecord createSeed(SyncEntityMessage record)
+	    throws SeedException {
 
 	SeedRecord seed = null;
 	try {
-	    // TODO Remove hard coding of Entity IDs
-	    String entityId = entityGetter.getId(record.getEntity());
-	    String recordId = String.valueOf(record.getCalculatedPrimaryKey());
-	    String recordJson = jsonMapper.writeValueAsString(record);
-	    String recordHash = record.generateHash();
-	    // TODO: get peer id from database
-	    String origin = "";// me.getPeerId();
-	    seed = new SeedRecord(entityId, recordId, recordHash, recordJson,
-		    origin);
-	    LOG.debug("generated seed record: " + seed);
+
+	    seed = createSeedRecord(record);
 
 	} catch (IOException e) {
 	    LOG.warn("Error while JSON Serialization", e);
 	    throw new SeedException("Error while JSON Serialization", e);
 	}
 
+	return seed;
+    }
+
+    private SeedRecord createSeedRecord(SyncEntityMessage record)
+	    throws JsonGenerationException, JsonMappingException, IOException {
+	String entityId = entityGetter.getId(record.getEntity());
+	String recordId = String.valueOf(record.getCalculatedPrimaryKey());
+	String recordJson = jsonMapper.writeValueAsString(record);
+	String recordHash = record.generateHash();
+	// TODO: get peer id from database
+	String origin = "";// me.getPeerId();
+	// SeedRecord seed = new SeedRecord(entityId, recordId, recordHash,
+	// recordJson, origin);
+	SeedRecord seed = new SeedRecord();
+	seed.setEntityId(entityId);
+	seed.setRecordId(recordId);
+	seed.setRecordHash(recordHash);
+	seed.setRecordJson(recordJson);
+	seed.setOrigin(origin);
+	LOG.debug("generated seed record: " + seed);
 	return seed;
     }
 }

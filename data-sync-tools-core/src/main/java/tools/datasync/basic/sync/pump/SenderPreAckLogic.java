@@ -58,14 +58,26 @@ public class SenderPreAckLogic {
 	syncStateInitializer.setIsRunning(false);
 
 	// Send message to the other Peer's receiver "Begin seed"
-	SyncMessage syncMessage = new SyncMessage(null, messageNumber++,
-		SyncMessageType.BEGIN_SEED.toString(), null, null,
-		System.currentTimeMillis());
+	SyncMessage syncMessage = createSyncMessage(messageNumber++);
+	// SyncMessage syncMessage = new SyncMessage(null, messageNumber++,
+	// SyncMessageType.BEGIN_SEED.toString(), null, null,
+	// System.currentTimeMillis());
 	String message = jsonMapper.writeValueAsString(syncMessage);
 	this.sendQueue.put(message);
 	LOG.info("Completed seeding, send message to the peer that we're ready to receive");
 
 	return messageNumber;
+    }
+
+    private SyncMessage createSyncMessage(long messageNumber) {
+	SyncMessage syncMessage = new SyncMessage();
+	// syncMessage.setOriginId(null); //on purpose null
+	syncMessage.setMessageNumber(messageNumber);
+	syncMessage.setMessageType(SyncMessageType.BEGIN_SEED.toString());
+	syncMessage.setTimestamp(System.currentTimeMillis());
+	// syncMessage.setPayloadHash(null); //on purpose null
+	// syncMessage.setPayloadJson(null); //on purpose null
+	return (syncMessage);
     }
 
     public void setSyncStateInitializer(

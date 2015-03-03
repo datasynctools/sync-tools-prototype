@@ -43,14 +43,27 @@ public class SenderPostAckLogic {
 		+ Thread.currentThread().isInterrupted() + ", isRunning="
 		+ isRunning.get() + ", stopper=" + stopper.get()
 		+ ", seedProducer.isRunning=" + seedProducer.isRunning());
-	syncMessage = new SyncMessage(null, messageNumber++,
-		SyncMessageType.SYNC_OVER.toString(), null, null,
-		System.currentTimeMillis());
+	syncMessage = createSyncMessage(messageNumber++);
+
+	// syncMessage = new SyncMessage(null, messageNumber++,
+	// SyncMessageType.SYNC_OVER.toString(), null, null,
+	// System.currentTimeMillis());
 	message = jsonMapper.writeValueAsString(syncMessage);
 
 	LOG.info("Sending - " + message);
 	this.sendQueue.put(message);
 	return messageNumber;
+    }
+
+    private SyncMessage createSyncMessage(long messageNumber) {
+	SyncMessage syncMessage = new SyncMessage();
+	// syncMessage.setOriginId(null); //leaving null on purpose
+	syncMessage.setMessageNumber(messageNumber);
+	syncMessage.setMessageType(SyncMessageType.SYNC_OVER.toString());
+	syncMessage.setTimestamp(System.currentTimeMillis());
+	// syncMessage.setPaloadHash(null);//leaving null on purpose
+	// syncMessage.setPayloadJson(null); //leaving null on purpose
+	return (syncMessage);
     }
 
     private boolean activeMessages() {
@@ -64,16 +77,32 @@ public class SenderPostAckLogic {
 	    String message, long messageNumber) throws InterruptedException,
 	    JsonGenerationException, JsonMappingException, IOException {
 	String payloadJson = jsonMapper.writeValueAsString(seed);
-	String paloadHash = seed.getRecordHash();
-	syncMessage = new SyncMessage(seed.getOrigin(), messageNumber++,
-		SyncMessageType.SEED.toString(), payloadJson, paloadHash,
-		System.currentTimeMillis());
+	String payloadHash = seed.getRecordHash();
+
+	syncMessage = createSyncMessage(seed, messageNumber, payloadJson,
+		payloadHash);
+
+	// syncMessage = new SyncMessage(seed.getOrigin(), messageNumber++,
+	// SyncMessageType.SEED.toString(), payloadJson, paloadHash,
+	// System.currentTimeMillis());
 	message = jsonMapper.writeValueAsString(syncMessage);
 
 	LOG.info("Sending - " + message);
 	this.sendQueue.put(message);
 	return (messageNumber);
 
+    }
+
+    private SyncMessage createSyncMessage(SeedRecord seed, long messageNumber,
+	    String payloadJson, String payloadHash) {
+	SyncMessage syncMessage = new SyncMessage();
+	syncMessage.setOriginId(seed.getOrigin());
+	syncMessage.setMessageNumber(messageNumber);
+	syncMessage.setMessageType(SyncMessageType.SEED.toString());
+	syncMessage.setTimestamp(System.currentTimeMillis());
+	syncMessage.setPayloadHash(payloadHash);
+	syncMessage.setPayloadJson(payloadJson);
+	return (syncMessage);
     }
 
     private long sendSyncMessages(SyncMessage syncMessage, String message,
