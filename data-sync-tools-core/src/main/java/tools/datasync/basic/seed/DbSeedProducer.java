@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.model.EntityGetter;
-import tools.datasync.basic.model.JSON;
+import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.util.JSONMapperBean;
 
@@ -49,7 +49,7 @@ public class DbSeedProducer implements SeedProducer {
 
     private final List<String> tables;
 
-    private Iterator<JSON> currentJsonIterator = null;
+    private Iterator<SyncEntityMessage> currentJsonIterator = null;
     private Iterator<String> tableNameIterator = new Iterator<String>() {
 	int index = 0;
 
@@ -118,7 +118,7 @@ public class DbSeedProducer implements SeedProducer {
     public SeedRecord getNextSeed() throws SeedOverException, SeedException {
 
 	if (hasNextSeed()) {
-	    JSON json = this.currentJsonIterator.next();
+	    SyncEntityMessage json = this.currentJsonIterator.next();
 	    SeedRecord seed = this.createSeed(json);
 	    return seed;
 
@@ -140,7 +140,7 @@ public class DbSeedProducer implements SeedProducer {
 	return this.isRunning;
     }
 
-    private SeedRecord createSeed(JSON record) throws SeedException {
+    private SeedRecord createSeed(SyncEntityMessage record) throws SeedException {
 
 	SeedRecord seed = null;
 	try {

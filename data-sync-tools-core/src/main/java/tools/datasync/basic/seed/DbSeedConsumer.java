@@ -30,8 +30,8 @@ import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.logic.ConflictResolver;
 import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.IdGetter;
-import tools.datasync.basic.model.JSON;
 import tools.datasync.basic.model.SeedRecord;
+import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.basic.util.JSONMapperBean;
 import tools.datasync.basic.util.Md5HashGenerator;
 
@@ -73,7 +73,8 @@ public class DbSeedConsumer implements SeedConsumer {
 
 	String entityName = entityGetter.getName(seed.getEntityId());
 	String dbRecord = seed.getRecordJson();
-	JSON json = jsonMapper.readValue(dbRecord, JSON.class);
+	SyncEntityMessage json = jsonMapper.readValue(dbRecord,
+		SyncEntityMessage.class);
 
 	validate(seed, dbRecord);
 
@@ -88,10 +89,10 @@ public class DbSeedConsumer implements SeedConsumer {
 
     }
 
-    private void handle(SeedRecord seed, JSON json, String entityName)
-	    throws Exception {
-	JSON stateRecord = genericDao.selectState(seed.getEntityId(),
-		seed.getRecordId());
+    private void handle(SeedRecord seed, SyncEntityMessage json,
+	    String entityName) throws Exception {
+	SyncEntityMessage stateRecord = genericDao.selectState(
+		seed.getEntityId(), seed.getRecordId());
 
 	if (stateRecord != null) {
 
@@ -103,15 +104,17 @@ public class DbSeedConsumer implements SeedConsumer {
 
     }
 
-    private void handleRecordDoesNotExist(JSON stateRecord, SeedRecord seed,
-	    JSON json, String entityName) throws Exception {
+    private void handleRecordDoesNotExist(SyncEntityMessage stateRecord,
+	    SeedRecord seed, SyncEntityMessage json, String entityName)
+	    throws Exception {
 	// If the record DOES NOT exist in the SyncState table:
 	// 1. insert the User table with the new value
 	LOG.info("Record DOES NOT exist in the SyncState table, inserting the User table with the new value");
 	genericDao.save(entityName, json);
 
 	// 2. insert the SyncState table with the new value
-	JSON syncState = new JSON(entityGetter.getSyncStateName());
+	SyncEntityMessage syncState = new SyncEntityMessage();
+	syncState.setEntity(entityGetter.getSyncStateName());
 	// TODO Remove hard coding of Entity IDs
 	syncState.set("ENTITYID", entityGetter.getId(entityName));
 	syncState.set("RECORDID", json.getCalculatedPrimaryKey());
@@ -123,8 +126,9 @@ public class DbSeedConsumer implements SeedConsumer {
 	genericDao.save(entityGetter.getSyncStateName(), syncState);
     }
 
-    private void handleRecordExists(JSON stateRecord, SeedRecord seed,
-	    JSON json, String entityName) throws Exception {
+    private void handleRecordExists(SyncEntityMessage stateRecord,
+	    SeedRecord seed, SyncEntityMessage json, String entityName)
+	    throws Exception {
 	// If the record exists in the SyncState table, check if the
 	// hashes match.
 	LOG.info("Record exists in the SyncState table" + stateRecord);
@@ -138,19 +142,21 @@ public class DbSeedConsumer implements SeedConsumer {
 	}
     }
 
-    private void handleRecordDoesNotMatch(JSON stateRecord, SeedRecord seed,
-	    JSON json, String entityName) throws Exception {
+    private void handleRecordDoesNotMatch(SyncEntityMessage stateRecord,
+	    SeedRecord seed, SyncEntityMessage json, String entityName)
+	    throws Exception {
 	// If the record exists in the SyncState table and the hash
 	// does not match:
 
-	JSON myJSON = jsonMapper.readValue(
-		String.valueOf(stateRecord.get("RECORDDATA")), JSON.class);
+	SyncEntityMessage myJSON = jsonMapper.readValue(
+		String.valueOf(stateRecord.get("RECORDDATA")),
+		SyncEntityMessage.class);
 	// 1. run the standard merge logic (a MergeStrategy class)
 	// using the existing record in the User table and the newly
 	// received message (there are some error conditions here
 	// for advanced conflicts)
 	LOG.info("Hash does not match, run the standard merge logic");
-	JSON resolvedJSON = conflictResolver.resolve(myJSON, json);
+	SyncEntityMessage resolvedJSON = conflictResolver.resolve(myJSON, json);
 
 	if (resolvedJSON == null) {
 	    LOG.debug("Conflict resolver did not have a record to write");
@@ -160,17 +166,22 @@ public class DbSeedConsumer implements SeedConsumer {
 	}
     }
 
-    private void writeChangedRecord(JSON resolvedJSON, SeedRecord seed,
-	    JSON json, String entityName) throws Exception {
+    private void writeChangedRecord(SyncEntityMessage resolvedJSON,
+	    SeedRecord seed, SyncEntityMessage json, String entityName)
+	    throws Exception {
 	// 2. update the User table with the new value
 	LOG.info("Update the User table with the new value");
 	genericDao.saveOrUpdate(entityName, resolvedJSON,
 		recordIdGetter.get(entityName));
+	updateSyncStateTable(resolvedJSON, entityName);
+    }
 
+    private void updateSyncStateTable(SyncEntityMessage resolvedJSON, String entityName)
+	    throws Exception {
 	// 3. update the SyncState table with the newly
 	// calculated hash
-	JSON syncState = new JSON(entityGetter.getSyncStateName());
-	// TODO Remove hard coding of Entity IDs
+	SyncEntityMessage syncState = new SyncEntityMessage();
+	syncState.setEntity(entityGetter.getSyncStateName());
 	syncState.set("ENTITYID", entityGetter.getId(entityName));
 	syncState.set("RECORDID",
 		resolvedJSON.get(recordIdGetter.get(entityName)));
@@ -181,6 +192,7 @@ public class DbSeedConsumer implements SeedConsumer {
 	LOG.info("Update the SyncState table with the newly calculated hash.");
 	genericDao.update(entityGetter.getSyncStateName(), syncState,
 		recordIdGetter.get(entityGetter.getSyncStateName()));
+
     }
 
 }

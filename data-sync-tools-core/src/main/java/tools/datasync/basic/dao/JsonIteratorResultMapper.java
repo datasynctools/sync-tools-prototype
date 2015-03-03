@@ -9,9 +9,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import tools.datasync.basic.model.IdGetter;
-import tools.datasync.basic.model.JSON;
+import tools.datasync.basic.model.SyncEntityMessage;
 
-public class JsonIteratorResultMapper implements ResultMapper<Iterator<JSON>> {
+public class JsonIteratorResultMapper implements ResultMapper<Iterator<SyncEntityMessage>> {
 
     private IdGetter idGetter;
 
@@ -19,7 +19,7 @@ public class JsonIteratorResultMapper implements ResultMapper<Iterator<JSON>> {
 	this.idGetter = idGetter;
     }
 
-    public Iterator<JSON> map(final ResultSet result, final String entityName,
+    public Iterator<SyncEntityMessage> map(final ResultSet result, final String entityName,
 	    final Closeable closable) throws SQLException {
 
 	// String primaryKey = Ids.KeyColumn.get(entityName);

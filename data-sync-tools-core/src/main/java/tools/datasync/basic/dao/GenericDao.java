@@ -25,26 +25,26 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 
-import tools.datasync.basic.model.JSON;
+import tools.datasync.basic.model.SyncEntityMessage;
 
 public interface GenericDao {
 
-    public Iterator<JSON> selectAll(String entityName, boolean sorted)
+    public Iterator<SyncEntityMessage> selectAll(String entityName, boolean sorted)
 	    throws SQLException;
 
-    public void saveOrUpdate(String entityName, List<JSON> jsonList,
+    public void saveOrUpdate(String entityName, List<SyncEntityMessage> jsonList,
 	    String keyColumn) throws SQLException;
 
-    public void saveOrUpdate(String entityName, JSON json, String keyColumn)
+    public void saveOrUpdate(String entityName, SyncEntityMessage json, String keyColumn)
 	    throws SQLException;
 
-    public void save(String entityName, JSON json) throws SQLException;
+    public void save(String entityName, SyncEntityMessage json) throws SQLException;
 
-    public void update(String entityName, JSON json, String keyColumn)
+    public void update(String entityName, SyncEntityMessage json, String keyColumn)
 	    throws SQLException;
 
-    public JSON select(String tableName, String recordId) throws SQLException;
+    public SyncEntityMessage select(String tableName, String recordId) throws SQLException;
 
-    public JSON selectState(String entityId, String recordId)
+    public SyncEntityMessage selectState(String entityId, String recordId)
 	    throws SQLException;
 }

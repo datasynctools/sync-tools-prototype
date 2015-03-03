@@ -8,7 +8,7 @@ import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 
-import tools.datasync.basic.model.JSON;
+import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.basic.util.SQLGenUtil;
 
 public class JdbcMutationHelper {
@@ -27,7 +27,7 @@ public class JdbcMutationHelper {
 	this.updateCreator = updateCreator;
     }
 
-    public void saveOrUpdate(String dbName, String entityName, JSON json,
+    public void saveOrUpdate(String dbName, String entityName, SyncEntityMessage json,
 	    String keyColumn) throws SQLException {
 	Connection connection = null;
 	Statement statement = null;
@@ -55,14 +55,14 @@ public class JdbcMutationHelper {
     }
 
     private void executeInsert(Statement statement, String entityName,
-	    JSON json, String keyColumn) throws SQLException {
+	    SyncEntityMessage json, String keyColumn) throws SQLException {
 	String sql = insertCreator.createSQL(entityName, json, keyColumn);
 	LOG.debug(sql + ": saveOrUpdate() - " + sql);
 	statement.execute(sql);
     }
 
     private void executeUpdate(Statement statement, String entityName,
-	    JSON json, String keyColumn) throws SQLException {
+	    SyncEntityMessage json, String keyColumn) throws SQLException {
 	String sql = updateCreator.createSQL(entityName, json, keyColumn);
 	LOG.debug(sql + ": saveOrUpdate() - " + sql);
 	statement.execute(sql);

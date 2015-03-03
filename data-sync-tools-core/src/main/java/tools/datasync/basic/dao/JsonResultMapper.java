@@ -4,15 +4,16 @@ import java.io.Closeable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import tools.datasync.basic.model.JSON;
+import tools.datasync.basic.model.SyncEntityMessage;
 
-public class JsonResultMapper implements ResultMapper<JSON> {
+public class JsonResultMapper implements ResultMapper<SyncEntityMessage> {
 
-    public JSON map(ResultSet result, String entityName, Closeable closable)
-	    throws SQLException {
+    public SyncEntityMessage map(ResultSet result, String entityName,
+	    Closeable closable) throws SQLException {
 	if (result.next()) {
 
-	    JSON json = new JSON(entityName);
+	    SyncEntityMessage json = new SyncEntityMessage();
+	    json.setEntity(entityName);
 	    int count = result.getMetaData().getColumnCount();
 	    for (int index = 1; index <= count; index++) {
 		String columnName = result.getMetaData().getColumnName(index);

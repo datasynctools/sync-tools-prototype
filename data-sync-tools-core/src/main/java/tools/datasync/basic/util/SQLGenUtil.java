@@ -31,7 +31,7 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
-import tools.datasync.basic.model.JSON;
+import tools.datasync.basic.model.SyncEntityMessage;
 
 public class SQLGenUtil {
 
@@ -46,7 +46,7 @@ public class SQLGenUtil {
 	return sql.toString();
     }
 
-    public static String getInsertStatement(String tableName, JSON json) {
+    public static String getInsertStatement(String tableName, SyncEntityMessage json) {
 
 	StringBuffer insert = new StringBuffer();
 	insert.append("insert into ");
@@ -68,7 +68,7 @@ public class SQLGenUtil {
 	return insert.toString();
     }
 
-    private static void handleInsertKeys(Iterator<String> keys, JSON json,
+    private static void handleInsertKeys(Iterator<String> keys, SyncEntityMessage json,
 	    StringBuffer names, StringBuffer values) {
 	while (keys.hasNext()) {
 	    String name = keys.next();
@@ -86,7 +86,7 @@ public class SQLGenUtil {
 	}
     }
 
-    private static void handleType(Tuple<String, String> nameValue, JSON json,
+    private static void handleType(Tuple<String, String> nameValue, SyncEntityMessage json,
 	    StringBuffer values) {
 
 	if ("String".equalsIgnoreCase(nameValue.y)) {
@@ -131,7 +131,7 @@ public class SQLGenUtil {
 	}
     }
 
-    public static String getInsertPreparedStatement(String tableName, JSON json) {
+    public static String getInsertPreparedStatement(String tableName, SyncEntityMessage json) {
 
 	StringBuffer insertps = new StringBuffer();
 	insertps.append("insert into ");
@@ -153,7 +153,7 @@ public class SQLGenUtil {
 	return insertps.toString();
     }
 
-    private static void handleInsertPrepKeys(Iterator<String> keys, JSON json,
+    private static void handleInsertPrepKeys(Iterator<String> keys, SyncEntityMessage json,
 	    StringBuffer names, StringBuffer values) {
 	while (keys.hasNext()) {
 	    String name = keys.next();
@@ -167,7 +167,7 @@ public class SQLGenUtil {
 
     }
 
-    public static String getUpdateStatement(String tableName, JSON json,
+    public static String getUpdateStatement(String tableName, SyncEntityMessage json,
 	    String keyColumn) {
 
 	StringBuffer sql = new StringBuffer();
@@ -186,7 +186,7 @@ public class SQLGenUtil {
     }
 
     private static void handleUpdateWhere(StringBuffer sql, String keyColumn,
-	    JSON json) {
+	    SyncEntityMessage json) {
 	sql.append(" where ");
 	String[] keyColumns = keyColumn.split(", ");
 	for (int colIndex = 0; colIndex < keyColumns.length; colIndex++) {
@@ -201,7 +201,7 @@ public class SQLGenUtil {
 
     }
 
-    private static void handleUpdateKeys(Iterator<String> keys, JSON json,
+    private static void handleUpdateKeys(Iterator<String> keys, SyncEntityMessage json,
 	    StringBuffer sql) {
 	while (keys.hasNext()) {
 	    String name = keys.next();
@@ -218,7 +218,7 @@ public class SQLGenUtil {
 
     }
 
-    public static String getDeleteStatement(String tableName, JSON json,
+    public static String getDeleteStatement(String tableName, SyncEntityMessage json,
 	    String keyColumn) {
 
 	StringBuffer delete = new StringBuffer();

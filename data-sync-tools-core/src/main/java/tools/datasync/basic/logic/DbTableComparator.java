@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.dao.GenericJDBCDao;
-import tools.datasync.basic.model.JSON;
+import tools.datasync.basic.model.SyncEntityMessage;
 
 public class DbTableComparator {
 
@@ -27,10 +27,10 @@ public class DbTableComparator {
 	LOG.info("Creating comparator... " + sourceDao + targetDao);
     }
 
-    private Map<String, JSON> mapResults(Iterator<JSON> jsonIterator) {
-	Map<String, JSON> answer = new HashMap<String, JSON>();
+    private Map<String, SyncEntityMessage> mapResults(Iterator<SyncEntityMessage> jsonIterator) {
+	Map<String, SyncEntityMessage> answer = new HashMap<String, SyncEntityMessage>();
 	while (jsonIterator.hasNext()) {
-	    JSON json = jsonIterator.next();
+	    SyncEntityMessage json = jsonIterator.next();
 	    answer.put(json.getCalculatedPrimaryKey(), json);
 	}
 	return (answer);
@@ -40,9 +40,9 @@ public class DbTableComparator {
 	    SQLException {
 
 	LOG.info(">>> Comparing tables: " + entityName);
-	Map<String, JSON> sourceMap = mapResults(sourceDao.selectAll(
+	Map<String, SyncEntityMessage> sourceMap = mapResults(sourceDao.selectAll(
 		entityName, true));
-	Map<String, JSON> targetMap = mapResults(targetDao.selectAll(
+	Map<String, SyncEntityMessage> targetMap = mapResults(targetDao.selectAll(
 		entityName, true));
 
 	Iterator<String> sourceKeys = sourceMap.keySet().iterator();
@@ -60,13 +60,13 @@ public class DbTableComparator {
     }
 
     private void compare(Iterator<String> sourceKeys,
-	    Map<String, JSON> sourceMap, Map<String, JSON> targetMap,
+	    Map<String, SyncEntityMessage> sourceMap, Map<String, SyncEntityMessage> targetMap,
 	    String entityName) {
 	while (sourceKeys.hasNext()) {
 	    String sourceKey = sourceKeys.next();
-	    JSON source = sourceMap.get(sourceKey);
+	    SyncEntityMessage source = sourceMap.get(sourceKey);
 	    if (targetMap.containsKey(sourceKey)) {
-		JSON target = targetMap.get(sourceKey);
+		SyncEntityMessage target = targetMap.get(sourceKey);
 		if (source.equals(target)) {
 		    LOG.info("Records match in entity " + entityName
 			    + " and record " + sourceKey + ", json=" + source);

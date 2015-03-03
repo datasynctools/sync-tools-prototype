@@ -21,7 +21,7 @@
  */
 package tools.datasync.basic.logic;
 
-import tools.datasync.basic.model.JSON;
+import tools.datasync.basic.model.SyncEntityMessage;
 
 public class InitiatorWinsConflictResolver implements ConflictResolver {
 
@@ -33,7 +33,7 @@ public class InitiatorWinsConflictResolver implements ConflictResolver {
     }
 
     // @Override
-    public JSON resolve(JSON my, JSON theirs) throws ConflictException {
+    public SyncEntityMessage resolve(SyncEntityMessage my, SyncEntityMessage theirs) throws ConflictException {
 
 	if (isInitiator) {
 	    return null;

@@ -10,9 +10,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tools.datasync.basic.model.JSON;
+import tools.datasync.basic.model.SyncEntityMessage;
 
-public class JdbcJsonIterator implements Iterator<JSON> {
+public class JdbcJsonIterator implements Iterator<SyncEntityMessage> {
 
     private static final Logger LOG = LoggerFactory
 	    .getLogger(JdbcJsonIterator.class);
@@ -53,7 +53,8 @@ public class JdbcJsonIterator implements Iterator<JSON> {
 	}
     }
 
-    private void addObjects(JSON json, int count) throws SQLException {
+    private void addObjects(SyncEntityMessage json, int count)
+	    throws SQLException {
 	for (int index = 1; index <= count; index++) {
 	    String columnName = result.getMetaData().getColumnName(index);
 	    Object value = result.getObject(index);
@@ -62,8 +63,9 @@ public class JdbcJsonIterator implements Iterator<JSON> {
 	}
     }
 
-    private JSON nextLogic() throws SQLException {
-	JSON json = new JSON(entityName);
+    private SyncEntityMessage nextLogic() throws SQLException {
+	SyncEntityMessage json = new SyncEntityMessage();
+	json.setEntity(entityName);
 
 	StringBuffer sbPrimaryKey = new StringBuffer();
 	addPrimaryKeys(sbPrimaryKey);
@@ -82,7 +84,7 @@ public class JdbcJsonIterator implements Iterator<JSON> {
 	return json;
     }
 
-    public JSON next() {
+    public SyncEntityMessage next() {
 	try {
 
 	    return (nextLogic());

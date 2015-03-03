@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import tools.datasync.basic.model.JSON;
+import tools.datasync.basic.model.SyncEntityMessage;
 
-public class SyncStateResultMapper implements ResultMapper<JSON> {
+public class SyncStateResultMapper implements ResultMapper<SyncEntityMessage> {
 
     private String syncStateTableName;
 
@@ -15,11 +15,12 @@ public class SyncStateResultMapper implements ResultMapper<JSON> {
 	this.syncStateTableName = syncStateTableName;
     }
 
-    public JSON map(ResultSet result, String entityName, Closeable closable)
-	    throws SQLException, IOException {
+    public SyncEntityMessage map(ResultSet result, String entityName,
+	    Closeable closable) throws SQLException, IOException {
 	if (result.next()) {
 
-	    JSON json = new JSON(syncStateTableName);
+	    SyncEntityMessage json = new SyncEntityMessage();
+	    json.setEntity(syncStateTableName);
 	    int count = result.getMetaData().getColumnCount();
 	    for (int index = 1; index <= count; index++) {
 		String columnName = result.getMetaData().getColumnName(index);

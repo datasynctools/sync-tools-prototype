@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.IdGetter;
-import tools.datasync.basic.model.JSON;
+import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.basic.util.SQLGenUtil;
 
 public class GenericJDBCDao implements GenericDao {
@@ -47,8 +47,8 @@ public class GenericJDBCDao implements GenericDao {
     private EntityGetter entityGetter;
     private IdGetter idGetter;
 
-    private JdbcSelectionHelper<JSON> stateSelector;
-    private JdbcSelectionHelper<Iterator<JSON>> allSelector;
+    private JdbcSelectionHelper<SyncEntityMessage> stateSelector;
+    private JdbcSelectionHelper<Iterator<SyncEntityMessage>> allSelector;
 
     private JsonResultMapper jsonResultMapper = new JsonResultMapper();
     private JsonIteratorResultMapper jsonIteratorResultMapper;
@@ -61,8 +61,8 @@ public class GenericJDBCDao implements GenericDao {
 	this.dbName = dbName;
 	this.entityGetter = entityGetter;
 	this.idGetter = idGetter;
-	stateSelector = new JdbcSelectionHelper<JSON>(dataSource);
-	allSelector = new JdbcSelectionHelper<Iterator<JSON>>(dataSource);
+	stateSelector = new JdbcSelectionHelper<SyncEntityMessage>(dataSource);
+	allSelector = new JdbcSelectionHelper<Iterator<SyncEntityMessage>>(dataSource);
 	jdbcMutator = new JdbcMutationHelper(dataSource,
 		new InsertSqlCreator(), new UpdateSqlCreator());
 	jsonIteratorResultMapper = new JsonIteratorResultMapper(idGetter);
@@ -70,7 +70,7 @@ public class GenericJDBCDao implements GenericDao {
 
     // Returning result set linked iterator because size of database can cause
     // out of memory error.
-    public Iterator<JSON> selectAll(final String entityName, boolean sorted)
+    public Iterator<SyncEntityMessage> selectAll(final String entityName, boolean sorted)
 	    throws SQLException {
 
 	String query = "select * from " + entityName;
@@ -90,7 +90,7 @@ public class GenericJDBCDao implements GenericDao {
 
     }
 
-    public JSON select(final String entityName, String id) throws SQLException {
+    public SyncEntityMessage select(final String entityName, String id) throws SQLException {
 
 	String query = "select * from " + entityName + " where "
 		+ idGetter.get(entityName) + "='" + id + "'";
@@ -98,7 +98,7 @@ public class GenericJDBCDao implements GenericDao {
 
     }
 
-    public JSON selectState(String entityId, String recordId)
+    public SyncEntityMessage selectState(String entityId, String recordId)
 	    throws SQLException {
 
 	// TODO remove hard coding of sync state table
@@ -110,7 +110,7 @@ public class GenericJDBCDao implements GenericDao {
 
     }
 
-    public void save(String entityName, JSON json) throws SQLException {
+    public void save(String entityName, SyncEntityMessage json) throws SQLException {
 
 	// logger.debug("entityName=" + entityName + ", json=" + json);
 	Connection connection = null;
@@ -138,7 +138,7 @@ public class GenericJDBCDao implements GenericDao {
 	}
     }
 
-    public void update(String entityName, JSON json, String keyColumn)
+    public void update(String entityName, SyncEntityMessage json, String keyColumn)
 	    throws SQLException {
 
 	LOG.debug(dbName + ": update() - entityName=" + entityName + ", json="
@@ -165,23 +165,23 @@ public class GenericJDBCDao implements GenericDao {
 	}
     }
 
-    public void saveOrUpdate(String entityName, JSON json, String keyColumn)
+    public void saveOrUpdate(String entityName, SyncEntityMessage json, String keyColumn)
 	    throws SQLException {
 
 	jdbcMutator.saveOrUpdate(entityName, entityName, json, keyColumn);
 
     }
 
-    public void saveOrUpdate(String entityName, List<JSON> jsonList,
+    public void saveOrUpdate(String entityName, List<SyncEntityMessage> jsonList,
 	    String keyColumn) throws SQLException {
 	LOG.debug(dbName + ": saveOrUpdate() - entityName=" + entityName
 		+ ", count=" + jsonList.size() + ", keyColumn=" + keyColumn);
-	for (JSON json : jsonList) {
+	for (SyncEntityMessage json : jsonList) {
 	    this.saveOrUpdate(entityName, json, keyColumn);
 	}
     }
 
-    public String getSyncRecordId(JSON json) {
+    public String getSyncRecordId(SyncEntityMessage json) {
 
 	// String entityName = json.getEntity();
 

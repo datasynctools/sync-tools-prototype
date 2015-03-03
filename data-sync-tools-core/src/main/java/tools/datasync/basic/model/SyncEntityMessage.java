@@ -26,28 +26,22 @@ package tools.datasync.basic.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tools.datasync.basic.model.convert.BooleanConverter;
-import tools.datasync.basic.model.convert.Converter;
-import tools.datasync.basic.model.convert.DateConverter;
-import tools.datasync.basic.model.convert.DoubleConverter;
-import tools.datasync.basic.model.convert.IntegerConverter;
-import tools.datasync.basic.model.convert.LongConverter;
-import tools.datasync.basic.model.convert.StringConverter;
 import tools.datasync.basic.util.HashGenerator;
 import tools.datasync.basic.util.Md5HashGenerator;
 
-public class JSON implements Cloneable, Serializable {
+//TODO Doug comment: While I see what this class is doing at a high level, I think it can be further reduced.
+//For instance, it can be altered to reduce the number of non-native objects being created and 
+//to better support a pluggable data format.
+public class SyncEntityMessage implements Cloneable, Serializable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JSON.class);
+    private static final Logger LOG = LoggerFactory
+	    .getLogger(SyncEntityMessage.class);
 
     private static final long serialVersionUID = 1052072136660446741L;
     private static final HashGenerator hashGenerator = Md5HashGenerator
@@ -55,67 +49,23 @@ public class JSON implements Cloneable, Serializable {
 
     private String entity;
     private String calculatedPrimaryKey;
-    private Map<String, Object> props;
-    private Map<String, String> types;
+    private SyncEntityMessageSupport support;
 
-    private final static Map<String, Converter> converters = new HashMap<String, Converter>();
-
-    private JSON() {
-	setupConverters();
-    }
-
-    public JSON(String entity) {
-
-	this.setEntity(entity);
-	// Linked hash map to keep the order.
-	this.props = new LinkedHashMap<String, Object>();
-	this.types = new LinkedHashMap<String, String>();
-
-	setupConverters();
-    }
-
-    private void setupConverters() {
-	if (converters.size() == 0) {
-	    converters.put("string", new StringConverter());
-	    converters.put("integer", new IntegerConverter());
-	    converters.put("long", new LongConverter());
-	    converters.put("double", new DoubleConverter());
-	    converters.put("boolean", new BooleanConverter());
-	    converters.put("date", new DateConverter());
-	}
+    public SyncEntityMessage() {
+	support = new SyncEntityMessageSupport();
     }
 
     public void set(String name, Object value) {
-
-	if (value == null || "".equals(value)) {
-	    return;
-	}
-	if (value instanceof Date) {
-	    value = ((Date) value).getTime();
-	}
-	this.props.put(name, value);
-	this.types.put(name, value.getClass().getSimpleName());
+	support.set(name, value);
     }
 
     public Object get(String name) {
-
-	String type = this.types.get(name);
-	String value = String.valueOf(this.props.get(name));
-
-	Converter converter = converters.get(type.toLowerCase());
-
-	if (converter != null) {
-	    return converter.convert(value);
-	}
-
-	throw new IllegalArgumentException("Type not supported " + type
-		+ " for value " + value + ", for name " + name);
+	return support.get(name);
 
     }
 
     public String getType(String name) {
-
-	return types.get(name);
+	return support.getType(name);
     }
 
     public String getEntity() {
@@ -135,26 +85,24 @@ public class JSON implements Cloneable, Serializable {
     }
 
     public Map<String, Object> getData() {
-
-	return this.props;
+	return support.getData();
     }
 
     public void setData(Map<String, Object> props) {
-
-	this.props = props;
+	support.setData(props);
     }
 
     public Map<String, String> getTypes() {
-	return types;
+	return support.getTypes();
     }
 
     public void setTypes(Map<String, String> types) {
-	this.types = types;
+	support.setTypes(types);
     }
 
     @Override
     public String toString() {
-	return String.valueOf(props);
+	return String.valueOf(support.getData());
     }
 
     @Override
@@ -162,6 +110,9 @@ public class JSON implements Cloneable, Serializable {
 	final int prime = 31;
 	int result = 1;
 	result = prime * result + ((entity == null) ? 0 : entity.hashCode());
+
+	Map<String, Object> props = support.getData();
+
 	result = prime * result + ((props == null) ? 0 : props.hashCode());
 	return result;
     }
@@ -175,16 +126,18 @@ public class JSON implements Cloneable, Serializable {
 	if (getClass() != obj.getClass())
 	    return false;
 
-	JSON other = (JSON) obj;
+	SyncEntityMessage other = (SyncEntityMessage) obj;
 	return equals(this, other);
     }
 
-    private boolean equals(JSON me, JSON other) {
-	if (me.props == null) {
-	    if (other.props != null) {
+    private boolean equals(SyncEntityMessage me, SyncEntityMessage other) {
+	Map<String, Object> myProps = support.getData();
+	Map<String, Object> otherProps = other.getData();
+	if (myProps == null) {
+	    if (otherProps != null) {
 		return false;
 	    }
-	} else if (!props.equals(other.props)) {
+	} else if (!myProps.equals(otherProps)) {
 	    return false;
 	}
 	return true;
@@ -192,7 +145,7 @@ public class JSON implements Cloneable, Serializable {
 
     private List<String> sortProps() {
 	List<String> keys = new ArrayList<String>();
-	keys.addAll(props.keySet());
+	keys.addAll(support.getData().keySet());
 	Collections.sort(keys);
 	return keys;
     }
@@ -200,7 +153,7 @@ public class JSON implements Cloneable, Serializable {
     private StringBuffer flattenProps(List<String> sortedKeys) {
 	StringBuffer sbValue = new StringBuffer();
 	for (String key : sortedKeys) {
-	    Object value = props.get(key);
+	    Object value = support.getData().get(key);
 	    sbValue.append(String.valueOf(value));
 	    sbValue.append(',');
 	}
@@ -211,7 +164,7 @@ public class JSON implements Cloneable, Serializable {
     }
 
     public String generateHash() {
-
+	Map<String, Object> props = support.getData();
 	if (props == null || props.size() == 0) {
 	    return "NO_DATA:NO_HASH";
 	}

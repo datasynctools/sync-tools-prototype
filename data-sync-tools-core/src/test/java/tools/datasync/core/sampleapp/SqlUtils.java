@@ -27,18 +27,26 @@ public class SqlUtils {
 	while (sc.hasNext()) {
 	    String sql = sc.next();
 	    sql = sql.trim();
-	    if (StringUtils.isWhiteSpaceOnly(sql)) {
-		continue;
+	    boolean skipSql = isSkip(sql);
+	    if (!skipSql) {
+		LOG.debug(sql);
+		Statement stmt = conn.createStatement();
+		stmt.execute(sql);
+		stmt.close();
 	    }
-	    if (sql.startsWith("--")) {
-		continue;
-	    }
-	    LOG.debug(sql);
-	    Statement stmt = conn.createStatement();
-	    stmt.execute(sql);
-	    stmt.close();
 	}
 	sc.close();
 	LOG.debug("Executed " + path + " successfully.");
+    }
+
+    private static final boolean isSkip(String sql) {
+	if (StringUtils.isWhiteSpaceOnly(sql)) {
+	    return true;
+	}
+	if (sql.startsWith("--")) {
+	    return true;
+	}
+	return false;
+
     }
 }

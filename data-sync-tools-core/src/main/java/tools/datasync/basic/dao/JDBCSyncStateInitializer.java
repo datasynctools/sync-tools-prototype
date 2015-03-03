@@ -7,10 +7,12 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 
 import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.IdGetter;
-import tools.datasync.basic.model.JSON;
+import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.basic.sync.pump.SyncStateInitializer;
 import tools.datasync.basic.util.JSONMapperBean;
 
@@ -51,21 +53,37 @@ public class JDBCSyncStateInitializer implements SyncStateInitializer {
 
 	    logger.info("Populating SyncState table for [" + table
 		    + "] records...");
-	    Iterator<JSON> jsonIterator = genericDao.selectAll(table, true);
+	    Iterator<SyncEntityMessage> jsonIterator = genericDao.selectAll(
+		    table, true);
 
 	    while (jsonIterator.hasNext()) {
-		JSON record = jsonIterator.next();
+		SyncEntityMessage record = jsonIterator.next();
 
-		JSON syncState = new JSON(table);
-		syncState.set("ENTITYID", idGetter.get(table));
-		syncState.set("RECORDID", record.getCalculatedPrimaryKey());
-		String recordJson = jsonMapper.writeValueAsString(record);
-		syncState.set("RECORDDATA", recordJson);
-		syncState.set("RECORDHASH", record.generateHash());
+		SyncEntityMessage syncState = new SyncEntityMessage();
+		// TODO Doug comment: I don't understand these variable names
+		fillSyncEntityMessage(syncState, record, table);
+
+		// syncState.setEntity(table);
+		// syncState.set("ENTITYID", idGetter.get(table));
+		// syncState.set("RECORDID", record.getCalculatedPrimaryKey());
+		// String recordJson = jsonMapper.writeValueAsString(record);
+		// syncState.set("RECORDDATA", recordJson);
+		// syncState.set("RECORDHASH", record.generateHash());
 
 		genericDao.save(entityGetter.getSyncStateName(), syncState);
 	    }
 	}
+    }
+
+    private void fillSyncEntityMessage(SyncEntityMessage syncState,
+	    SyncEntityMessage record, String table)
+	    throws JsonGenerationException, JsonMappingException, IOException {
+	syncState.setEntity(table);
+	syncState.set("ENTITYID", idGetter.get(table));
+	syncState.set("RECORDID", record.getCalculatedPrimaryKey());
+	String recordJson = jsonMapper.writeValueAsString(record);
+	syncState.set("RECORDDATA", recordJson);
+	syncState.set("RECORDHASH", record.generateHash());
     }
 
     // @Override
