@@ -2,11 +2,9 @@ package tools.datasync.basic.sync;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import tools.datasync.basic.comm.SyncConnection;
-import tools.datasync.basic.sync.fsm.SyncStateElement;
-import tools.datasync.basic.sync.pump.JvmSyncPump;
 import tools.datasync.basic.sync.pump.SyncPump;
 
 /**
@@ -32,16 +30,18 @@ import tools.datasync.basic.sync.pump.SyncPump;
  */
 public class SyncSession {
 
-    Logger logger = Logger.getLogger(JvmSyncPump.class.getName());
+    private static final Logger LOG = LoggerFactory
+	    .getLogger(SyncSession.class);
 
-    public SyncPump pumpA2B;
-    public SyncPump pumpB2A;
-    public SyncConnection syncConnA;
-    public SyncConnection syncConnB;
+    private SyncPump pumpA2B;
+    private SyncPump pumpB2A;
+    // private SyncConnection syncConnA;
+    // private SyncConnection syncConnB;
 
     public String sessionId;
-    public SyncStateElement syncStateA;
-    public SyncStateElement syncStateB;
+
+    // public SyncStateElement syncStateA;
+    // public SyncStateElement syncStateB;
 
     // TODO: figure out how to monitor state of N/W based pumping strategies.
     // HeartBeat ?
@@ -69,6 +69,6 @@ public class SyncSession {
 	    }
 	}
 
-	logger.info("Finished sync");
+	LOG.info("Finished sync");
     }
 }
