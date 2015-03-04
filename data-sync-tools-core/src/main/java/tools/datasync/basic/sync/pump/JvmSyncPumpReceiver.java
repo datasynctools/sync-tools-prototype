@@ -20,7 +20,7 @@ import tools.datasync.basic.comm.SyncMessageType;
 import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.seed.SeedConsumer;
 import tools.datasync.basic.seed.SeedException;
-import tools.datasync.basic.util.JSONMapperBean;
+import tools.datasync.basic.util.JsonMapperBean;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -50,7 +50,7 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 
     private BlockingQueue<String> receiveQueue;
     private AtomicBoolean isRunning;
-    private JSONMapperBean jsonMapper;
+    private JsonMapperBean jsonMapper;
     private SeedConsumer seedConsumer;
 
     private AtomicBoolean stopper;
@@ -64,7 +64,7 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 	this.receiveQueue = receiveQueue;
 	this.stopper = stopped;
 	this.isRunning = new AtomicBoolean(true);
-	this.jsonMapper = JSONMapperBean.getInstance();
+	this.jsonMapper = JsonMapperBean.getInstance();
     }
 
     public void setSeedConsumer(SeedConsumer seedConsumer) {
@@ -128,7 +128,6 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 
 	if (SyncMessageType.SEED.equals(syncMessage.getMessageType())) {
 
-	    // TODO: process this seed message
 	    SeedRecord seed = jsonMapper.readValue(
 		    syncMessage.getPayloadJson(), SeedRecord.class);
 	    seedConsumer.consume(seed);
@@ -138,13 +137,10 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 	    return true;
 	} else if (SyncMessageType.BEGIN_SEED.equals(syncMessage
 		.getMessageType())) {
-	    // TODO: signal the sender to start sending
+	    // Signal the sender to start sending
 	    ackPeerSenderLatch.countDown();
 	    LOG.info("Acknowledged Sender Peer with ackPeerSenderLatch"
 		    + ackPeerSenderLatch);
-
-	    // logger.info("Received begin seed from receiving pair. beginSeedLatch"
-	    // + ackPeerSenderLatch);
 	}
 	return false; // not finished
     }

@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.IdGetter;
 import tools.datasync.basic.model.SyncEntityMessage;
-import tools.datasync.basic.util.SQLGenUtil;
+import tools.datasync.basic.util.SqlGenUtil;
 
 public class GenericJDBCDao implements GenericDao {
 
@@ -50,8 +50,8 @@ public class GenericJDBCDao implements GenericDao {
     private JdbcSelectionHelper<SyncEntityMessage> stateSelector;
     private JdbcSelectionHelper<Iterator<SyncEntityMessage>> allSelector;
 
-    private JsonResultMapper jsonResultMapper = new JsonResultMapper();
-    private JsonIteratorResultMapper jsonIteratorResultMapper;
+    private SyncEntityMessageResultMapper jsonResultMapper = new SyncEntityMessageResultMapper();
+    private SyncEntityMessageIteratorResultMapper jsonIteratorResultMapper;
 
     private JdbcMutationHelper jdbcMutator;
 
@@ -62,16 +62,18 @@ public class GenericJDBCDao implements GenericDao {
 	this.entityGetter = entityGetter;
 	this.idGetter = idGetter;
 	stateSelector = new JdbcSelectionHelper<SyncEntityMessage>(dataSource);
-	allSelector = new JdbcSelectionHelper<Iterator<SyncEntityMessage>>(dataSource);
+	allSelector = new JdbcSelectionHelper<Iterator<SyncEntityMessage>>(
+		dataSource);
 	jdbcMutator = new JdbcMutationHelper(dataSource,
 		new InsertSqlCreator(), new UpdateSqlCreator());
-	jsonIteratorResultMapper = new JsonIteratorResultMapper(idGetter);
+	jsonIteratorResultMapper = new SyncEntityMessageIteratorResultMapper(
+		idGetter);
     }
 
     // Returning result set linked iterator because size of database can cause
     // out of memory error.
-    public Iterator<SyncEntityMessage> selectAll(final String entityName, boolean sorted)
-	    throws SQLException {
+    public Iterator<SyncEntityMessage> selectAll(final String entityName,
+	    boolean sorted) throws SQLException {
 
 	String query = "select * from " + entityName;
 	if (sorted) {
@@ -90,7 +92,8 @@ public class GenericJDBCDao implements GenericDao {
 
     }
 
-    public SyncEntityMessage select(final String entityName, String id) throws SQLException {
+    public SyncEntityMessage select(final String entityName, String id)
+	    throws SQLException {
 
 	String query = "select * from " + entityName + " where "
 		+ idGetter.get(entityName) + "='" + id + "'";
@@ -101,7 +104,6 @@ public class GenericJDBCDao implements GenericDao {
     public SyncEntityMessage selectState(String entityId, String recordId)
 	    throws SQLException {
 
-	// TODO remove hard coding of sync state table
 	String query = "select * from " + entityGetter.getSyncStateName()
 		+ " where EntityId='" + entityId + "' and RecordId='"
 		+ recordId + "'";
@@ -110,14 +112,14 @@ public class GenericJDBCDao implements GenericDao {
 
     }
 
-    public void save(String entityName, SyncEntityMessage json) throws SQLException {
+    public void save(String entityName, SyncEntityMessage json)
+	    throws SQLException {
 
-	// logger.debug("entityName=" + entityName + ", json=" + json);
 	Connection connection = null;
 	Statement statement = null;
 	try {
 	    // Try insert statement...
-	    String insert = SQLGenUtil.getInsertStatement(entityName, json);
+	    String insert = SqlGenUtil.getInsertStatement(entityName, json);
 	    connection = dataSource.getConnection();
 
 	    statement = connection.createStatement();
@@ -138,8 +140,8 @@ public class GenericJDBCDao implements GenericDao {
 	}
     }
 
-    public void update(String entityName, SyncEntityMessage json, String keyColumn)
-	    throws SQLException {
+    public void update(String entityName, SyncEntityMessage json,
+	    String keyColumn) throws SQLException {
 
 	LOG.debug(dbName + ": update() - entityName=" + entityName + ", json="
 		+ json + ", keyColumn=" + keyColumn);
@@ -148,7 +150,7 @@ public class GenericJDBCDao implements GenericDao {
 
 	try {
 	    // Try update statement...
-	    String update = SQLGenUtil.getUpdateStatement(entityName, json,
+	    String update = SqlGenUtil.getUpdateStatement(entityName, json,
 		    keyColumn);
 	    LOG.debug(dbName + ": update() - " + update);
 	    connection = dataSource.getConnection();
@@ -165,15 +167,16 @@ public class GenericJDBCDao implements GenericDao {
 	}
     }
 
-    public void saveOrUpdate(String entityName, SyncEntityMessage json, String keyColumn)
-	    throws SQLException {
+    public void saveOrUpdate(String entityName, SyncEntityMessage json,
+	    String keyColumn) throws SQLException {
 
 	jdbcMutator.saveOrUpdate(entityName, entityName, json, keyColumn);
 
     }
 
-    public void saveOrUpdate(String entityName, List<SyncEntityMessage> jsonList,
-	    String keyColumn) throws SQLException {
+    public void saveOrUpdate(String entityName,
+	    List<SyncEntityMessage> jsonList, String keyColumn)
+	    throws SQLException {
 	LOG.debug(dbName + ": saveOrUpdate() - entityName=" + entityName
 		+ ", count=" + jsonList.size() + ", keyColumn=" + keyColumn);
 	for (SyncEntityMessage json : jsonList) {

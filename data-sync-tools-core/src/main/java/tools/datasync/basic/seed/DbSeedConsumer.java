@@ -32,7 +32,7 @@ import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.IdGetter;
 import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.model.SyncEntityMessage;
-import tools.datasync.basic.util.JSONMapperBean;
+import tools.datasync.basic.util.JsonMapperBean;
 import tools.datasync.basic.util.Md5HashGenerator;
 
 public class DbSeedConsumer implements SeedConsumer {
@@ -40,7 +40,7 @@ public class DbSeedConsumer implements SeedConsumer {
     private static final Logger LOG = LoggerFactory
 	    .getLogger(DbSeedConsumer.class);
 
-    private JSONMapperBean jsonMapper = JSONMapperBean.getInstance();
+    private JsonMapperBean jsonMapper = JsonMapperBean.getInstance();
     private Md5HashGenerator hashGenerator = Md5HashGenerator.getInstance();
     private GenericDao genericDao;
     private ConflictResolver conflictResolver;
@@ -58,10 +58,9 @@ public class DbSeedConsumer implements SeedConsumer {
 
     private void validate(SeedRecord seed, String dbRecord) {
 	if (!hashGenerator.validate(dbRecord, seed.getRecordHash())) {
-	    // throw new
-	    // SeedException("Illegal message - Record does not match with its hash");
 
-	    // TODO Is this the right logic?
+	    // TODO Is this the right logic? Should we throw an exception or
+	    // some other logic?
 	    LOG.warn("Illegal message - Record does not match with its hash\n"
 		    + dbRecord);
 	}
@@ -115,7 +114,6 @@ public class DbSeedConsumer implements SeedConsumer {
 	// 2. insert the SyncState table with the new value
 	SyncEntityMessage syncState = new SyncEntityMessage();
 	syncState.setEntity(entityGetter.getSyncStateName());
-	// TODO Remove hard coding of Entity IDs
 	syncState.set("ENTITYID", entityGetter.getId(entityName));
 	syncState.set("RECORDID", json.getCalculatedPrimaryKey());
 	String recordJson = jsonMapper.writeValueAsString(json);
@@ -176,8 +174,8 @@ public class DbSeedConsumer implements SeedConsumer {
 	updateSyncStateTable(resolvedJSON, entityName);
     }
 
-    private void updateSyncStateTable(SyncEntityMessage resolvedJSON, String entityName)
-	    throws Exception {
+    private void updateSyncStateTable(SyncEntityMessage resolvedJSON,
+	    String entityName) throws Exception {
 	// 3. update the SyncState table with the newly
 	// calculated hash
 	SyncEntityMessage syncState = new SyncEntityMessage();

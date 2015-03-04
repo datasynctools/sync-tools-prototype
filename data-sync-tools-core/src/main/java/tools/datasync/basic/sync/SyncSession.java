@@ -35,13 +35,8 @@ public class SyncSession {
 
     private SyncPump pumpA2B;
     private SyncPump pumpB2A;
-    // private SyncConnection syncConnA;
-    // private SyncConnection syncConnB;
 
     public String sessionId;
-
-    // public SyncStateElement syncStateA;
-    // public SyncStateElement syncStateB;
 
     // TODO: figure out how to monitor state of N/W based pumping strategies.
     // HeartBeat ?
@@ -62,7 +57,6 @@ public class SyncSession {
 	while (pumpA2B.isPumping() || pumpB2A.isPumping()) {
 	    try {
 		TimeUnit.MILLISECONDS.sleep(100);
-		// Thread.sleep(100);
 	    } catch (InterruptedException e) {
 		e.printStackTrace();
 		return;

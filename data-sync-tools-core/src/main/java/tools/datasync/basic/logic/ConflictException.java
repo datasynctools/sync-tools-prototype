@@ -21,6 +21,10 @@
  */
 package tools.datasync.basic.logic;
 
+//TODO: Remove all framework-specific Exceptions? 
+//Would we rather the framework to use all runtime exceptions. 
+//This seems to be an emerging/preferred trend and a personal preference, of Doug Johnson. 
+//This maps better to languages like C#.
 public class ConflictException extends Exception {
 
     /**

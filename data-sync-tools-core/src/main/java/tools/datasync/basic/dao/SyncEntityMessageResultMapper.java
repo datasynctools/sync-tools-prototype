@@ -6,7 +6,8 @@ import java.sql.SQLException;
 
 import tools.datasync.basic.model.SyncEntityMessage;
 
-public class JsonResultMapper implements ResultMapper<SyncEntityMessage> {
+public class SyncEntityMessageResultMapper implements
+	ResultMapper<SyncEntityMessage> {
 
     public SyncEntityMessage map(ResultSet result, String entityName,
 	    Closeable closable) throws SQLException {

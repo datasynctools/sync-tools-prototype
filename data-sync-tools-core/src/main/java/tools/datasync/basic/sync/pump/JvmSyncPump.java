@@ -3,7 +3,8 @@
  */
 package tools.datasync.basic.sync.pump;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -28,20 +29,20 @@ import org.apache.log4j.Logger;
  */
 public class JvmSyncPump implements SyncPump {
 
+    private static final Logger LOG = LoggerFactory
+	    .getLogger(JvmSyncPump.class);
+
     private PeerMode peerMode;
     private JvmSyncPumpSender sender = null;
     private JvmSyncPumpReceiver receiver = null;
-    Logger logger = Logger.getLogger(JvmSyncPump.class.getName());
 
     public JvmSyncPump(PeerMode peerMode, JvmSyncPumpSender sender,
 	    JvmSyncPumpReceiver receiver) {
-	super();
 	this.peerMode = peerMode;
 	this.sender = sender;
 	this.receiver = receiver;
     }
 
-    // @Override
     public void beginPump() {
 	Thread senderThread = new Thread(sender, "Sender-"
 		+ this.peerMode.name());
@@ -52,10 +53,9 @@ public class JvmSyncPump implements SyncPump {
 	senderThread.start();
 	receiverThread.start();
 
-	logger.info("Started JvmSyncPump sender and receiver");
+	LOG.info("Started JvmSyncPump sender and receiver");
     }
 
-    // @Override
     public boolean isPumping() {
 	return sender.isRunning().get() || receiver.isRunning().get();
     }

@@ -43,26 +43,6 @@ public class SampleAppTableNameGetter implements IdGetter {
 
     public String get(String entityName) {
 
-	// String value = entityNames.get(entityName);
-	//
-	// if (Table.CONTACT.equalsIgnoreCase(entityName)) {
-	// return KeyColumn.PK_CONTACT;
-	//
-	// } else if (Table.CONTACT_LINK.equalsIgnoreCase(entityName)) {
-	// return KeyColumn.PK_CONTACT_LINK;
-	//
-	// } else if (Table.WORK_HISTORY.equalsIgnoreCase(entityName)) {
-	// return KeyColumn.PK_WORK_HISTORY;
-	//
-	// } else if (Table.SYNC_ENTITY.equalsIgnoreCase(entityName)) {
-	// return KeyColumn.PK_SYNC_ENTITY;
-	//
-	// } else if (Table.SYNC_PEER.equalsIgnoreCase(entityName)) {
-	// return KeyColumn.PK_SYNC_PEER;
-	//
-	// } else if (Table.SYNC_STATE.equalsIgnoreCase(entityName)) {
-	// return KeyColumn.PK_SYNC_STATE;
-	// }
 	if (!entityNames.containsKey(entityName)) {
 	    throw (new RuntimeException("No entity name of [" + entityName
 		    + "]"));

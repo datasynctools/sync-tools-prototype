@@ -19,7 +19,6 @@ public class SenderPresentAcknolwedger {
 
     public boolean waitForSenderAck(AtomicBoolean isRunning,
 	    AtomicBoolean stopper) throws InterruptedException {
-	// TODO: Wait for "Begin Seed" message from other peer
 
 	LOG.info("Waiting for peer sender message so we can send using ackPeerSenderLatch "
 		+ ackPeerSenderLatch);

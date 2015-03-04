@@ -35,7 +35,7 @@ import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.model.SyncEntityMessage;
-import tools.datasync.basic.util.JSONMapperBean;
+import tools.datasync.basic.util.JsonMapperBean;
 
 public class DbSeedProducer implements SeedProducer {
 
@@ -44,7 +44,7 @@ public class DbSeedProducer implements SeedProducer {
 
     private EntityGetter entityGetter;
     private GenericDao genericDao;
-    private JSONMapperBean jsonMapper = JSONMapperBean.getInstance();
+    private JsonMapperBean jsonMapper = JsonMapperBean.getInstance();
     private boolean isRunning = false;
 
     boolean stop = false;
@@ -164,16 +164,15 @@ public class DbSeedProducer implements SeedProducer {
 	String recordId = String.valueOf(record.getCalculatedPrimaryKey());
 	String recordJson = jsonMapper.writeValueAsString(record);
 	String recordHash = record.generateHash();
-	// TODO: get peer id from database
 	String origin = "";// me.getPeerId();
-	// SeedRecord seed = new SeedRecord(entityId, recordId, recordHash,
-	// recordJson, origin);
+
 	SeedRecord seed = new SeedRecord();
 	seed.setEntityId(entityId);
 	seed.setRecordId(recordId);
 	seed.setRecordHash(recordHash);
 	seed.setRecordJson(recordJson);
 	seed.setOrigin(origin);
+
 	LOG.debug("generated seed record: " + seed);
 	return seed;
     }

@@ -108,14 +108,14 @@
 		<constructor-arg ref="entityGetter" />
 	</bean>
 	
-	<bean id="syncStateInitializerA" class="tools.datasync.basic.dao.JDBCSyncStateInitializer">
+	<bean id="syncStateInitializerA" class="tools.datasync.basic.dao.JdbcSyncStateInitializer">
 		<constructor-arg ref="tables"/>
 		<constructor-arg ref="entityGetter" />
 		<constructor-arg ref="sampleSyncIdGetter"/>		
 		<constructor-arg ref="sourceDao"/>
 	</bean>
 
-	<bean id="syncStateInitializerB" class="tools.datasync.basic.dao.JDBCSyncStateInitializer">
+	<bean id="syncStateInitializerB" class="tools.datasync.basic.dao.JdbcSyncStateInitializer">
 		<constructor-arg ref="tables"/>
 		<constructor-arg ref="entityGetter" />
 		<constructor-arg ref="sampleSyncIdGetter"/>		

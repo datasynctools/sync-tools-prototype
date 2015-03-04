@@ -6,12 +6,13 @@ import java.sql.Statement;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JdbcSelectionHelper<T> {
 
-    private static Logger LOG = Logger.getLogger(JdbcSelectionHelper.class
-	    .getName());
+    private static final Logger LOG = LoggerFactory
+	    .getLogger(JdbcSelectionHelper.class);
 
     private DataSource dataSource;
 
@@ -37,6 +38,7 @@ public class JdbcSelectionHelper<T> {
 	}
 
 	// documentation note: the mapper is responsible for closing the
+	// connection
 
     }
 }

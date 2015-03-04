@@ -16,16 +16,37 @@
  * 
  * @author  Upendra Jariya
  * @sponsor Douglas Johnson
+ * @copyright datasync.tools
  * @version 1.0
- * @since   2014-11-10
+ * @since   20-Nov-2014
  */
-package tools.datasync.basic.sync;
 
-public class SyncException extends Exception {
+package tools.datasync.basic.util;
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 2984999604731566988L;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig.Feature;
+
+public class JsonMapperBean extends ObjectMapper {
+
+    private static JsonMapperBean bean = null;
+
+    public static synchronized JsonMapperBean getInstance() {
+
+	if (bean == null) {
+	    bean = new JsonMapperBean();
+	}
+	return bean;
+    }
+
+    private JsonMapperBean() {
+
+	super();
+	init();
+    }
+
+    public void init() {
+
+	this.configure(Feature.FAIL_ON_EMPTY_BEANS, false);
+    }
 
 }

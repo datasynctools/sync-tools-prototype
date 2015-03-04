@@ -16,6 +16,4 @@ public interface SyncStateInitializer {
 
     EntityGetter getEntityGetter();
 
-    // void setGenericDao(GenericDao genericDao);
-
 }

@@ -16,7 +16,7 @@ import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.seed.SeedException;
 import tools.datasync.basic.seed.SeedOverException;
 import tools.datasync.basic.seed.SeedProducer;
-import tools.datasync.basic.util.JSONMapperBean;
+import tools.datasync.basic.util.JsonMapperBean;
 
 public class SenderPostAckLogic {
 
@@ -24,7 +24,7 @@ public class SenderPostAckLogic {
 	    .getLogger(SenderPostAckLogic.class);
 
     private BlockingQueue<String> sendQueue;
-    private JSONMapperBean jsonMapper;
+    private JsonMapperBean jsonMapper;
     private SeedProducer seedProducer;
 
     private AtomicBoolean isRunning;
@@ -45,9 +45,6 @@ public class SenderPostAckLogic {
 		+ ", seedProducer.isRunning=" + seedProducer.isRunning());
 	syncMessage = createSyncMessage(messageNumber++);
 
-	// syncMessage = new SyncMessage(null, messageNumber++,
-	// SyncMessageType.SYNC_OVER.toString(), null, null,
-	// System.currentTimeMillis());
 	message = jsonMapper.writeValueAsString(syncMessage);
 
 	LOG.info("Sending - " + message);
@@ -82,9 +79,6 @@ public class SenderPostAckLogic {
 	syncMessage = createSyncMessage(seed, messageNumber, payloadJson,
 		payloadHash);
 
-	// syncMessage = new SyncMessage(seed.getOrigin(), messageNumber++,
-	// SyncMessageType.SEED.toString(), payloadJson, paloadHash,
-	// System.currentTimeMillis());
 	message = jsonMapper.writeValueAsString(syncMessage);
 
 	LOG.info("Sending - " + message);
@@ -128,7 +122,7 @@ public class SenderPostAckLogic {
 
     }
 
-    public void setJsonMapper(JSONMapperBean jsonMapper) {
+    public void setJsonMapper(JsonMapperBean jsonMapper) {
 	this.jsonMapper = jsonMapper;
     }
 

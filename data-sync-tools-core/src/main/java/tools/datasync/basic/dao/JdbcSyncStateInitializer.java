@@ -6,52 +6,49 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.IdGetter;
 import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.basic.sync.pump.SyncStateInitializer;
-import tools.datasync.basic.util.JSONMapperBean;
+import tools.datasync.basic.util.JsonMapperBean;
 
-public class JDBCSyncStateInitializer implements SyncStateInitializer {
+public class JdbcSyncStateInitializer implements SyncStateInitializer {
+
+    private static final Logger LOG = LoggerFactory
+	    .getLogger(JdbcSyncStateInitializer.class);
 
     private AtomicBoolean isRunning;
     private GenericDao genericDao;
-    private JSONMapperBean jsonMapper;
-    // private Md5HashGenerator hashGenerator;
+    private JsonMapperBean jsonMapper;
 
-    Logger logger = Logger.getLogger(JDBCSyncStateInitializer.class.getName());
     private List<String> tables;
     private EntityGetter entityGetter;
     private IdGetter idGetter;
 
-    // = { Ids.Table.CONTACT, Ids.Table.WORK_HISTORY,
-    // Ids.Table.CONTACT_LINK };
-
-    public JDBCSyncStateInitializer(List<String> tables,
+    public JdbcSyncStateInitializer(List<String> tables,
 	    EntityGetter entityGetter, IdGetter idGetter, GenericDao genericDao) {
 	this.isRunning = new AtomicBoolean(false);
-	this.jsonMapper = JSONMapperBean.getInstance();
+	this.jsonMapper = JsonMapperBean.getInstance();
 	this.tables = tables;
 	this.entityGetter = entityGetter;
 	this.idGetter = idGetter;
 	this.genericDao = genericDao;
-	// this.hashGenerator = Md5HashGenerator.getInstance();
     }
 
     public List<String> getTables() {
 	return tables;
     }
 
-    // @Override
     public void doSeed() throws SQLException, IOException {
 
 	for (String table : tables) {
 
-	    logger.info("Populating SyncState table for [" + table
+	    LOG.info("Populating SyncState table for [" + table
 		    + "] records...");
 	    Iterator<SyncEntityMessage> jsonIterator = genericDao.selectAll(
 		    table, true);
@@ -60,15 +57,9 @@ public class JDBCSyncStateInitializer implements SyncStateInitializer {
 		SyncEntityMessage record = jsonIterator.next();
 
 		SyncEntityMessage syncState = new SyncEntityMessage();
+
 		// TODO Doug comment: I don't understand these variable names
 		fillSyncEntityMessage(syncState, record, table);
-
-		// syncState.setEntity(table);
-		// syncState.set("ENTITYID", idGetter.get(table));
-		// syncState.set("RECORDID", record.getCalculatedPrimaryKey());
-		// String recordJson = jsonMapper.writeValueAsString(record);
-		// syncState.set("RECORDDATA", recordJson);
-		// syncState.set("RECORDHASH", record.generateHash());
 
 		genericDao.save(entityGetter.getSyncStateName(), syncState);
 	    }
@@ -86,12 +77,10 @@ public class JDBCSyncStateInitializer implements SyncStateInitializer {
 	syncState.set("RECORDHASH", record.generateHash());
     }
 
-    // @Override
     public void setIsRunning(boolean isRunning) {
 	this.isRunning.set(isRunning);
     }
 
-    // @Override
     public void setGenericDao(GenericDao genericDao) {
 	this.genericDao = genericDao;
     }

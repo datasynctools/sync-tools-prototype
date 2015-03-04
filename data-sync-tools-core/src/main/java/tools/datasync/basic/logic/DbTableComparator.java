@@ -13,6 +13,7 @@ import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.dao.GenericJDBCDao;
 import tools.datasync.basic.model.SyncEntityMessage;
 
+//TODO Is this better in a utility class or test class and not in core?
 public class DbTableComparator {
 
     private GenericDao sourceDao = null;
@@ -27,7 +28,8 @@ public class DbTableComparator {
 	LOG.info("Creating comparator... " + sourceDao + targetDao);
     }
 
-    private Map<String, SyncEntityMessage> mapResults(Iterator<SyncEntityMessage> jsonIterator) {
+    private Map<String, SyncEntityMessage> mapResults(
+	    Iterator<SyncEntityMessage> jsonIterator) {
 	Map<String, SyncEntityMessage> answer = new HashMap<String, SyncEntityMessage>();
 	while (jsonIterator.hasNext()) {
 	    SyncEntityMessage json = jsonIterator.next();
@@ -40,10 +42,10 @@ public class DbTableComparator {
 	    SQLException {
 
 	LOG.info(">>> Comparing tables: " + entityName);
-	Map<String, SyncEntityMessage> sourceMap = mapResults(sourceDao.selectAll(
-		entityName, true));
-	Map<String, SyncEntityMessage> targetMap = mapResults(targetDao.selectAll(
-		entityName, true));
+	Map<String, SyncEntityMessage> sourceMap = mapResults(sourceDao
+		.selectAll(entityName, true));
+	Map<String, SyncEntityMessage> targetMap = mapResults(targetDao
+		.selectAll(entityName, true));
 
 	Iterator<String> sourceKeys = sourceMap.keySet().iterator();
 
@@ -60,8 +62,8 @@ public class DbTableComparator {
     }
 
     private void compare(Iterator<String> sourceKeys,
-	    Map<String, SyncEntityMessage> sourceMap, Map<String, SyncEntityMessage> targetMap,
-	    String entityName) {
+	    Map<String, SyncEntityMessage> sourceMap,
+	    Map<String, SyncEntityMessage> targetMap, String entityName) {
 	while (sourceKeys.hasNext()) {
 	    String sourceKey = sourceKeys.next();
 	    SyncEntityMessage source = sourceMap.get(sourceKey);

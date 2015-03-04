@@ -32,8 +32,8 @@ public class InitiatorWinsConflictResolver implements ConflictResolver {
 	this.isInitiator = isInitiator;
     }
 
-    // @Override
-    public SyncEntityMessage resolve(SyncEntityMessage my, SyncEntityMessage theirs) throws ConflictException {
+    public SyncEntityMessage resolve(SyncEntityMessage my,
+	    SyncEntityMessage theirs) throws ConflictException {
 
 	if (isInitiator) {
 	    return null;

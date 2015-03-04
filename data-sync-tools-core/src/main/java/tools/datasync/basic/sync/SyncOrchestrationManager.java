@@ -30,12 +30,11 @@ import tools.datasync.basic.sync.pump.SyncPumpFactory;
  */
 public class SyncOrchestrationManager {
 
-    SyncPumpFactory pumpFactoryA2B;
-    SyncPumpFactory pumpFactoryB2A;
+    private SyncPumpFactory pumpFactoryA2B;
+    private SyncPumpFactory pumpFactoryB2A;
 
     public SyncOrchestrationManager(SyncPumpFactory pumpFactoryA2B,
 	    SyncPumpFactory pumpFactoryB2A) {
-	super();
 	this.pumpFactoryA2B = pumpFactoryA2B;
 	this.pumpFactoryB2A = pumpFactoryB2A;
     }

@@ -29,21 +29,24 @@ import tools.datasync.basic.model.SyncEntityMessage;
 
 public interface GenericDao {
 
-    public Iterator<SyncEntityMessage> selectAll(String entityName, boolean sorted)
+    public Iterator<SyncEntityMessage> selectAll(String entityName,
+	    boolean sorted) throws SQLException;
+
+    public void saveOrUpdate(String entityName,
+	    List<SyncEntityMessage> jsonList, String keyColumn)
 	    throws SQLException;
 
-    public void saveOrUpdate(String entityName, List<SyncEntityMessage> jsonList,
+    public void saveOrUpdate(String entityName, SyncEntityMessage json,
 	    String keyColumn) throws SQLException;
 
-    public void saveOrUpdate(String entityName, SyncEntityMessage json, String keyColumn)
+    public void save(String entityName, SyncEntityMessage json)
 	    throws SQLException;
 
-    public void save(String entityName, SyncEntityMessage json) throws SQLException;
+    public void update(String entityName, SyncEntityMessage json,
+	    String keyColumn) throws SQLException;
 
-    public void update(String entityName, SyncEntityMessage json, String keyColumn)
+    public SyncEntityMessage select(String tableName, String recordId)
 	    throws SQLException;
-
-    public SyncEntityMessage select(String tableName, String recordId) throws SQLException;
 
     public SyncEntityMessage selectState(String entityId, String recordId)
 	    throws SQLException;

@@ -21,7 +21,10 @@
  */
 package tools.datasync.basic.seed;
 
-//TODO This exception is likely extraneous. Consider removing.
+//TODO: Remove all framework-specific Exceptions? 
+//Would we rather the framework to use all runtime exceptions. 
+//This seems to be an emerging/preferred trend and a personal preference, of Doug Johnson. 
+//This maps better to languages like C#.
 public class SeedOverException extends Exception {
 
     private static final long serialVersionUID = -383765003985920204L;

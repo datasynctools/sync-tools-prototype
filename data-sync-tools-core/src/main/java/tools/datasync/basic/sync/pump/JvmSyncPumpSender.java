@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.seed.SeedOverException;
 import tools.datasync.basic.seed.SeedProducer;
-import tools.datasync.basic.util.JSONMapperBean;
+import tools.datasync.basic.util.JsonMapperBean;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -56,7 +56,7 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
 	senderPreAckLogic.setSyncStateInitializer(syncStateInitializer);
 	senderPreAckLogic.setSendQueue(sendQueue);
 
-	JSONMapperBean jsonMapper = JSONMapperBean.getInstance();
+	JsonMapperBean jsonMapper = JsonMapperBean.getInstance();
 	senderPreAckLogic.setJsonMapper(jsonMapper);
 	senderPostAckLogic.setJsonMapper(jsonMapper);
 

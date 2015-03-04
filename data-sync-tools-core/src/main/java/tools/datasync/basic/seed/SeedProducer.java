@@ -29,7 +29,4 @@ public interface SeedProducer {
 
     public boolean isRunning();
 
-    // public void setGenericDao(GenericDao genericDao);
-    //
-    // public GenericDao getGenericDao();
 }

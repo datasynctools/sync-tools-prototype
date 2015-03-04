@@ -11,16 +11,18 @@ import java.util.List;
 import tools.datasync.basic.model.IdGetter;
 import tools.datasync.basic.model.SyncEntityMessage;
 
-public class JsonIteratorResultMapper implements ResultMapper<Iterator<SyncEntityMessage>> {
+public class SyncEntityMessageIteratorResultMapper implements
+	ResultMapper<Iterator<SyncEntityMessage>> {
 
     private IdGetter idGetter;
 
-    public JsonIteratorResultMapper(IdGetter idGetter) {
+    public SyncEntityMessageIteratorResultMapper(IdGetter idGetter) {
 	this.idGetter = idGetter;
     }
 
-    public Iterator<SyncEntityMessage> map(final ResultSet result, final String entityName,
-	    final Closeable closable) throws SQLException {
+    public Iterator<SyncEntityMessage> map(final ResultSet result,
+	    final String entityName, final Closeable closable)
+	    throws SQLException {
 
 	// String primaryKey = Ids.KeyColumn.get(entityName);
 	String primaryKey = idGetter.get(entityName);

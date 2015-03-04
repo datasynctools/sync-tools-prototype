@@ -21,27 +21,31 @@
  */
 package tools.datasync.basic.comm;
 
+//TODO: Remove all framework-specific Exceptions? 
+//Would we rather the framework to use all runtime exceptions. 
+//This seems to be an emerging/preferred trend and a personal preference, of Doug Johnson. 
+//This maps better to languages like C#.
 public class CommException extends Exception {
 
-	private static final long serialVersionUID = -383765003985920204L;
+    private static final long serialVersionUID = -383765003985920204L;
 
-	public CommException() {
+    public CommException() {
 
-	}
+    }
 
-	public CommException(String message) {
-		super(message);
+    public CommException(String message) {
+	super(message);
 
-	}
+    }
 
-	public CommException(String message, Throwable cause) {
-		super(message, cause);
-		
-	}
+    public CommException(String message, Throwable cause) {
+	super(message, cause);
 
-	public CommException(Throwable cause) {
-		super(cause);
-		
-	}
+    }
+
+    public CommException(Throwable cause) {
+	super(cause);
+
+    }
 
 }

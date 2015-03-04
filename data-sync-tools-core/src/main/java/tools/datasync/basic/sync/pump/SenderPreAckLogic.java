@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.comm.SyncMessage;
 import tools.datasync.basic.comm.SyncMessageType;
-import tools.datasync.basic.util.JSONMapperBean;
+import tools.datasync.basic.util.JsonMapperBean;
 
 public class SenderPreAckLogic {
 
@@ -23,7 +23,7 @@ public class SenderPreAckLogic {
     private BothSendersPresentAcknowledger bothSendersPresentAcknowledger = new BothSendersPresentAcknowledger();
     private SyncStateInitializer syncStateInitializer;
     private BlockingQueue<String> sendQueue;
-    private JSONMapperBean jsonMapper;
+    private JsonMapperBean jsonMapper;
 
     // TODO does the message number make sense? how is it used? think it's just
     // extraneous and should be removed
@@ -59,9 +59,6 @@ public class SenderPreAckLogic {
 
 	// Send message to the other Peer's receiver "Begin seed"
 	SyncMessage syncMessage = createSyncMessage(messageNumber++);
-	// SyncMessage syncMessage = new SyncMessage(null, messageNumber++,
-	// SyncMessageType.BEGIN_SEED.toString(), null, null,
-	// System.currentTimeMillis());
 	String message = jsonMapper.writeValueAsString(syncMessage);
 	this.sendQueue.put(message);
 	LOG.info("Completed seeding, send message to the peer that we're ready to receive");
@@ -90,7 +87,7 @@ public class SenderPreAckLogic {
 		.setAckPairReceiverLatch(ackPairReceiverLatch);
     }
 
-    public void setJsonMapper(JSONMapperBean jsonMapper) {
+    public void setJsonMapper(JsonMapperBean jsonMapper) {
 	this.jsonMapper = jsonMapper;
     }
 

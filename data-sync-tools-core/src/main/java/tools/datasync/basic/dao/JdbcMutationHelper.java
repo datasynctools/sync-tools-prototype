@@ -6,15 +6,16 @@ import java.sql.Statement;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.model.SyncEntityMessage;
-import tools.datasync.basic.util.SQLGenUtil;
+import tools.datasync.basic.util.SqlGenUtil;
 
 public class JdbcMutationHelper {
 
-    private static Logger LOG = Logger.getLogger(JdbcSelectionHelper.class
-	    .getName());
+    private static final Logger LOG = LoggerFactory
+	    .getLogger(JdbcMutationHelper.class);
 
     private DataSource dataSource;
     private SqlCreator insertCreator;
@@ -27,8 +28,8 @@ public class JdbcMutationHelper {
 	this.updateCreator = updateCreator;
     }
 
-    public void saveOrUpdate(String dbName, String entityName, SyncEntityMessage json,
-	    String keyColumn) throws SQLException {
+    public void saveOrUpdate(String dbName, String entityName,
+	    SyncEntityMessage json, String keyColumn) throws SQLException {
 	Connection connection = null;
 	Statement statement = null;
 
@@ -39,7 +40,7 @@ public class JdbcMutationHelper {
 
 	} catch (SQLException ex) {
 	    // May be primary key violation, try update statement...
-	    if (SQLGenUtil.isConstraintViolation(ex)) {
+	    if (SqlGenUtil.isConstraintViolation(ex)) {
 
 		executeUpdate(statement, entityName, json, keyColumn);
 

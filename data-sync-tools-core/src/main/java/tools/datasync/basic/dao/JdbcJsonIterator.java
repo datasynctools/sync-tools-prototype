@@ -39,9 +39,6 @@ public class JdbcJsonIterator implements Iterator<SyncEntityMessage> {
 	} catch (SQLException e) {
 
 	    throw (new RuntimeException(e));
-	    // logger.error(dbName + ": "
-	    // + "result set error - hasNext().", e);
-	    // return false;
 	}
     }
 
@@ -73,14 +70,10 @@ public class JdbcJsonIterator implements Iterator<SyncEntityMessage> {
 	    sbPrimaryKey.setLength(sbPrimaryKey.length() - 2);
 	}
 	json.setCalculatedPrimaryKey(sbPrimaryKey.toString());
-	// logger.debug("ResultSet.next() - calculated primary key: "
-	// + json.getCalculatedPrimaryKey());
 
 	int count = result.getMetaData().getColumnCount();
 	addObjects(json, count);
 	count++;
-	// logger.debug(dbName + ": ResultSet.next() - returning "
-	// + entityName + " - " + json);
 	return json;
     }
 
@@ -90,13 +83,10 @@ public class JdbcJsonIterator implements Iterator<SyncEntityMessage> {
 	    return (nextLogic());
 
 	} catch (SQLException e) {
-	    // logger.warn(dbName + ": result set error - next().", e);
 	    throw new RuntimeException(e);
 	} finally {
 	    try {
 		if (!hasMore) {
-		    // logger.debug(dbName
-		    // + ": selectAll() - closing resultset");
 		    closable.close();
 		}
 	    } catch (IOException e) {
@@ -107,7 +97,7 @@ public class JdbcJsonIterator implements Iterator<SyncEntityMessage> {
     }
 
     public void remove() {
-	// Do nothing
+	// Do nothing on purpose
     }
 
 }

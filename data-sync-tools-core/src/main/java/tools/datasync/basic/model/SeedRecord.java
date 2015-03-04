@@ -35,86 +35,46 @@ public class SeedRecord implements Serializable, Cloneable {
     public SeedRecord() {
     }
 
-    /**
-     * @return the entityId
-     */
     public String getEntityId() {
 	return entityId;
     }
 
-    /**
-     * @param entityId
-     *            the entityId to set
-     */
     public void setEntityId(String entityId) {
 	this.entityId = entityId;
     }
 
-    /**
-     * @return the recordId
-     */
     public String getRecordId() {
 	return recordId;
     }
 
-    /**
-     * @param recordId
-     *            the recordId to set
-     */
     public void setRecordId(String recordId) {
 	this.recordId = recordId;
     }
 
-    /**
-     * @return the recordHash
-     */
     public String getRecordHash() {
 	return recordHash;
     }
 
-    /**
-     * @param recordHash
-     *            the recordHash to set
-     */
     public void setRecordHash(String recordHash) {
 	this.recordHash = recordHash;
     }
 
-    /**
-     * @return the recordJson
-     */
     public String getRecordJson() {
 	return recordJson;
     }
 
-    /**
-     * @param recordJson
-     *            the recordJson to set
-     */
     public void setRecordJson(String recordJson) {
 	this.recordJson = recordJson;
     }
 
-    /**
-     * @return the origin
-     */
     public String getOrigin() {
 	return origin;
     }
 
-    /**
-     * @param origin
-     *            the origin to set
-     */
     public void setOrigin(String origin) {
 	this.origin = origin;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
 	return "SeedRecord [entityId=" + entityId + ", recordId=" + recordId
