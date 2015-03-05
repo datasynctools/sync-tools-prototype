@@ -81,7 +81,10 @@ public class SeedIntegrationTest {
 	    targetDao = appContext.getBean("targetDao", GenericDao.class);
 
 	} catch (Exception e) {
-	    appContext.close();
+	    LOG.error("Cannot load app enviornment", e);
+	    if (appContext != null) {
+		appContext.close();
+	    }
 	}
 
     }
