@@ -83,7 +83,7 @@ public class SenderPostAckLogic {
 
 	LOG.info("Sending - " + message);
 	this.sendQueue.put(message);
-	return (messageNumber);
+	return (messageNumber + 1);
 
     }
 
