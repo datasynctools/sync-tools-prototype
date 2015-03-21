@@ -6,6 +6,7 @@ package tools.datasync.basic.sync.pump;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -16,10 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.comm.SyncMessage;
-import tools.datasync.basic.comm.SyncMessageType;
-import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.seed.SeedConsumer;
 import tools.datasync.basic.seed.SeedException;
+import tools.datasync.basic.sync.pump.handlers.SyncMessageHandler;
 import tools.datasync.basic.util.JsonMapperBean;
 
 /**
@@ -48,6 +48,8 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
     private static final Logger LOG = LoggerFactory
 	    .getLogger(JvmSyncPumpReceiver.class);
 
+    private SyncMessageHandler syncMessageHandler = null;
+
     private BlockingQueue<String> receiveQueue;
     private AtomicBoolean isRunning;
     private JsonMapperBean jsonMapper;
@@ -57,6 +59,8 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 
     private CountDownLatch ackPairReceiverLatch;
     private CountDownLatch ackPeerSenderLatch;
+    private CopyOnWriteArrayList<String> arrayList;
+    private NextEntitySignaler nextEntitySignaler;
 
     public JvmSyncPumpReceiver(BlockingQueue<String> receiveQueue,
 	    AtomicBoolean stopped) {
@@ -65,6 +69,7 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 	this.stopper = stopped;
 	this.isRunning = new AtomicBoolean(true);
 	this.jsonMapper = JsonMapperBean.getInstance();
+
     }
 
     public void setSeedConsumer(SeedConsumer seedConsumer) {
@@ -121,32 +126,22 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 
     private boolean handleMessage(String message) throws JsonParseException,
 	    JsonMappingException, IOException, SeedException {
-	LOG.info("Received Sync Message: " + message);
 
+	// TODO Add more error handling
 	SyncMessage syncMessage = jsonMapper.readValue(message,
 		SyncMessage.class);
 
-	if (SyncMessageType.SEED.equals(syncMessage.getMessageType())) {
+	return syncMessageHandler.handle(syncMessage);
 
-	    SeedRecord seed = jsonMapper.readValue(
-		    syncMessage.getPayloadJson(), SeedRecord.class);
-	    seedConsumer.consume(seed);
-
-	} else if (SyncMessageType.SYNC_OVER.equals(syncMessage
-		.getMessageType())) {
-	    return true;
-	} else if (SyncMessageType.BEGIN_SEED.equals(syncMessage
-		.getMessageType())) {
-	    // Signal the sender to start sending
-	    ackPeerSenderLatch.countDown();
-	    LOG.info("Acknowledged Sender Peer with ackPeerSenderLatch"
-		    + ackPeerSenderLatch);
-	}
-	return false; // not finished
     }
 
     public void run() {
 	try {
+
+	    if (syncMessageHandler == null) {
+		syncMessageHandler = new SyncMessageHandler(ackPeerSenderLatch,
+			arrayList, seedConsumer, nextEntitySignaler);
+	    }
 
 	    ackPairReceiverLatch.countDown();
 	    LOG.info("Acknowledged Receiver Pair");
@@ -154,7 +149,7 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 	    mainLoop();
 
 	} catch (Throwable e) {
-	    LOG.error("Error while receiving messages: " + e);
+	    LOG.error("Error while receiving messages", e);
 	    isRunning.set(false);
 	    stop();
 	}
@@ -175,6 +170,10 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 	this.ackPeerSenderLatch = ackPeerSenderLatch;
     }
 
+    public void setArrayList(CopyOnWriteArrayList<String> arrayList) {
+	this.arrayList = arrayList;
+    }
+
     public BlockingQueue<String> getQueue() {
 	return this.receiveQueue;
     }
@@ -182,6 +181,10 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
     public void stop() {
 	stopper.set(true);
 	isRunning.set(false);
+    }
+
+    public void setNextEntitySignaler(NextEntitySignaler nextEntitySignaler) {
+	this.nextEntitySignaler = nextEntitySignaler;
     }
 
     public void uncaughtException(Thread t, Throwable e) {

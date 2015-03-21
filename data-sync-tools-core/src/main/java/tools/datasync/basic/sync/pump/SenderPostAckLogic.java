@@ -27,6 +27,8 @@ public class SenderPostAckLogic {
     private JsonMapperBean jsonMapper;
     private SeedProducer seedProducer;
 
+    private NextEntityAwaiter nextEntityAwaiter;
+
     private AtomicBoolean isRunning;
     private AtomicBoolean stopper;
 
@@ -114,6 +116,9 @@ public class SenderPostAckLogic {
 		return messageNumber;
 	    }
 
+	    messageNumber = nextEntityAwaiter.awaitForNextEntity(seed,
+		    messageNumber);
+
 	    messageNumber = sendSyncMessage(seed, syncMessage, message,
 		    messageNumber);
 
@@ -140,6 +145,10 @@ public class SenderPostAckLogic {
 
     public void setStopper(AtomicBoolean stopper) {
 	this.stopper = stopper;
+    }
+
+    public void setNextEntityAwaiter(NextEntityAwaiter nextEntityAwaiter) {
+	this.nextEntityAwaiter = nextEntityAwaiter;
     }
 
 }

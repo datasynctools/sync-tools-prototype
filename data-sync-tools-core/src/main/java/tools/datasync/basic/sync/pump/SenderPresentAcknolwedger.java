@@ -28,10 +28,10 @@ public class SenderPresentAcknolwedger {
 		isRunning.set(false);
 		return false;
 	    }
-	    LOG.info("No acknowledge received on waiting for ackPeerSenderLatch "
+	    LOG.debug("No acknowledge received on waiting for ackPeerSenderLatch "
 		    + ackPeerSenderLatch);
 	}
-	LOG.info("Peersender sent begin seed, ready to send messages");
+	LOG.info("Peer sender sent 'begin seed', ready to send messages");
 	return true;
     }
 

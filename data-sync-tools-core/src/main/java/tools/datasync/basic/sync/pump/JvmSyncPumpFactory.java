@@ -60,21 +60,21 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
 		syncStateInitializer.getTables(),
 		syncStateInitializer.getEntityGetter());
 
-	JvmSyncPumpSender sender = new JvmSyncPumpSender(peer.getQueue(),
-		syncStateInitializer, concurArgs.getStopper());
+	JvmSyncPumpSender sender = new JvmSyncPumpSender(peer.getSendQueue(),
+		syncStateInitializer, concurArgs);
 
 	sender.setSeedProducer(seedProducer);
 	sender.setAckPairReceiverLatch(peer.getAckPairReceiverLatch());
 	sender.setAckPeerSenderLatch(peer.getAckPeerSenderLatch());
-	sender.setBeginSenderLatch(concurArgs.getBeginSenderLatch());
+	// sender.setBeginSenderLatch(concurArgs.getBeginSenderLatch());
 	return (sender);
     }
 
     private JvmSyncPumpReceiver createReceiver(JvmSyncPeerParms peer,
 	    GenericDao targetDao, ConflictResolver conflictResolver,
 	    AtomicBoolean stopper) {
-	JvmSyncPumpReceiver receiver = new JvmSyncPumpReceiver(peer.getQueue(),
-		stopper);
+	JvmSyncPumpReceiver receiver = new JvmSyncPumpReceiver(
+		peer.getReceiveQueue(), stopper);
 
 	SeedConsumer seedConsumer = syncPairConfig.getSeedConsumerFactory()
 		.create(conflictResolver, targetDao);
@@ -82,19 +82,47 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
 	receiver.setSeedConsumer(seedConsumer);
 	receiver.setAckPairReceiverLatch(peer.getAckPairReceiverLatch());
 	receiver.setAckPeerSenderLatch(peer.getAckPeerSenderLatch());
+	receiver.setArrayList(peer.getArrayList());
+	receiver.setNextEntitySignaler(concurArgs.getNextEntitySignaler());
 
 	return (receiver);
+    }
+
+    private JvmSyncPeerParms calculateReceiverPeer(PeerMode peerMode) {
+
+	return syncPair.getPeerMe();
+
+	// if (peerMode.equals(PeerMode.A2B)) {
+	// return (syncPair.getPeerMe());
+	// } else {
+	// return (syncPair.getPeerOther());
+	// }
+    }
+
+    private JvmSyncPeerParms calculateSenderPeer(PeerMode peerMode) {
+
+	return syncPair.getPeerMe();
+
+	// if (peerMode.equals(PeerMode.A2B)) {
+	// return (syncPair.getPeerMe());
+	// } else {
+	// return (syncPair.getPeerOther());
+	// }
     }
 
     public SyncPump getInstance(PeerMode peerMode)
 	    throws InstantiationException {
 
-	JvmSyncPumpSender sender = createSender(syncPair.getPeerMe(),
+	JvmSyncPeerParms senderPeer = calculateSenderPeer(peerMode);
+	JvmSyncPeerParms receiverPeer = calculateReceiverPeer(peerMode);
+
+	JvmSyncPumpSender sender = createSender(senderPeer,
 		syncPairConfig.getSourceDao(), syncStateInitializer, concurArgs);
-	JvmSyncPumpReceiver receiver = createReceiver(syncPair.getPeerMe(),
+	JvmSyncPumpReceiver receiver = createReceiver(receiverPeer,
 		syncPairConfig.getTargetDao(), syncPairConfig
 			.getConflictResolverFactory().create(peerMode),
 		concurArgs.getStopper());
+
 	return new JvmSyncPump(peerMode, sender, receiver);
 
     }

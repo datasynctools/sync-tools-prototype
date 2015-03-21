@@ -20,7 +20,8 @@ public class SenderPreAckLogic {
 
     private SenderPresentAcknolwedger senderPresentAcknolwedger = new SenderPresentAcknolwedger();
     private ReceiverPresentAcknolwedger receiverPresentAcknolwedger = new ReceiverPresentAcknolwedger();
-    private BothSendersPresentAcknowledger bothSendersPresentAcknowledger = new BothSendersPresentAcknowledger();
+    // private BothSendersPresentAcknowledger bothSendersPresentAcknowledger =
+    // new BothSendersPresentAcknowledger();
     private SyncStateInitializer syncStateInitializer;
     private BlockingQueue<String> sendQueue;
     private JsonMapperBean jsonMapper;
@@ -37,15 +38,17 @@ public class SenderPreAckLogic {
 	    return new SenderPreAckLogicResult(false, messageNumber);
 	}
 
+	LOG.info("The receiver for this sender is acknowledged");
+
 	if (!senderPresentAcknolwedger.waitForSenderAck(isRunning, stopper)) {
 	    return new SenderPreAckLogicResult(false, messageNumber);
-
 	}
+	LOG.info("The peer sender is acknowledged");
 
-	if (!bothSendersPresentAcknowledger.waitForBothSendersAck(isRunning,
-		stopper)) {
-	    return new SenderPreAckLogicResult(false, messageNumber);
-	}
+	// if (!bothSendersPresentAcknowledger.waitForBothSendersAck(isRunning,
+	// stopper)) {
+	// return new SenderPreAckLogicResult(false, messageNumber);
+	// }
 
 	return new SenderPreAckLogicResult(true, messageNumber);
 
@@ -95,9 +98,9 @@ public class SenderPreAckLogic {
 	senderPresentAcknolwedger.setAckPeerSenderLatch(ackPeerSenderLatch);
     }
 
-    public void setBeginSenderLatch(CountDownLatch beginSenderLatch) {
-	bothSendersPresentAcknowledger.setBeginSenderLatch(beginSenderLatch);
-    }
+    // public void setBeginSenderLatch(CountDownLatch beginSenderLatch) {
+    // bothSendersPresentAcknowledger.setBeginSenderLatch(beginSenderLatch);
+    // }
 
     public void setSendQueue(BlockingQueue<String> sendQueue) {
 	this.sendQueue = sendQueue;
@@ -113,9 +116,9 @@ public class SenderPreAckLogic {
 	this.receiverPresentAcknolwedger = receiverPresentAcknolwedger;
     }
 
-    public void setBothSendersPresentAcknowledger(
-	    BothSendersPresentAcknowledger bothSendersPresentAcknowledger) {
-	this.bothSendersPresentAcknowledger = bothSendersPresentAcknowledger;
-    }
+    // public void setBothSendersPresentAcknowledger(
+    // BothSendersPresentAcknowledger bothSendersPresentAcknowledger) {
+    // this.bothSendersPresentAcknowledger = bothSendersPresentAcknowledger;
+    // }
 
 }

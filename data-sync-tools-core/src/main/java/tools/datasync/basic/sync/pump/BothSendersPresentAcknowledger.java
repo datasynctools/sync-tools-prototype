@@ -20,11 +20,11 @@ public class BothSendersPresentAcknowledger {
     public boolean waitForBothSendersAck(AtomicBoolean isRunning,
 	    AtomicBoolean stopper) throws InterruptedException {
 	// Count down beginSenderLatch indicating this sender is ready.
-	LOG.info(">>> Counting down beginSenderLatch indicating this sender is ready");
+	LOG.info("Counting down beginSenderLatch indicating this sender is ready");
 	beginSenderLatch.countDown();
 
 	// Wait on beginSenderLatch until both senders are ready.
-	LOG.info(">>> Waiting on beginSenderLatch until both senders are ready");
+	LOG.info("Waiting on beginSenderLatch until both senders are ready");
 	while (!beginSenderLatch.await(awaitDuration, awaitUnit)) {
 	    if (stopper.get()) {
 		LOG.info("Stop requested, shutting down");

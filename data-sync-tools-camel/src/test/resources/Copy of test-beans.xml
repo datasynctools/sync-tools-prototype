@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	 xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:camel="http://camel.apache.org/schema/spring"
 	xsi:schemaLocation="
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+    http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
 	<bean id="syncPeerA" class="tools.datasync.basic.sync.SyncPeer"><constructor-arg value="A" /></bean>
 	<bean id="syncPeerB" class="tools.datasync.basic.sync.SyncPeer"><constructor-arg value="B" /></bean>
@@ -19,19 +21,84 @@
 	<bean id="beginSenderLatch" class="java.util.concurrent.CountDownLatch">
 		<constructor-arg value="2"/>
 	</bean>
+
+	<!-- producer template -->
+	<camel:template id="a2BSendingTemplate" camelContextId="pumpFactoryACamel" />
 	
-	<bean id="a2bQueue" class="java.util.concurrent.LinkedBlockingQueue" />
-	<bean id="b2aQueue" class="java.util.concurrent.LinkedBlockingQueue" />
+	<!-- 
+	<camel:template id="a2BSendingTemplate" defaultEndpoint="http4:localhost:10010/sync" camelContextId="pumpFactoryACamel" />	
+	<camel:template id="b2AReceivingTemplate" defaultEndpoint="http4:localhost:10010/requestB2A" camelContextId="pumpFactoryACamel" />
+	 -->
+	 
+	<!-- 
+	<bean id="a2BReceivingTemplate" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetClass"  ref="pumpFactoryACamel"/>
+		<property name="targetMethod" value="createConsumerTemplate"/>
+	</bean>
+	-->
+	
+	<bean id="a2BReceivingTemplate"  factory-bean="pumpFactoryACamel" factory-method="createConsumerTemplate" />
+	
+	<!-- 
+	<camel:template id="a2BReceivingTemplate" defaultEndpoint="http4:localhost:10010/request" camelContextId="pumpFactoryACamel" />
+	-->
+	
+	<bean id="peerMe-a2BSenderUri" class="java.lang.String">
+		<constructor-arg value="http4:localhost:10010/syncUpdate" />
+	</bean>
+	<bean id="peerMe-a2BReceiverUri" class="java.lang.String">
+		<constructor-arg value="http4:localhost:10010/syncResponse" />	
+	</bean>
+	
+	<bean id="peerMe-b2a-Queue" class="java.util.concurrent.LinkedBlockingQueue" />
+	<bean id="peerOther-to-PeerMe-b2a-Transmition-Queue" class="java.util.concurrent.LinkedBlockingQueue" />	
+	<bean id="peerOther-b2a-Queue" class="java.util.concurrent.LinkedBlockingQueue" />
+
+	<!-- FIXME: 'a2bSendingQueue' isn't really the right name for this queue -->
+	<bean id="a2bSendingQueue" class="tools.datasync.basic.sync.pump.camel.CamelBlockingQueuePollAndPull">
+		<constructor-arg ref="peerMe-a2BSenderUri" />
+		<constructor-arg ref="peerMe-a2BReceiverUri" />
+		<constructor-arg ref="a2BSendingTemplate" />
+	</bean>
+
+	<bean id="a2bReceivingQueue" class="java.util.concurrent.LinkedBlockingQueue" />
+
+<!-- 
+
+	<bean id="b2aReceivingQueue" class="tmp.CamelConsumerPollBlockingQueue">
+		<constructor-arg ref="a2BReceivingTemplate" />
+		<constructor-arg value="http4:localhost:10010/response"  />		
+		<constructor-arg ref="peerMe-b2a-Queue" />
+	</bean>
+
+	<bean id="b2ASendingQueue" class="tools.datasync.basic.sync.pump.camel.CamelConsumerBlockingQueue">
+		<constructor-arg ref="a2BReceivingTemplate" />
+		<constructor-arg value="http4:localhost:10010/responseB2A"  />		
+		<constructor-arg ref="b2aQueue" />
+	</bean>
+
+	<bean id="b2aReceivingQueue" class="tools.datasync.basic.sync.pump.camel.CamelProducerBlockingQueue">
+		<constructor-arg ref="b2AReceivingTemplate" />
+		<constructor-arg ref="b2aQueue" />
+	</bean>
+ -->
 
 	<bean id="peerMe" class="tools.datasync.basic.sync.pump.JvmSyncPeerParms">
 		<constructor-arg ref="syncPeerA"/>
-		<constructor-arg ref="a2bQueue"/>
-		<constructor-arg ref="nextEntityArrayList" />
+		<constructor-arg ref="a2bSendingQueue"/>
+		<!-- 
+		<constructor-arg ref="a2bQueue" />		
+		 -->
+		<constructor-arg ref="nextEntityArrayListA" />		 
 	</bean>
+	
 	<bean id="peerOther" class="tools.datasync.basic.sync.pump.JvmSyncPeerParms">
 		<constructor-arg ref="syncPeerB"/>
+		<constructor-arg ref="peerOther-b2a-Queue"/>
+		<!-- 
 		<constructor-arg ref="b2aQueue"/>
-		<constructor-arg ref="nextEntityArrayList" />
+		 -->
+		<constructor-arg ref="nextEntityArrayListB" />		 
 	</bean>
 
 	<bean id="pairA" class="tools.datasync.basic.sync.pump.JvmSyncPair">
@@ -94,8 +161,9 @@
 		<constructor-arg value="false" />
 	</bean>
 
-	<util:list id="nextEntityArrayList" list-class="java.util.concurrent.CopyOnWriteArrayList" value-type="java.lang.String" />
-	
+	<util:list id="nextEntityArrayListA" list-class="java.util.concurrent.CopyOnWriteArrayList" value-type="java.lang.String" />
+	<util:list id="nextEntityArrayListB" list-class="java.util.concurrent.CopyOnWriteArrayList" value-type="java.lang.String" />
+
 	<bean id="java.util.concurrent.TimeUnit.SECONDS"
 		class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean"/>
 
@@ -105,29 +173,48 @@
 	</bean>
  
 	<bean id="nextEntityAwaiterA2B" class="tools.datasync.basic.sync.pump.NextEntityAwaiter">
-		<constructor-arg ref="nextEntityArrayList" />
+		<constructor-arg ref="nextEntityArrayListA" />
 		<constructor-arg ref="stopper" />
 		<constructor-arg ref="timeSpan" />
-		<constructor-arg ref="a2bQueue" />
+		<constructor-arg ref="a2bSendingQueue" />
 	</bean>
 
 	<bean id="nextEntityAwaiterB2A" class="tools.datasync.basic.sync.pump.NextEntityAwaiter">
-		<constructor-arg ref="nextEntityArrayList" />
+		<constructor-arg ref="nextEntityArrayListB" />
 		<constructor-arg ref="stopper" />
 		<constructor-arg ref="timeSpan" />
-		<constructor-arg ref="b2aQueue" />
+		<constructor-arg ref="peerOther-b2a-Queue" />
+	</bean>
+
+<!--
+	<bean id="concurArgs" class="tools.datasync.basic.sync.pump.JvmSyncConcurArgs">
+		<constructor-arg ref="stopper" />
+		<constructor-arg ref="beginSenderLatch" />
+		<constructor-arg ref="nextEntityArrayList" />		
+	</bean>
+-->
+
+	<bean id="nextEntitySignalerA2B" class="tools.datasync.basic.sync.pump.camel.CamelPutNextEntitySignaler">
+		<constructor-arg value="http4:localhost:10010/syncUpdate" />
+		<constructor-arg ref="a2BSendingTemplate" />
+	</bean>
+	
+	<bean id="nextEntitySignalerB2A" class="tools.datasync.basic.sync.pump.BlockingQueueNextEntitySignaler">
+		<constructor-arg ref="peerOther-to-PeerMe-b2a-Transmition-Queue" />	
 	</bean>
 
 	<bean id="concurArgsA2B" class="tools.datasync.basic.sync.pump.JvmSyncConcurArgs">
 		<constructor-arg ref="stopper" />
 		<constructor-arg ref="beginSenderLatch" />
 		<constructor-arg ref="nextEntityAwaiterA2B" />
+		<constructor-arg ref="nextEntitySignalerA2B" />
 	</bean>
 
 	<bean id="concurArgsB2A" class="tools.datasync.basic.sync.pump.JvmSyncConcurArgs">
 		<constructor-arg ref="stopper" />
 		<constructor-arg ref="beginSenderLatch" />
 		<constructor-arg ref="nextEntityAwaiterB2A" />
+		<constructor-arg ref="nextEntitySignalerB2A" />		
 	</bean>
 
 	<util:list id="tables">
@@ -153,13 +240,59 @@
 		<constructor-arg ref="entityGetter" />
 		<constructor-arg ref="sampleSyncIdGetter"/>		
 		<constructor-arg ref="targetDao"/>
-	</bean>
+	</bean>	
+	
+	<camel:camelContext id="pumpFactoryACamel">
+	  <camel:route>
+	    <camel:from uri="direct:start"/>	    
+	    <camel:to uri="http4:localhost:10010/request"/>
+	  </camel:route>	  
+	</camel:camelContext>
+
+	<camel:camelContext id="pumpFactoryBCamelRequest">
+	  <camel:route>
+	    <camel:from uri="jetty:http://localhost:10010/syncUpdate"/>
+	    <camel:process ref="a2B-HttpUpdateProcessor" />
+	  </camel:route>
+	</camel:camelContext>
+
+	<camel:camelContext id="pumpFactoryBCamelResponse">
+	  <camel:route>
+	    <camel:from uri="jetty:http://localhost:10010/syncResponse"/>
+	    <camel:process ref="b2A-HttpResponseProcessor" />
+	  </camel:route>
+	</camel:camelContext>
 
 	<bean id="pumpFactoryA" class="tools.datasync.basic.sync.pump.JvmSyncPumpFactory">
 		<constructor-arg ref="pairA"/>
 		<constructor-arg ref="daoPairA"/>
 		<constructor-arg ref="syncStateInitializerA"/>
 		<constructor-arg ref="concurArgsA2B"/>
+	</bean>
+	
+	<!-- 
+	<bean id="a2B-HttpProcessor" class="tools.datasync.basic.sync.pump.camel.CamelRequestProcessor">
+		<constructor-arg ref="b2aQueue" />
+	</bean>
+	 -->
+
+<!-- 
+	<bean id="nullQueue" class="java.util.concurrent.LinkedBlockingQueue" />
+	
+	<bean id="a2B-HttpResponseProcessor" class="tools.datasync.basic.sync.pump.camel.CamelResponseProcessor">
+		<constructor-arg ref="b2aQueue" />
+	</bean>
+
+	<bean id="b2A-HttpProcessor" class="tools.datasync.basic.sync.pump.camel.CamelRequestProcessor">
+		<constructor-arg ref="b2aQueue" />
+	</bean>
+-->
+	<bean id="a2B-HttpUpdateProcessor" class="tools.datasync.basic.sync.pump.camel.CamelRequestProcessor">
+		<constructor-arg ref="a2bReceivingQueue" />
+	</bean>
+
+	<bean id="b2A-HttpResponseProcessor" class="tools.datasync.basic.sync.pump.camel.CamelResponseProcessor">
+		<constructor-arg ref="peerOther-to-PeerMe-b2a-Transmition-Queue" />
 	</bean>
 
 	<bean id="pumpFactoryB" class="tools.datasync.basic.sync.pump.JvmSyncPumpFactory">

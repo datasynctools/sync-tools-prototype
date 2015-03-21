@@ -59,6 +59,9 @@ public class SyncMessageType implements Serializable, Cloneable {
     public static final SyncMessageType APPLY_CHANGES_OVER = new SyncMessageType(
 	    "APPLY_CHANGES_OVER");
 
+    public static final SyncMessageType PEER_READY_WITH_NEXT_ENTITY = new SyncMessageType(
+	    "PEER_READY_WITH_NEXT_ENTITY");
+
     public static final SyncMessageType UNKNOWN = new SyncMessageType("UNKNOWN");
 
     private final String messageType;
@@ -82,6 +85,7 @@ public class SyncMessageType implements Serializable, Cloneable {
 	    syncMessageList.add(CONFLICT_RESOLUTION);
 	    syncMessageList.add(APPLY_CHANGES);
 	    syncMessageList.add(APPLY_CHANGES_OVER);
+	    syncMessageList.add(PEER_READY_WITH_NEXT_ENTITY);
 	}
     }
 

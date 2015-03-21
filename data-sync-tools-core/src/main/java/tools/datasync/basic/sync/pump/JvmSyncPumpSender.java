@@ -49,9 +49,10 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
     private SenderPostAckLogic senderPostAckLogic = new SenderPostAckLogic();
 
     public JvmSyncPumpSender(BlockingQueue<String> sendQueue,
-	    SyncStateInitializer syncStateInitializer, AtomicBoolean stopper) {
+	    SyncStateInitializer syncStateInitializer,
+	    JvmSyncConcurArgs concurArgs) {
 
-	this.stopper = stopper;
+	this.stopper = concurArgs.getStopper();
 	this.isRunning = new AtomicBoolean(true);
 	senderPreAckLogic.setSyncStateInitializer(syncStateInitializer);
 	senderPreAckLogic.setSendQueue(sendQueue);
@@ -63,6 +64,8 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
 	senderPostAckLogic.setIsRunning(isRunning);
 	senderPostAckLogic.setStopper(stopper);
 	senderPostAckLogic.setSendQueue(sendQueue);
+	senderPostAckLogic.setNextEntityAwaiter(concurArgs
+		.getNextEntityAwaiter());
     }
 
     public void setSeedProducer(SeedProducer seedProducer) {
@@ -108,9 +111,9 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
 	senderPreAckLogic.setAckPeerSenderLatch(ackPeerSenderLatch);
     }
 
-    public void setBeginSenderLatch(CountDownLatch beginSenderLatch) {
-	senderPreAckLogic.setBeginSenderLatch(beginSenderLatch);
-    }
+    // public void setBeginSenderLatch(CountDownLatch beginSenderLatch) {
+    // senderPreAckLogic.setBeginSenderLatch(beginSenderLatch);
+    // }
 
     public AtomicBoolean isRunning() {
 	return isRunning;

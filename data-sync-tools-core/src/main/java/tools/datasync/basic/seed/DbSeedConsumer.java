@@ -79,10 +79,14 @@ public class DbSeedConsumer implements SeedConsumer {
 
 	try {
 
+	    // TODO: REMOVE HARD CODED SLEEP
+	    // LOG.info("seed insert {}", seed);
+	    // TimeUnit.SECONDS.sleep(2);
+
 	    handle(seed, json, entityName);
 
 	} catch (Exception e) {
-	    LOG.error("Error while consuming record: ", e);
+	    LOG.error("Error while consuming record [" + seed + "]", e);
 	    throw new IOException(e.getMessage(), e);
 	}
 
@@ -108,7 +112,9 @@ public class DbSeedConsumer implements SeedConsumer {
 	    throws Exception {
 	// If the record DOES NOT exist in the SyncState table:
 	// 1. insert the User table with the new value
-	LOG.info("Record DOES NOT exist in the SyncState table, inserting the User table with the new value");
+	LOG.info(
+		"Record DOES NOT exist in the SyncState table, inserting the User table with the new value [{}]",
+		json);
 	genericDao.save(entityName, json);
 
 	// 2. insert the SyncState table with the new value
@@ -120,7 +126,8 @@ public class DbSeedConsumer implements SeedConsumer {
 	syncState.set("RECORDDATA", recordJson);
 	syncState.set("RECORDHASH", json.generateHash());
 
-	LOG.info("inserting the SyncState table with the new value");
+	LOG.info("Inserting the SyncState table with the new value [{}]",
+		syncState);
 	genericDao.save(entityGetter.getSyncStateName(), syncState);
     }
 

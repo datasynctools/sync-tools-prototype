@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+  
+  <appender name="console" class="org.apache.log4j.ConsoleAppender"> 
+    <param name="Target" value="System.out"/> 
+    <layout class="org.apache.log4j.PatternLayout"> 
+
+    <!-- 
+      <param name="ConversionPattern" value="%-5p %c{1} - %m%n"/>
+      -->
+      <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss,SSS} [%t] %-5p (%F:%L) - %m%n%n"/>
+    </layout>
+    <!-- 
+    <filter class="tools.datasync.core.sampleapp.ContextFilter">
+    	<param name="acceptThreadRegExp" value=".*" />
+    	<param name="level" value="INFO" />    	    	    	
+    </filter>
+     --> 
+  </appender> 
+  
+  <appender name="a2bFile-Send" class="org.apache.log4j.RollingFileAppender"> 
+       <param name="append" value="false" />
+	   <param name="maxFileSize" value="1024KB" />
+	   <param name="maxBackupIndex" value="3" />
+	   <param name="file" value="logs/basic-datasync-a2b-send.log" />
+    <layout class="org.apache.log4j.PatternLayout"> 
+    <!-- 
+      <param name="ConversionPattern" value="%-5p %c{1} - %m%n"/>
+      -->
+      <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss,SSS} [%t] %-5p (%F:%L) - %m%n%n"/>
+    </layout>
+    <filter class="tools.datasync.core.sampleapp.ContextFilter">
+    	<param name="acceptThreadRegExp" value="Sender-A2B" />
+    	<param name="ignoreClassRegExp" value="tools.datasync.basic.sync.pump.JvmSyncPumpReceiver" />
+    	<param name="level" value="INFO" />
+    </filter> 
+  </appender> 
+
+  <appender name="a2bFile-Receive" class="org.apache.log4j.RollingFileAppender"> 
+       <param name="append" value="false" />
+	   <param name="maxFileSize" value="1024KB" />
+	   <param name="maxBackupIndex" value="3" />
+	   <param name="file" value="logs/basic-datasync-a2b-receive.log" />
+    <layout class="org.apache.log4j.PatternLayout"> 
+    <!-- 
+      <param name="ConversionPattern" value="%-5p %c{1} - %m%n"/>
+      -->
+      <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss,SSS} [%t] %-5p (%F:%L) - %m%n%n"/>
+    </layout>
+    <filter class="tools.datasync.core.sampleapp.ContextFilter">
+    	<param name="acceptThreadRegExp" value="Receiver-A2B" />
+    	<!-- 
+    	<param name="acceptThreadRegExp" value="Sender-A2B|Receiver-A2B" />
+    	<param name="ignoreClassRegExp" value="tools.datasync.basic.sync.pump.JvmSyncPumpReceiver" />
+    	 -->
+    	<param name="level" value="INFO" />
+    </filter> 
+  </appender> 
+
+  <appender name="b2aFile-Send" class="org.apache.log4j.RollingFileAppender"> 
+       <param name="append" value="false" />
+	   <param name="maxFileSize" value="1024KB" />
+	   <param name="maxBackupIndex" value="3" />
+	   <param name="file" value="logs/basic-datasync-b2a-send.log" />
+    <layout class="org.apache.log4j.PatternLayout"> 
+    <!-- 
+      <param name="ConversionPattern" value="%-5p %c{1} - %m%n"/>
+      -->
+      <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss,SSS} [%t] %-5p (%F:%L) - %m%n%n"/>
+    </layout>
+    <filter class="tools.datasync.core.sampleapp.ContextFilter">
+    <!-- 
+    	<param name="threadRegExp" value="qtp.*" />
+	 -->    	
+    	<param name="acceptThreadRegExp" value="Sender-B2A" />
+    	
+    	<param name="level" value="INFO" />
+    </filter> 
+  </appender> 
+
+  <appender name="b2aFile-Receive" class="org.apache.log4j.RollingFileAppender"> 
+       <param name="append" value="false" />
+	   <param name="maxFileSize" value="1024KB" />
+	   <param name="maxBackupIndex" value="3" />
+	   <param name="file" value="logs/basic-datasync-b2a-receive.log" />
+    <layout class="org.apache.log4j.PatternLayout"> 
+    <!-- 
+      <param name="ConversionPattern" value="%-5p %c{1} - %m%n"/>
+      -->
+      <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss,SSS} [%t] %-5p (%F:%L) - %m%n%n"/>
+    </layout>
+    <filter class="tools.datasync.core.sampleapp.ContextFilter">
+    <!-- 
+    	<param name="threadRegExp" value="qtp.*" />
+	 -->    	
+    	<param name="acceptThreadRegExp" value="Receiver-B2A" />
+<!-- 
+    	<param name="acceptThreadRegExp" value="Sender-B2A|Receiver-B2A|qtp.*" />
+ -->    	
+    	<param name="level" value="INFO" />
+    </filter> 
+  </appender> 
+  
+  <appender name="sync-http-a2b" class="org.apache.log4j.RollingFileAppender"> 
+       <param name="append" value="false" />
+	   <param name="maxFileSize" value="1024KB" />
+	   <param name="maxBackupIndex" value="3" />
+	   <param name="file" value="logs/basic-datasync-http-a2b.log" />
+    <layout class="org.apache.log4j.PatternLayout"> 
+    <!-- 
+      <param name="ConversionPattern" value="%-5p %c{1} - %m%n"/>
+      -->
+      <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss,SSS} [%t] %-5p (%F:%L) - %m%n%n"/>
+    </layout>
+    <filter class="tools.datasync.core.sampleapp.ContextFilter">
+    <!-- 
+    	<param name="threadRegExp" value="qtp.*" />
+	 -->    	
+    	<param name="acceptThreadRegExp" value="qtp.*" />
+    	<param name="ignoreClassRegExp" value=".*CamelResponseProcessor.*" />
+<!-- 
+    	<param name="acceptThreadRegExp" value="Sender-B2A|Receiver-B2A|qtp.*" />
+ -->    	
+    	<param name="level" value="INFO" />
+    </filter> 
+  </appender> 
+
+
+  <appender name="sync-http-b2a" class="org.apache.log4j.RollingFileAppender"> 
+       <param name="append" value="false" />
+	   <param name="maxFileSize" value="1024KB" />
+	   <param name="maxBackupIndex" value="3" />
+	   <param name="file" value="logs/basic-datasync-http-b2a.log" />
+    <layout class="org.apache.log4j.PatternLayout"> 
+    <!-- 
+      <param name="ConversionPattern" value="%-5p %c{1} - %m%n"/>
+      -->
+      <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss,SSS} [%t] %-5p (%F:%L) - %m%n%n"/>
+    </layout>
+    <filter class="tools.datasync.core.sampleapp.ContextFilter">
+    <!-- 
+    	<param name="threadRegExp" value="qtp.*" />
+	 -->    	
+    	<param name="acceptThreadRegExp" value="qtp.*" />
+    	<param name="ignoreClassRegExp" value=".*CamelRequestProcessor.*" />
+<!-- 
+    	<param name="acceptThreadRegExp" value="Sender-B2A|Receiver-B2A|qtp.*" />
+ -->    	
+    	<param name="level" value="INFO" />
+    </filter> 
+  </appender> 
+
+  <root> 
+    <priority value ="info" /> 
+    <appender-ref ref="console" />  
+    <appender-ref ref="a2bFile-Send" /> 
+    <appender-ref ref="a2bFile-Receive" /> 
+    <appender-ref ref="b2aFile-Send" />
+    <appender-ref ref="b2aFile-Receive" />
+    <appender-ref ref="sync-http-a2b" />
+    <appender-ref ref="sync-http-b2a" />
+  </root>
+  
+</log4j:configuration>
