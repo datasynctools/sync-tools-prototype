@@ -22,15 +22,15 @@ public class NextEntityAwaiter {
     private CopyOnWriteArrayList<String> arrayList;
     private TimeSpan awaitTimeSpan;
     private AtomicBoolean stopper;
-    private BlockingQueue<String> queue;
+    private BlockingQueue<String> sendQueue;
     private JsonMapperBean jsonMapper = JsonMapperBean.getInstance();
 
     public NextEntityAwaiter(CopyOnWriteArrayList<String> arrayList,
-	    TimeSpan awaitTimeSpan, BlockingQueue<String> queue,
+	    TimeSpan awaitTimeSpan, BlockingQueue<String> sendQueue,
 	    AtomicBoolean stopper) {
 	this.arrayList = arrayList;
 	this.awaitTimeSpan = awaitTimeSpan;
-	this.queue = queue;
+	this.sendQueue = sendQueue;
 	this.stopper = stopper;
     }
 
@@ -65,9 +65,9 @@ public class NextEntityAwaiter {
 
 	    LOG.info("Signal to peer that I have finished an "
 		    + "Entity set with value {} using {}[{}]", lastEntityId,
-		    queue.getClass(), queue.hashCode());
+		    sendQueue.getClass(), sendQueue.hashCode());
 
-	    queue.put(message);
+	    sendQueue.put(message);
 	} catch (Exception e) {
 	    throw (new RuntimeException(e));
 	}

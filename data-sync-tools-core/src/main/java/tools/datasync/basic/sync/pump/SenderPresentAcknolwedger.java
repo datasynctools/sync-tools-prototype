@@ -20,8 +20,7 @@ public class SenderPresentAcknolwedger {
     public boolean waitForSenderAck(AtomicBoolean isRunning,
 	    AtomicBoolean stopper) throws InterruptedException {
 
-	LOG.info("Waiting for peer sender message so we can send using ackPeerSenderLatch "
-		+ ackPeerSenderLatch);
+	LOG.info("Waiting for peer sender message");
 	while (!ackPeerSenderLatch.await(awaitDuration, awaitUnit)) {
 	    if (stopper.get()) {
 		LOG.info("Stop requested, shutting down");

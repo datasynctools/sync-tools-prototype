@@ -8,6 +8,7 @@ import java.util.concurrent.CountDownLatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tools.datasync.api.utils.Jsonify;
 import tools.datasync.basic.comm.SyncMessage;
 import tools.datasync.basic.comm.SyncMessageType;
 import tools.datasync.basic.seed.SeedConsumer;
@@ -19,6 +20,8 @@ public class SyncMessageHandler {
 	    .getLogger(SyncMessageHandler.class);
 
     private Map<String, SyncMessageProcessor> processors = new HashMap<String, SyncMessageProcessor>();
+
+    private Jsonify stringifier = new Jsonify();
 
     public SyncMessageHandler(CountDownLatch latch,
 	    CopyOnWriteArrayList<String> arrayList, SeedConsumer seedConsumer,
@@ -36,7 +39,10 @@ public class SyncMessageHandler {
 
     public boolean handle(SyncMessage syncMessage) {
 
-	LOG.info("Received Sync Message: " + syncMessage);
+	LOG.info("Received Sync Message: "
+		+ stringifier.toStringSerialize(syncMessage));
+	// LOG.info("Received Sync Message: \n"
+	// + stringifier.toStringPretty(syncMessage));
 
 	SyncMessageProcessor processor = processors.get(syncMessage
 		.getMessageType());

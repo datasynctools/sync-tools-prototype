@@ -136,6 +136,7 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
     }
 
     public void run() {
+	LOG.info("Started sync receiver");
 	try {
 
 	    if (syncMessageHandler == null) {
@@ -144,7 +145,7 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 	    }
 
 	    ackPairReceiverLatch.countDown();
-	    LOG.info("Acknowledged Receiver Pair");
+	    LOG.info("Acknowledged Sender-Receiver pair");
 
 	    mainLoop();
 

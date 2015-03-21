@@ -9,6 +9,10 @@ import org.codehaus.jackson.node.ObjectNode;
 public class Jsonify implements Stringify {
 
     public String toString(Object item) {
+	return toStringSerialize(item);
+    }
+
+    public String toStringSerialize(Object item) {
 	StringWriter writer = new StringWriter();
 	ObjectMapper mapper = new ObjectMapper();
 	ObjectNode root = mapper.createObjectNode();
@@ -21,6 +25,21 @@ public class Jsonify implements Stringify {
 	    throw (new RuntimeException(e));
 	}
 	return writer.toString();
-
     }
+
+    public String toStringPretty(Object item) {
+	StringWriter writer = new StringWriter();
+	ObjectMapper mapper = new ObjectMapper();
+	ObjectNode root = mapper.createObjectNode();
+	root.putPOJO(item.getClass().getSimpleName(), item);
+	// mapper.enable(SerializationConfig.Feature.FLUSH_AFTER_WRITE_VALUE);
+	mapper.enable(SerializationConfig.Feature.INDENT_OUTPUT);
+	try {
+	    mapper.writeValue(writer, root);
+	} catch (Exception e) {
+	    throw (new RuntimeException(e));
+	}
+	return writer.toString();
+    }
+
 }

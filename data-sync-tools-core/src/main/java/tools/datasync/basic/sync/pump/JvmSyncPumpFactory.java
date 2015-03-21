@@ -91,7 +91,6 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
     private JvmSyncPeerParms calculateReceiverPeer(PeerMode peerMode) {
 
 	return syncPair.getPeerMe();
-
 	// if (peerMode.equals(PeerMode.A2B)) {
 	// return (syncPair.getPeerMe());
 	// } else {
@@ -100,14 +99,13 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
     }
 
     private JvmSyncPeerParms calculateSenderPeer(PeerMode peerMode) {
-
 	return syncPair.getPeerMe();
 
-	// if (peerMode.equals(PeerMode.A2B)) {
-	// return (syncPair.getPeerMe());
-	// } else {
-	// return (syncPair.getPeerOther());
-	// }
+//	if (peerMode.equals(PeerMode.A2B)) {
+//	    return (syncPair.getPeerMe());
+//	} else {
+//	    return (syncPair.getPeerOther());
+//	}
     }
 
     public SyncPump getInstance(PeerMode peerMode)

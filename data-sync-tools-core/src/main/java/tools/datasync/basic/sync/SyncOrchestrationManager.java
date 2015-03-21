@@ -41,7 +41,10 @@ public class SyncOrchestrationManager {
 
     public SyncSession createSession() throws InstantiationException {
 	SyncPump pumpA2B = pumpFactoryA2B.getInstance(PeerMode.A2B);
+
 	SyncPump pumpB2A = pumpFactoryB2A.getInstance(PeerMode.B2A);
+
+	// SyncPump pumpB2A = pumpFactoryB2A.getInstance(PeerMode.B2A);
 
 	return new SyncSession(pumpA2B, pumpB2A);
     }

@@ -3,7 +3,9 @@
  */
 package tools.datasync.basic.sync.pump;
 
+import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.sql.SQLException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -11,6 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tools.datasync.basic.seed.SeedException;
 import tools.datasync.basic.seed.SeedOverException;
 import tools.datasync.basic.seed.SeedProducer;
 import tools.datasync.basic.util.JsonMapperBean;
@@ -74,20 +77,10 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
 
     public void run() {
 	isRunning.set(true);
-
-	LOG.info("Started JvmSyncPumpSender...");
+	LOG.info("Started sync sender");
 	try {
 
-	    SenderPreAckLogicResult result = senderPreAckLogic.preAckMain(
-		    isRunning, stopper, messageNumber);
-
-	    if (!result.isContinueProcessing()) {
-		return;
-	    }
-
-	    messageNumber = result.getMessageCount();
-
-	    messageNumber = senderPostAckLogic.runPostAckMain(messageNumber);
+	    runMain();
 
 	} catch (SeedOverException e) {
 	    LOG.info("Seed Over from Seed Producer", e);
@@ -99,8 +92,23 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
 	    isRunning.set(false);
 	    throw (new RuntimeException(e));
 	}
-
+	LOG.info("Finished sync sender");
 	isRunning.set(false);
+    }
+
+    private void runMain() throws SQLException, IOException,
+	    InterruptedException, SeedOverException, SeedException {
+
+	SenderPreAckLogicResult result = senderPreAckLogic.preAckMain(
+		isRunning, stopper, messageNumber);
+
+	if (!result.isContinueProcessing()) {
+	    return;
+	}
+
+	messageNumber = result.getMessageCount();
+
+	messageNumber = senderPostAckLogic.runPostAckMain(messageNumber);
     }
 
     public void setAckPairReceiverLatch(CountDownLatch ackPairReceiverLatch) {

@@ -134,7 +134,7 @@
 		<constructor-arg ref="nextEntityArrayListA" />
 		<constructor-arg ref="stopper" />
 		<constructor-arg ref="timeSpan" />
-		<constructor-arg ref="a2bReceivingQueue" />
+		<constructor-arg ref="b2aSendingQueue" />
 	</bean>
 
 	<bean id="nextEntityAwaiterB" class="tools.datasync.basic.sync.pump.NextEntityAwaiter">

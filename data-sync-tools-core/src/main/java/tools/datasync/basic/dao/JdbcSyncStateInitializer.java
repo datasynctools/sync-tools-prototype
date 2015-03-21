@@ -48,8 +48,7 @@ public class JdbcSyncStateInitializer implements SyncStateInitializer {
 
 	for (String table : tables) {
 
-	    LOG.info("Populating SyncState table for [" + table
-		    + "] records...");
+	    LOG.info("Populating SyncState table for [" + table + "] records");
 	    Iterator<SyncEntityMessage> jsonIterator = genericDao.selectAll(
 		    table, true);
 

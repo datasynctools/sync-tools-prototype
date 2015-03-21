@@ -41,7 +41,7 @@ public class SenderPostAckLogic {
 
 	messageNumber = sendSyncMessages(syncMessage, message, messageNumber);
 
-	LOG.info("Flag state: Thread interrupted="
+	LOG.debug("Flag state: Thread interrupted="
 		+ Thread.currentThread().isInterrupted() + ", isRunning="
 		+ isRunning.get() + ", stopper=" + stopper.get()
 		+ ", seedProducer.isRunning=" + seedProducer.isRunning());
@@ -111,7 +111,7 @@ public class SenderPostAckLogic {
 	    // Get next seed
 	    SeedRecord seed = seedProducer.getNextSeed();
 	    if (seed == null) {
-		LOG.info(">>> Seed phase is over... Terminating the sender process logic.");
+		LOG.info("Seed phase is complete");
 		isRunning.set(false);
 		return messageNumber;
 	    }

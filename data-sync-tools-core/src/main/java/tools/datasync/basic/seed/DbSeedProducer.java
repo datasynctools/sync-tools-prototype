@@ -129,7 +129,6 @@ public class DbSeedProducer implements SeedProducer {
 	} else {
 
 	    this.isRunning = false;
-	    LOG.info("No more tables to seed from");
 	    return null;
 	    // TODO: Should we throw here ?
 	    // throw (new RuntimeException(e));

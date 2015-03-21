@@ -43,7 +43,6 @@ public class SenderPreAckLogic {
 	if (!senderPresentAcknolwedger.waitForSenderAck(isRunning, stopper)) {
 	    return new SenderPreAckLogicResult(false, messageNumber);
 	}
-	LOG.info("The peer sender is acknowledged");
 
 	// if (!bothSendersPresentAcknowledger.waitForBothSendersAck(isRunning,
 	// stopper)) {
