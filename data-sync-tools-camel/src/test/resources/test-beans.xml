@@ -12,10 +12,10 @@
 	<bean id="syncPeerB" class="tools.datasync.basic.sync.SyncPeer"><constructor-arg value="B" /></bean>
 
 	<bean id="dataSourceB" class="org.apache.derby.jdbc.EmbeddedDataSource">
-		<property name="databaseName" value="db-A" />
+		<property name="databaseName" value="db-B" />
 	</bean>
 	<bean id="dataSourceA" class="org.apache.derby.jdbc.EmbeddedDataSource">
-		<property name="databaseName" value="db-B" />
+		<property name="databaseName" value="db-A" />
 	</bean>
 
 	<!-- producer template -->
@@ -37,13 +37,14 @@
 		<constructor-arg ref="peerMe-b2aReceiverUri" />
 		<constructor-arg ref="camelTemplate" />
 	</bean>
-	<bean id="a2bReceivingQueue" class="tools.datasync.basic.sync.pump.camel.CamelBlockingQueuePollAndPull">
+	<bean id="b2aReceivingQueue" class="tools.datasync.basic.sync.pump.camel.CamelBlockingQueuePollAndPull">
 		<constructor-arg ref="peerMe-a2bSenderUri" />
 		<constructor-arg ref="peerMe-b2aReceiverUri" />
 		<constructor-arg ref="camelTemplate" />
 	</bean>
-	<bean id="b2aSendingQueue" class="java.util.concurrent.LinkedBlockingQueue" />			 
-	<bean id="b2aReceivingQueue" class="java.util.concurrent.LinkedBlockingQueue" />
+
+	<bean id="b2aSendingQueue" class="java.util.concurrent.LinkedBlockingQueue" />
+	<bean id="a2bReceivingQueue" class="java.util.concurrent.LinkedBlockingQueue" />
 
 	<bean id="peerMe" class="tools.datasync.basic.sync.pump.JvmSyncPeerParms">
 		<constructor-arg ref="syncPeerA"/>
@@ -219,7 +220,7 @@
 	</bean>
 	
 	<bean id="a2B-HttpUpdateProcessor" class="tools.datasync.basic.sync.pump.camel.CamelRequestProcessor">
-		<constructor-arg ref="b2aReceivingQueue" />
+		<constructor-arg ref="a2bReceivingQueue" />
 	</bean>
 
 	<bean id="b2A-HttpResponseProcessor" class="tools.datasync.basic.sync.pump.camel.CamelResponseProcessor">
