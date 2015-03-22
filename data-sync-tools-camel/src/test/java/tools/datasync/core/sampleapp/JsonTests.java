@@ -1,5 +1,10 @@
 package tools.datasync.core.sampleapp;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
@@ -61,6 +66,19 @@ public class JsonTests {
 	LOG.info("Found message {}", jsonString);
 	Assert.assertTrue("Begin Seed value not correct",
 		"BEGIN_SEED".equals(syncMessage.getMessageType()));
+    }
+
+    @Test
+    public void dateTest() throws ParseException {
+	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+	Date aDate = dateFormat.parse("1992-1-23 00:00:00");
+	long aTime = aDate.getTime();
+	LOG.info("A's time {}", aTime);
+
+	Date bDate = dateFormat.parse("1993-1-23 00:00:00");
+	long bTime = bDate.getTime();
+	LOG.info("B's time {}", bTime);
     }
 
     @Test
