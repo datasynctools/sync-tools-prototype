@@ -173,6 +173,9 @@ public class SenderPostAckLogic {
 	addQueues(answer);
 	answer.append("seedProducer=");
 	answer.append(seedProducer.toString());
+	answer.append(", ");
+	answer.append("nextEntityAwaiter=");
+	answer.append(nextEntityAwaiter.toString());
 	answer.append("}");
 	return (answer.toString());
     }
