@@ -3,9 +3,7 @@
  */
 package tools.datasync.basic.sync.pump;
 
-import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.sql.SQLException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -14,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.comm.SyncMessage;
-import tools.datasync.basic.seed.SeedException;
 import tools.datasync.basic.seed.SeedOverException;
 import tools.datasync.basic.seed.SeedProducer;
 import tools.datasync.basic.util.StringUtils;
@@ -45,84 +42,57 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
     private static final Logger LOG = LoggerFactory
 	    .getLogger(JvmSyncPumpSender.class);
 
-    private AtomicBoolean isRunning;
-    private AtomicBoolean stopper;
-    private long messageNumber = 0;
-
-    private SenderPreAckLogic senderPreAckLogic = new SenderPreAckLogic();
-    private SenderPostAckLogic senderPostAckLogic = new SenderPostAckLogic();
+    private JvmSyncPumpSenderSupport support = new JvmSyncPumpSenderSupport();
 
     public JvmSyncPumpSender(BlockingQueue<SyncMessage> sendQueue,
 	    SyncStateInitializer syncStateInitializer,
 	    JvmSyncConcurArgs concurArgs) {
 
-	this.stopper = concurArgs.getStopper();
-	this.isRunning = new AtomicBoolean(true);
-	senderPreAckLogic.setSyncStateInitializer(syncStateInitializer);
-	senderPreAckLogic.setSendQueue(sendQueue);
+	support.initialize(sendQueue, syncStateInitializer, concurArgs);
 
-	senderPostAckLogic.setIsRunning(isRunning);
-	senderPostAckLogic.setStopper(stopper);
-	senderPostAckLogic.setSendQueue(sendQueue);
-	senderPostAckLogic.setNextEntityAwaiter(concurArgs
-		.getNextEntityAwaiter());
     }
 
     public void setSeedProducer(SeedProducer seedProducer) {
-	senderPostAckLogic.setSeedProducer(seedProducer);
+	support.setSeedProducer(seedProducer);
     }
 
     public void run() {
-	isRunning.set(true);
+	support.isRunning().set(true);
 	LOG.info("Started sync sender: {}", this.toString());
 	try {
 
-	    runMain();
+	    support.runMain();
 
 	} catch (SeedOverException e) {
 	    LOG.info("Seed Over from Seed Producer", e);
-	    isRunning.set(false);
+	    support.isRunning().set(false);
 	    // TODO: Should we throw here ?
 	    // throw (new RuntimeException(e));
 	} catch (Exception e) {
 	    LOG.error("Error in Sender", e);
-	    isRunning.set(false);
+	    support.isRunning().set(false);
+
 	    throw (new RuntimeException(e));
 	}
 	LOG.info("Finished sync sender");
-	isRunning.set(false);
-    }
+	support.isRunning().set(false);
 
-    private void runMain() throws SQLException, IOException,
-	    InterruptedException, SeedOverException, SeedException {
-
-	SenderPreAckLogicResult result = senderPreAckLogic.preAckMain(
-		isRunning, stopper, messageNumber);
-
-	if (!result.isContinueProcessing()) {
-	    return;
-	}
-
-	messageNumber = result.getMessageCount();
-
-	messageNumber = senderPostAckLogic.runPostAckMain(messageNumber);
     }
 
     public void setAckPairReceiverLatch(CountDownLatch ackPairReceiverLatch) {
-	senderPreAckLogic.setAckPairReceiverLatch(ackPairReceiverLatch);
+	support.setAckPairReceiverLatch(ackPairReceiverLatch);
     }
 
     public void setAckPeerSenderLatch(CountDownLatch ackPeerSenderLatch) {
-	senderPreAckLogic.setAckPeerSenderLatch(ackPeerSenderLatch);
+	support.setAckPeerSenderLatch(ackPeerSenderLatch);
     }
 
     public AtomicBoolean isRunning() {
-	return isRunning;
+	return support.isRunning();
     }
 
     public void stop() {
-	stopper.set(true);
-	isRunning.set(false);
+	support.stop();
     }
 
     public void uncaughtException(Thread t, Throwable e) {
@@ -136,10 +106,10 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
 	answer.append(StringUtils.getSimpleName(this));
 	answer.append("{");
 	answer.append("senderPreAckLogic=");
-	answer.append(senderPreAckLogic.toString());
+	answer.append(support.senderPreAckLogic.toString());
 	answer.append(", ");
 	answer.append("senderPostAckLogic=");
-	answer.append(senderPostAckLogic.toString());
+	answer.append(support.senderPostAckLogic.toString());
 	answer.append("}");
 	return (answer.toString());
     }
