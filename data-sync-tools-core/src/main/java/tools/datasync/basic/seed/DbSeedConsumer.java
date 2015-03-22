@@ -78,19 +78,11 @@ public class DbSeedConsumer implements SeedConsumer {
 	LOG.debug("Consuming SEED Record: {}", seed);
 
 	String entityName = entityGetter.getName(seed.getEntityId());
-	// String dbRecord = seed.getRecordData();
 	SyncEntityMessage recordData = seed.getRecordData();
-	// SyncEntityMessage json = jsonMapper.readValue(dbRecord,
-	// SyncEntityMessage.class);
 
 	validate(seed, recordData);
 
 	try {
-
-	    // TODO: REMOVE HARD CODED SLEEP
-	    // LOG.info("seed insert {}", seed);
-	    // TimeUnit.SECONDS.sleep(2);
-
 	    handle(seed, recordData, entityName);
 
 	} catch (Exception e) {
@@ -137,7 +129,7 @@ public class DbSeedConsumer implements SeedConsumer {
 	// syncState);
 	genericDao.save(entityGetter.getSyncStateName(), syncState);
 
-	LOG.info("Record does not exist in SyncTable, so insert User "
+	LOG.info("Record does not exist in SyncTable, so inserted User "
 		+ "and State tables with data for "
 		+ "entityId={}, recordId={}", seed.getEntityId(),
 		seed.getRecordId());
@@ -153,7 +145,7 @@ public class DbSeedConsumer implements SeedConsumer {
 	    // If the record exists in the SyncState table and the
 	    // hashes match, break and go to next message
 	    LOG.info("Record exists and hashes match, so "
-		    + "do nothing for entityId={}, recordId={}",
+		    + "did nothing for entityId={}, recordId={}",
 		    seed.getEntityId(), seed.getRecordId());
 	    return;
 	} else {
@@ -212,20 +204,12 @@ public class DbSeedConsumer implements SeedConsumer {
 	syncState.set("ENTITYID", entityGetter.getId(entityName));
 	syncState.set("RECORDID",
 		resolvedRecordData.get(recordIdGetter.get(entityName)));
-	// String recordString =
-	// jsonMapper.writeValueAsString(resolvedRecordData);
 	String recordString = jsonify.toString(resolvedRecordData);
-
 	syncState.set("RECORDDATA", recordString);
-
 	String newHash = hashGenerator.generate(recordString);
-
 	syncState.set("RECORDHASH", newHash);
-
-	LOG.info("Update the SyncState table with the newly calculated hash.");
 	genericDao.update(entityGetter.getSyncStateName(), syncState,
 		recordIdGetter.get(entityGetter.getSyncStateName()));
-
     }
 
     public String toString() {
