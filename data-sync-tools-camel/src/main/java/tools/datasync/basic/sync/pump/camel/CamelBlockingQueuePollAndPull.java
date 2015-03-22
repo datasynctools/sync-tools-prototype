@@ -36,8 +36,12 @@ public class CamelBlockingQueuePollAndPull extends AbstractPartialBlockingQueue
 
     public void put(SyncMessage syncMessage) throws InterruptedException {
 	String body = jsonify.toString(syncMessage);
-	LOG.info("Sending body {}", body);
 	template.sendBody(updateUri, body);
+	LOG.info("Sent sync message number {}", syncMessage.getMessageNumber());
+
+	// LOG.info("Sent sync message type {}, number {}, hash {}",
+	// syncMessage.getMessageType(), syncMessage.getMessageNumber(),
+	// syncMessage.getPaloadHash());
     }
 
     private boolean continueMe(Date start, Date end, long duration) {
@@ -81,7 +85,9 @@ public class CamelBlockingQueuePollAndPull extends AbstractPartialBlockingQueue
 	    throw (new RuntimeException("Bad Data", e));
 	}
 
-	LOG.info("Found message {}", syncMessage);
+	LOG.info("Found SyncMessage of message type {} with msgNum {}",
+		syncMessage.getMessageType(), syncMessage.getMessageNumber());
+	LOG.debug("SyncMessage {}", syncMessage);
 
 	return (syncMessage);
 

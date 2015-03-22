@@ -74,7 +74,7 @@ public class DbSeedConsumer implements SeedConsumer {
 
     public void consume(SeedRecord seed) throws IOException, SeedException {
 
-	LOG.debug("Consuming SEED Record: " + seed);
+	LOG.debug("Consuming SEED Record: {}", seed);
 
 	String entityName = entityGetter.getName(seed.getEntityId());
 	// String dbRecord = seed.getRecordData();
@@ -119,9 +119,6 @@ public class DbSeedConsumer implements SeedConsumer {
 	    throws Exception {
 	// If the record DOES NOT exist in the SyncState table:
 	// 1. insert the User table with the new value
-	LOG.info(
-		"Record DOES NOT exist in the SyncState table, inserting the User table with the new value [{}]",
-		recordData);
 	genericDao.save(entityName, recordData);
 
 	// 2. insert the SyncState table with the new value
@@ -135,9 +132,14 @@ public class DbSeedConsumer implements SeedConsumer {
 	// syncState.set("RECORDHASH", recordData.generateHash());
 	syncState.set("RECORDHASH", seed.getRecordHash());
 
-	LOG.info("Inserting the SyncState table with the new value [{}]",
-		syncState);
+	// LOG.info("Inserting the SyncState table with the new value [{}]",
+	// syncState);
 	genericDao.save(entityGetter.getSyncStateName(), syncState);
+
+	LOG.info("Record does not exist in SyncTable, so insert User "
+		+ "and State tables with data for "
+		+ "entityId={}, recordId={}", seed.getEntityId(),
+		seed.getRecordId());
     }
 
     private void handleRecordExists(SyncEntityMessage stateRecord,
@@ -145,11 +147,13 @@ public class DbSeedConsumer implements SeedConsumer {
 	    throws Exception {
 	// If the record exists in the SyncState table, check if the
 	// hashes match.
-	LOG.info("Record exists in the SyncState table" + stateRecord);
+	LOG.debug("Record exists in the SyncState table {}", stateRecord);
 	if (seed.getRecordHash().equals(stateRecord.get("RECORDHASH"))) {
 	    // If the record exists in the SyncState table and the
 	    // hashes match, break and go to next message
-	    LOG.info("Hashes match, break and go to next message");
+	    LOG.info("Record exists and hashes match, so "
+		    + "do nothing for entityId={}, recordId={}",
+		    seed.getEntityId(), seed.getRecordId());
 	    return;
 	} else {
 	    handleRecordDoesNotMatch(stateRecord, seed, recordData, entityName);
@@ -169,13 +173,16 @@ public class DbSeedConsumer implements SeedConsumer {
 	// using the existing record in the User table and the newly
 	// received message (there are some error conditions here
 	// for advanced conflicts)
-	LOG.info("Hash does not match, run the standard merge logic");
+	LOG.debug("Hash does not match, run the standard merge logic");
 	SyncEntityMessage resolvedRecordData = conflictResolver.resolve(myJSON,
 		recordData);
 
 	if (resolvedRecordData == null) {
 	    // TODO Should there be different error handling here?
-	    LOG.debug("Conflict resolver did not have a record to write");
+	    LOG.warn("Record exists and hashes do not match, but Conflict "
+		    + "resolver could not determine a syncEntityMessage "
+		    + "for entityId={}, recordId={}", seed.getEntityId(),
+		    seed.getRecordId());
 	    return;
 	} else {
 	    writeChangedRecord(resolvedRecordData, seed, recordData, entityName);
@@ -186,10 +193,13 @@ public class DbSeedConsumer implements SeedConsumer {
 	    SeedRecord seed, SyncEntityMessage recordData, String entityName)
 	    throws Exception {
 	// 2. update the User table with the new value
-	LOG.info("Update the User table with the new value");
 	genericDao.saveOrUpdate(entityName, resolvedRecordData,
 		recordIdGetter.get(entityName));
 	updateSyncStateTable(resolvedRecordData, entityName);
+	LOG.info("Record exists and hashes do not match, so updated User "
+		+ "and State tables with merged data for "
+		+ "entityId={}, recordId={}", seed.getEntityId(),
+		seed.getRecordId());
     }
 
     private void updateSyncStateTable(SyncEntityMessage resolvedRecordData,

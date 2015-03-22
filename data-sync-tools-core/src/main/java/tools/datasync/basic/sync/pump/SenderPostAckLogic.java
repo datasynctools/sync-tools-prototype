@@ -46,9 +46,10 @@ public class SenderPostAckLogic {
 		+ ", seedProducer.isRunning=" + seedProducer.isRunning());
 	syncMessage = createSyncMessage(messageNumber++);
 
-	// message = jsonMapper.writeValueAsString(syncMessage);
+	LOG.info("Completed send processing, so sent final sync message of "
+		+ "type {}, number {}", syncMessage.getMessageType(),
+		syncMessage.getMessageNumber());
 
-	LOG.info("Sending - " + syncMessage);
 	this.sendQueue.put(syncMessage);
 	return messageNumber;
     }
@@ -81,8 +82,11 @@ public class SenderPostAckLogic {
 
 	// message = jsonMapper.writeValueAsString(syncMessage);
 
-	LOG.info("Sending - " + syncMessage);
 	this.sendQueue.put(syncMessage);
+	LOG.info("Sent sync message of type {}, number {}, entityId {}, "
+		+ "recordId {}, and hash {}", syncMessage.getMessageType(),
+		syncMessage.getMessageNumber(), seed.getEntityId(),
+		seed.getRecordId(), seed.getRecordHash());
 	return (messageNumber + 1);
 
     }
@@ -109,7 +113,7 @@ public class SenderPostAckLogic {
 	    // Get next seed
 	    SeedRecord seed = seedProducer.getNextSeed();
 	    if (seed == null) {
-		LOG.info("Seed phase is complete");
+		LOG.debug("Seed phase is complete");
 		isRunning.set(false);
 		return messageNumber;
 	    }

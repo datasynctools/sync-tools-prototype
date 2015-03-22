@@ -27,11 +27,11 @@ public class CamelRequestProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
 	// just get the body as a string
 	String body = exchange.getIn().getBody(String.class);
-	LOG.info("processed to queue: {}", body);
 
 	SyncMessage syncMessage = processResponse(body);
 
 	receiveQueue.put(syncMessage);
+	LOG.info("Processed sync message body to queue: {}", body);
     }
 
     private SyncMessage processResponse(String response) {
@@ -43,7 +43,7 @@ public class CamelRequestProcessor implements Processor {
 	    throw (new RuntimeException("Bad Data", e));
 	}
 
-	LOG.info("Found message {}", syncMessage);
+	LOG.debug("Found message {}", syncMessage);
 
 	return (syncMessage);
 

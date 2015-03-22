@@ -119,7 +119,7 @@ public class DbSeedProducer implements SeedProducer {
 			+ "], moving to next table");
 	    }
 	}
-	LOG.info("No more tables to process");
+	LOG.debug("No more tables to process");
 	return false;
 
     }

@@ -11,10 +11,10 @@
 	<bean id="syncPeerA" class="tools.datasync.basic.sync.SyncPeer"><constructor-arg value="A" /></bean>
 	<bean id="syncPeerB" class="tools.datasync.basic.sync.SyncPeer"><constructor-arg value="B" /></bean>
 
-	<bean id="dataSourceA" class="org.apache.derby.jdbc.EmbeddedDataSource">
+	<bean id="dataSourceB" class="org.apache.derby.jdbc.EmbeddedDataSource">
 		<property name="databaseName" value="db-A" />
 	</bean>
-	<bean id="dataSourceB" class="org.apache.derby.jdbc.EmbeddedDataSource">
+	<bean id="dataSourceA" class="org.apache.derby.jdbc.EmbeddedDataSource">
 		<property name="databaseName" value="db-B" />
 	</bean>
 

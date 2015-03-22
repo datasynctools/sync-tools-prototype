@@ -119,11 +119,12 @@ public class GenericJDBCDao implements GenericDao {
 	Statement statement = null;
 	try {
 	    // Try insert statement...
-	    String insert = SqlGenUtil.getInsertStatement(entityName, recordData);
+	    String insert = SqlGenUtil.getInsertStatement(entityName,
+		    recordData);
 	    connection = dataSource.getConnection();
 
 	    statement = connection.createStatement();
-	    LOG.info("db [{}] : {}", dbName, insert);
+	    LOG.debug("db [{}] : {}", dbName, insert);
 	    statement.execute(insert);
 	    // LOG.debug(dbName + ": " + "commiting insert...");
 	    // LOG.debug("db [{}] : {}", dbName, insert);

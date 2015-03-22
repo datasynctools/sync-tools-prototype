@@ -39,7 +39,7 @@ public class SyncMessageHandler {
 
     public boolean handle(SyncMessage syncMessage) {
 
-	LOG.info("Received Sync Message: "
+	LOG.debug("Received Sync Message: "
 		+ stringifier.toStringSerialize(syncMessage));
 	// LOG.info("Received Sync Message: \n"
 	// + stringifier.toStringPretty(syncMessage));

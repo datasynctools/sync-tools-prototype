@@ -1,15 +1,14 @@
 package tools.datasync.basic.sync.pump.camel;
 
 import org.apache.camel.ProducerTemplate;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tools.datasync.api.utils.Jsonify;
 import tools.datasync.basic.comm.SyncMessage;
 import tools.datasync.basic.comm.SyncMessageType;
 import tools.datasync.basic.model.EnityId;
 import tools.datasync.basic.sync.pump.NextEntitySignaler;
-import tools.datasync.basic.util.ObjectMapperFactory;
 
 public class CamelPutNextEntitySignaler implements NextEntitySignaler {
 
@@ -19,7 +18,7 @@ public class CamelPutNextEntitySignaler implements NextEntitySignaler {
     private String updateUri;
     private ProducerTemplate template;
 
-    private ObjectMapper jsonMapper = ObjectMapperFactory.getInstance();
+    private Jsonify jsonify = new Jsonify();
 
     public CamelPutNextEntitySignaler(String updateUri,
 	    ProducerTemplate template) {
@@ -39,14 +38,10 @@ public class CamelPutNextEntitySignaler implements NextEntitySignaler {
 		.toString());
 	syncMessage.setTimestamp(System.currentTimeMillis());
 
-	String payload;
-	try {
-	    payload = jsonMapper.writeValueAsString(syncMessage);
-	} catch (Exception e) {
-	    throw (new RuntimeException(e));
-	}
+	String payload = jsonify.toString(syncMessage);
 
-	LOG.info("Sending body {}", payload);
+	LOG.info("Sending that next peer is this component is ready for next "
+		+ "entity now that entityId {} complete", previousEntityId);
 	template.sendBody(updateUri, payload);
 
     }

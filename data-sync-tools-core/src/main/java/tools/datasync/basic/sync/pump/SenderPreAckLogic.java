@@ -63,8 +63,9 @@ public class SenderPreAckLogic {
 	SyncMessage syncMessage = createSyncMessage(messageNumber++);
 	// String message = jsonMapper.writeValueAsString(syncMessage);
 	this.sendQueue.put(syncMessage);
-	LOG.info("Completed seeding, send message to the peer that we're ready to receive");
-
+	LOG.info("Completed seeding, so sent sync message of "
+		+ "type {}, number {}", syncMessage.getMessageType(),
+		syncMessage.getMessageNumber());
 	return messageNumber;
     }
 
