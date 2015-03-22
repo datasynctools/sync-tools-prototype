@@ -12,10 +12,13 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tools.datasync.api.utils.Jsonify;
 import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.IdGetter;
 import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.basic.sync.pump.SyncStateInitializer;
+import tools.datasync.basic.util.HashGenerator;
+import tools.datasync.basic.util.Md5HashGenerator;
 import tools.datasync.basic.util.ObjectMapperFactory;
 
 public class JdbcSyncStateInitializer implements SyncStateInitializer {
@@ -30,6 +33,9 @@ public class JdbcSyncStateInitializer implements SyncStateInitializer {
     private List<String> tables;
     private EntityGetter entityGetter;
     private IdGetter idGetter;
+
+    private Jsonify jsonify = new Jsonify();
+    HashGenerator hashGenerator = Md5HashGenerator.getInstance();
 
     public JdbcSyncStateInitializer(List<String> tables,
 	    EntityGetter entityGetter, IdGetter idGetter, GenericDao genericDao) {
@@ -72,9 +78,11 @@ public class JdbcSyncStateInitializer implements SyncStateInitializer {
 	syncState.setEntity(table);
 	syncState.set("ENTITYID", idGetter.get(table));
 	syncState.set("RECORDID", record.getCalculatedPrimaryKey());
-	String recordJson = jsonMapper.writeValueAsString(record);
-	syncState.set("RECORDDATA", recordJson);
-	syncState.set("RECORDHASH", record.generateHash());
+	// String recordJson = jsonMapper.writeValueAsString(record);
+	String recordString = jsonify.toString(record);
+	syncState.set("RECORDDATA", recordString);
+	String hash = hashGenerator.generate(recordString);
+	syncState.set("RECORDHASH", hash);
     }
 
     public void setIsRunning(boolean isRunning) {

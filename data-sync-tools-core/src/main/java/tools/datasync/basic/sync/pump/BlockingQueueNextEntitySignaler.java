@@ -2,14 +2,12 @@ package tools.datasync.basic.sync.pump;
 
 import java.util.concurrent.BlockingQueue;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.comm.SyncMessage;
 import tools.datasync.basic.comm.SyncMessageType;
 import tools.datasync.basic.model.EnityId;
-import tools.datasync.basic.util.ObjectMapperFactory;
 
 public class BlockingQueueNextEntitySignaler implements NextEntitySignaler {
 
@@ -17,7 +15,6 @@ public class BlockingQueueNextEntitySignaler implements NextEntitySignaler {
 	    .getLogger(BlockingQueueNextEntitySignaler.class);
 
     private BlockingQueue<SyncMessage> queue;
-    private ObjectMapper jsonMapper = ObjectMapperFactory.getInstance();
 
     public BlockingQueueNextEntitySignaler(BlockingQueue<SyncMessage> queue) {
 	this.queue = queue;

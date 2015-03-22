@@ -32,7 +32,7 @@ public class SeedRecord extends SyncPayloadData implements Serializable,
     private String entityId;
     private String recordId;
     private String recordHash;
-    private String recordJson;
+    private SyncEntityMessage recordData;
     private String origin;
 
     public SeedRecord() {
@@ -62,12 +62,12 @@ public class SeedRecord extends SyncPayloadData implements Serializable,
 	this.recordHash = recordHash;
     }
 
-    public String getRecordJson() {
-	return recordJson;
+    public SyncEntityMessage getRecordData() {
+	return recordData;
     }
 
-    public void setRecordJson(String recordJson) {
-	this.recordJson = recordJson;
+    public void setRecordData(SyncEntityMessage recordData) {
+	this.recordData = recordData;
     }
 
     public String getOrigin() {
@@ -81,7 +81,7 @@ public class SeedRecord extends SyncPayloadData implements Serializable,
     @Override
     public String toString() {
 	return "SeedRecord [entityId=" + entityId + ", recordId=" + recordId
-		+ ", recordHash=" + recordHash + ", recordJson=" + recordJson
+		+ ", recordHash=" + recordHash + ", recordData=" + recordData
 		+ ", origin=" + origin + "]";
     }
 

@@ -51,7 +51,6 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 
     private BlockingQueue<SyncMessage> receiveQueue;
     private AtomicBoolean isRunning;
-    // private JsonMapperBean jsonMapper;
     private SeedConsumer seedConsumer;
 
     private AtomicBoolean stopper;
@@ -67,8 +66,6 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 	this.receiveQueue = receiveQueue;
 	this.stopper = stopped;
 	this.isRunning = new AtomicBoolean(true);
-	// this.jsonMapper = JsonMapperBean.getInstance();
-
     }
 
     public void setSeedConsumer(SeedConsumer seedConsumer) {
@@ -127,10 +124,6 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
     private boolean handleMessage(SyncMessage message)
 	    throws JsonParseException, JsonMappingException, IOException,
 	    SeedException {
-
-	// // TODO Add more error handling
-	// SyncMessage syncMessage = jsonMapper.readValue(message,
-	// SyncMessage.class);
 
 	return syncMessageHandler.handle(message);
 

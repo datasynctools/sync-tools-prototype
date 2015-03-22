@@ -19,7 +19,7 @@ public class MetadataSyncRecordMutationBuilder
 		.value("EntityId", syncRecord.getEntityId())
 		.value("RecordId", syncRecord.getRecordId())
 		.value("RecordHash", syncRecord.getRecordHash())
-		.value("RecordData", syncRecord.getRecordJson());
+		.value("RecordData", syncRecord.getRecordData());
 
 	return answer;
     }
@@ -31,7 +31,7 @@ public class MetadataSyncRecordMutationBuilder
 		.value("EntityId", syncRecord.getEntityId())
 		.value("RecordId", syncRecord.getRecordId())
 		.value("RecordHash", syncRecord.getRecordHash())
-		.value("RecordData", syncRecord.getRecordJson());
+		.value("RecordData", syncRecord.getRecordData());
 
 	return answer;
     }

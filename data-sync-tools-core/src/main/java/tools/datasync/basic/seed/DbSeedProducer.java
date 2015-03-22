@@ -28,15 +28,16 @@ import java.util.List;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tools.datasync.api.utils.Jsonify;
 import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.model.SyncEntityMessage;
-import tools.datasync.basic.util.ObjectMapperFactory;
+import tools.datasync.basic.util.HashGenerator;
+import tools.datasync.basic.util.Md5HashGenerator;
 
 public class DbSeedProducer implements SeedProducer {
 
@@ -45,8 +46,13 @@ public class DbSeedProducer implements SeedProducer {
 
     private EntityGetter entityGetter;
     private GenericDao genericDao;
-    private ObjectMapper jsonMapper = ObjectMapperFactory.getInstance();
+    // private ObjectMapper jsonMapper = ObjectMapperFactory.getInstance();
     private boolean isRunning = false;
+
+    private static final HashGenerator hashGenerator = Md5HashGenerator
+	    .getInstance();
+
+    private Jsonify jsonify = new Jsonify();
 
     boolean stop = false;
 
@@ -158,19 +164,21 @@ public class DbSeedProducer implements SeedProducer {
 	return seed;
     }
 
-    private SeedRecord createSeedRecord(SyncEntityMessage record)
+    private SeedRecord createSeedRecord(SyncEntityMessage recordData)
 	    throws JsonGenerationException, JsonMappingException, IOException {
-	String entityId = entityGetter.getId(record.getEntity());
-	String recordId = String.valueOf(record.getCalculatedPrimaryKey());
-	String recordJson = jsonMapper.writeValueAsString(record);
-	String recordHash = record.generateHash();
+	String entityId = entityGetter.getId(recordData.getEntity());
+	String recordId = String.valueOf(recordData.getCalculatedPrimaryKey());
+	String recordString = jsonify.toString(recordData); //
+	// jsonMapper.writeValueAsString(record);
+	// OLD: String recordHash = record.generateHash();
+	String recordHash = hashGenerator.generate(recordString);
 	String origin = "";// me.getPeerId();
 
 	SeedRecord seed = new SeedRecord();
 	seed.setEntityId(entityId);
 	seed.setRecordId(recordId);
 	seed.setRecordHash(recordHash);
-	seed.setRecordJson(recordJson);
+	seed.setRecordData(recordData);
 	seed.setOrigin(origin);
 
 	LOG.debug("generated seed record: " + seed);

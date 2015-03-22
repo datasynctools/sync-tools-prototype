@@ -112,18 +112,18 @@ public class GenericJDBCDao implements GenericDao {
 
     }
 
-    public void save(String entityName, SyncEntityMessage json)
+    public void save(String entityName, SyncEntityMessage recordData)
 	    throws SQLException {
 
 	Connection connection = null;
 	Statement statement = null;
 	try {
 	    // Try insert statement...
-	    String insert = SqlGenUtil.getInsertStatement(entityName, json);
+	    String insert = SqlGenUtil.getInsertStatement(entityName, recordData);
 	    connection = dataSource.getConnection();
 
 	    statement = connection.createStatement();
-	    LOG.debug("db [{}] : {}", dbName, insert);
+	    LOG.info("db [{}] : {}", dbName, insert);
 	    statement.execute(insert);
 	    // LOG.debug(dbName + ": " + "commiting insert...");
 	    // LOG.debug("db [{}] : {}", dbName, insert);

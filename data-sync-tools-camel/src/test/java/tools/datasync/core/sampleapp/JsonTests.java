@@ -71,7 +71,7 @@ public class JsonTests {
 	msg.setMessageType("BEGIN_SEED");
 	SeedRecord payloadData = new SeedRecord();
 	payloadData.setEntityId("123");
-	payloadData.setRecordJson("some json");
+	// payloadData.setRecordData("some json");
 	msg.setPayloadData(payloadData);
 	String jsonString = new Jsonify().toString(msg);
 	LOG.info(jsonString);
@@ -94,7 +94,7 @@ public class JsonTests {
 		"BEGIN_SEED".equals(syncMessage.getMessageType()));
 	Assert.assertTrue("Embedded Data not correct", "some json"
 		.equals(((SeedRecord) syncMessage.getPayloadData())
-			.getRecordJson()));
+			.getRecordData()));
     }
 
 }

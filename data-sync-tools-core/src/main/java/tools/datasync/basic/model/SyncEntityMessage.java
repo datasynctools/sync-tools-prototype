@@ -24,28 +24,22 @@
 package tools.datasync.basic.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import tools.datasync.basic.util.HashGenerator;
-import tools.datasync.basic.util.Md5HashGenerator;
+import tools.datasync.basic.comm.SyncPayloadData;
 
 //TODO Doug comment: While I see what this class is doing at a high level, I think it can be further reduced.
 //For instance, it can be altered to reduce the number of non-native objects being created and 
 //to better support a pluggable data format.
-public class SyncEntityMessage implements Cloneable, Serializable {
+public class SyncEntityMessage extends SyncPayloadData implements Cloneable,
+	Serializable {
 
-    private static final Logger LOG = LoggerFactory
-	    .getLogger(SyncEntityMessage.class);
+    // private static final Logger LOG = LoggerFactory
+    // .getLogger(SyncEntityMessage.class);
 
     private static final long serialVersionUID = 1052072136660446741L;
-    private static final HashGenerator hashGenerator = Md5HashGenerator
-	    .getInstance();
+    // private static final HashGenerator hashGenerator = Md5HashGenerator
+    // .getInstance();
 
     private String entity;
     private String calculatedPrimaryKey;
@@ -142,41 +136,41 @@ public class SyncEntityMessage implements Cloneable, Serializable {
 	}
 	return true;
     }
-
-    private List<String> sortProps() {
-	List<String> keys = new ArrayList<String>();
-	keys.addAll(support.getData().keySet());
-	Collections.sort(keys);
-	return keys;
-    }
-
-    private StringBuffer flattenProps(List<String> sortedKeys) {
-	StringBuffer sbValue = new StringBuffer();
-	for (String key : sortedKeys) {
-	    Object value = support.getData().get(key);
-	    sbValue.append(String.valueOf(value));
-	    sbValue.append(',');
-	}
-	if (sbValue.length() > 0) {
-	    sbValue.setLength(sbValue.length() - 1);
-	}
-	return sbValue;
-    }
-
-    public String generateHash() {
-	Map<String, Object> props = support.getData();
-	if (props == null || props.size() == 0) {
-	    return "NO_DATA:NO_HASH";
-	}
-
-	List<String> keys = sortProps();
-
-	StringBuffer sbValue = flattenProps(keys);
-
-	String hash = hashGenerator.generate(sbValue.toString());
-	LOG.debug("Generated hash: " + hash + ", for data: ["
-		+ sbValue.toString() + "]");
-	return hash;
-    }
+    //
+    // private List<String> sortProps() {
+    // List<String> keys = new ArrayList<String>();
+    // keys.addAll(support.getData().keySet());
+    // Collections.sort(keys);
+    // return keys;
+    // }
+    //
+    // private StringBuffer flattenProps(List<String> sortedKeys) {
+    // StringBuffer sbValue = new StringBuffer();
+    // for (String key : sortedKeys) {
+    // Object value = support.getData().get(key);
+    // sbValue.append(String.valueOf(value));
+    // sbValue.append(',');
+    // }
+    // if (sbValue.length() > 0) {
+    // sbValue.setLength(sbValue.length() - 1);
+    // }
+    // return sbValue;
+    // }
+    //
+    // public String generateHash() {
+    // Map<String, Object> props = support.getData();
+    // if (props == null || props.size() == 0) {
+    // return "NO_DATA:NO_HASH";
+    // }
+    //
+    // List<String> keys = sortProps();
+    //
+    // StringBuffer sbValue = flattenProps(keys);
+    //
+    // String hash = hashGenerator.generate(sbValue.toString());
+    // LOG.debug("Generated hash: " + hash + ", for data: ["
+    // + sbValue.toString() + "]");
+    // return hash;
+    // }
 
 }

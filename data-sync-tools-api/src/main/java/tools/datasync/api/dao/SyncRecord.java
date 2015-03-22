@@ -5,7 +5,7 @@ public class SyncRecord {
     private String entityId;
     private String recordId;
     private String recordHash;
-    private String recordJson;
+    private String recordData;
     private String origin;
 
     public String getEntityId() {
@@ -32,12 +32,12 @@ public class SyncRecord {
 	this.recordHash = recordHash;
     }
 
-    public String getRecordJson() {
-	return recordJson;
+    public String getRecordData() {
+	return recordData;
     }
 
-    public void setRecordJson(String recordJson) {
-	this.recordJson = recordJson;
+    public void setRecordData(String recordData) {
+	this.recordData = recordData;
     }
 
     public String getOrigin() {

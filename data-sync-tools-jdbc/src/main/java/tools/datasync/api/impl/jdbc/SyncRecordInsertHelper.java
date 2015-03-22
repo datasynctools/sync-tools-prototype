@@ -57,7 +57,7 @@ public class SyncRecordInsertHelper {
     private static final void addRecordDataSql(SyncRecord item,
 	    StringBuilder builder) {
 	builder.append(" '");
-	builder.append(item.getRecordJson());
+	builder.append(item.getRecordData());
 	builder.append("',");
     }
 

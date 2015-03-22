@@ -53,7 +53,7 @@ public class CamelBlockingQueuePollAndPull extends AbstractPartialBlockingQueue
 	Date end = new Date();
 	long duration = TimeUnit.MILLISECONDS.convert(timeout, unit);
 
-	LOG.info("Getting messages from {}", requestUri);
+	LOG.debug("Getting messages from {}", requestUri);
 
 	do {
 	    String response = template.requestBody(requestUri, (Object) obj,
@@ -67,7 +67,7 @@ public class CamelBlockingQueuePollAndPull extends AbstractPartialBlockingQueue
 	    end = new Date();
 
 	} while (continueMe(start, end, duration));
-	LOG.info("No message in timeout period");
+	LOG.debug("No message in timeout period");
 	return null;
 
     }

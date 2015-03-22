@@ -47,7 +47,7 @@ public class SqlGenUtil {
     }
 
     public static String getInsertStatement(String tableName,
-	    SyncEntityMessage json) {
+	    SyncEntityMessage recordData) {
 
 	StringBuffer insert = new StringBuffer();
 	insert.append("insert into ");
@@ -55,9 +55,9 @@ public class SqlGenUtil {
 
 	StringBuffer names = new StringBuffer();
 	StringBuffer values = new StringBuffer();
-	Iterator<String> keys = json.getData().keySet().iterator();
+	Iterator<String> keys = recordData.getData().keySet().iterator();
 
-	handleInsertKeys(keys, json, names, values);
+	handleInsertKeys(keys, recordData, names, values);
 
 	insert.append(" (");
 	insert.append(names);
@@ -70,17 +70,17 @@ public class SqlGenUtil {
     }
 
     private static void handleInsertKeys(Iterator<String> keys,
-	    SyncEntityMessage json, StringBuffer names, StringBuffer values) {
+	    SyncEntityMessage recordData, StringBuffer names, StringBuffer values) {
 	while (keys.hasNext()) {
 	    String name = keys.next();
-	    if (StringUtils.isEmpty(json.get(name))
-		    || "null".equals(json.get(name))) {
+	    if (StringUtils.isEmpty(recordData.get(name))
+		    || "null".equals(recordData.get(name))) {
 		continue;
 	    }
 	    names.append(name);
-	    String type = json.getType(name);
+	    String type = recordData.getType(name);
 
-	    handleType(new Tuple<String, String>(name, type), json, values);
+	    handleType(new Tuple<String, String>(name, type), recordData, values);
 
 	    appendNextIfAvailable(keys, names);
 	    appendNextIfAvailable(keys, values);
@@ -88,20 +88,20 @@ public class SqlGenUtil {
     }
 
     private static void handleType(Tuple<String, String> nameValue,
-	    SyncEntityMessage json, StringBuffer values) {
+	    SyncEntityMessage recordData, StringBuffer values) {
 
 	if ("String".equalsIgnoreCase(nameValue.y)) {
 	    values.append("'");
-	    values.append(json.get(nameValue.x));
+	    values.append(recordData.get(nameValue.x));
 	    values.append("'");
 	} else if ("Date".equalsIgnoreCase(nameValue.y)
 		|| "Long".equalsIgnoreCase(nameValue.y)) {
 	    values.append("'");
-	    values.append(dateFormat.format(new Date((Long) json
+	    values.append(dateFormat.format(new Date((Long) recordData
 		    .get(nameValue.x))));
 	    values.append("'");
 	} else {
-	    values.append(json.get(nameValue.x));
+	    values.append(recordData.get(nameValue.x));
 	}
     }
 
@@ -133,7 +133,7 @@ public class SqlGenUtil {
     }
 
     public static String getInsertPreparedStatement(String tableName,
-	    SyncEntityMessage json) {
+	    SyncEntityMessage recordData) {
 
 	StringBuffer insertps = new StringBuffer();
 	insertps.append("insert into ");
@@ -141,9 +141,9 @@ public class SqlGenUtil {
 
 	StringBuffer names = new StringBuffer();
 	StringBuffer values = new StringBuffer();
-	Iterator<String> keys = json.getData().keySet().iterator();
+	Iterator<String> keys = recordData.getData().keySet().iterator();
 
-	handleInsertPrepKeys(keys, json, names, values);
+	handleInsertPrepKeys(keys, recordData, names, values);
 
 	insertps.append(" (");
 	insertps.append(names);
@@ -188,13 +188,13 @@ public class SqlGenUtil {
     }
 
     private static void handleUpdateWhere(StringBuffer sql, String keyColumn,
-	    SyncEntityMessage json) {
+	    SyncEntityMessage recordData) {
 	sql.append(" where ");
 	String[] keyColumns = keyColumn.split(", ");
 	for (int colIndex = 0; colIndex < keyColumns.length; colIndex++) {
 	    sql.append(keyColumns[colIndex]);
 	    sql.append("='");
-	    sql.append(json.get(keyColumns[colIndex]));
+	    sql.append(recordData.get(keyColumns[colIndex]));
 	    sql.append("'");
 	    if (colIndex + 1 < keyColumns.length) {
 		sql.append(" and ");
@@ -204,14 +204,14 @@ public class SqlGenUtil {
     }
 
     private static void handleUpdateKeys(Iterator<String> keys,
-	    SyncEntityMessage json, StringBuffer sql) {
+	    SyncEntityMessage recordData, StringBuffer sql) {
 	while (keys.hasNext()) {
 	    String name = keys.next();
-	    Object value = json.get(name);
+	    Object value = recordData.get(name);
 	    if (value == null || "null".equals(value) || "NULL".equals(value)) {
 		continue;
 	    }
-	    String type = json.getType(name);
+	    String type = recordData.getType(name);
 
 	    handleUpdateType(name, value, type, sql);
 
@@ -221,7 +221,7 @@ public class SqlGenUtil {
     }
 
     public static String getDeleteStatement(String tableName,
-	    SyncEntityMessage json, String keyColumn) {
+	    SyncEntityMessage recordData, String keyColumn) {
 
 	StringBuffer delete = new StringBuffer();
 	delete.append("delete from ");
@@ -230,7 +230,7 @@ public class SqlGenUtil {
 	delete.append(" where ");
 	delete.append(keyColumn);
 	delete.append("='");
-	delete.append(json.get(keyColumn));
+	delete.append(recordData.get(keyColumn));
 	delete.append("'");
 
 	LOG.debug(delete.toString());

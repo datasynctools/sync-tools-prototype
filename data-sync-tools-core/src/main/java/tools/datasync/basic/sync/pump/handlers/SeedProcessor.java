@@ -39,7 +39,8 @@ public class SeedProcessor implements SyncMessageProcessor {
 	    seedConsumer.consume(seed);
 
 	} catch (Exception e) {
-	    LOG.error("Fatal exception in processing", e);
+	    LOG.error("Fatal exception in processing syncMessage {}",
+		    syncMessage, e);
 	    throw (new RuntimeException("Fatal exception in processing", e));
 	}
 
