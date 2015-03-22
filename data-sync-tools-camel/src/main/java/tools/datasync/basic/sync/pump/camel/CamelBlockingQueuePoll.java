@@ -5,24 +5,32 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ProducerTemplate;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class CamelBlockingQueuePoll extends
-	AbstractPartialBlockingQueue implements BlockingQueue<String> {
+import tools.datasync.basic.comm.SyncMessage;
+import tools.datasync.basic.util.ObjectMapperFactory;
 
-    // private static final Logger LOG = LoggerFactory
-    // .getLogger(CamelProducerPollBlockingQueue.class);
+public class CamelBlockingQueuePoll extends AbstractPartialBlockingQueue
+	implements BlockingQueue<SyncMessage> {
+
+    private static final Logger LOG = LoggerFactory
+	    .getLogger(CamelBlockingQueuePoll.class);
 
     private ProducerTemplate template;
 
-    private BlockingQueue<String> consumingBlockingQueue;
+    private BlockingQueue<SyncMessage> consumingBlockingQueue;
+
+    private ObjectMapper jsonMapper = ObjectMapperFactory.getInstance();
 
     public CamelBlockingQueuePoll(ProducerTemplate template,
-	    BlockingQueue<String> consumingBlockingQueue) {
+	    BlockingQueue<SyncMessage> consumingBlockingQueue) {
 	this.template = template;
 	this.consumingBlockingQueue = consumingBlockingQueue;
     }
 
-    public void put(String e) throws InterruptedException {
+    public void put(SyncMessage e) throws InterruptedException {
 	consumingBlockingQueue.put(e);
     }
 
@@ -31,7 +39,8 @@ public class CamelBlockingQueuePoll extends
 	return (thisDuration < duration);
     }
 
-    public String poll(long timeout, TimeUnit unit) throws InterruptedException {
+    public SyncMessage poll(long timeout, TimeUnit unit)
+	    throws InterruptedException {
 
 	String obj = "";
 	Date start = new Date();
@@ -42,13 +51,28 @@ public class CamelBlockingQueuePoll extends
 	    String response = template.requestBody((Object) obj, String.class);
 
 	    if (!response.isEmpty()) {
-		return (response);
+		return (processResponse(response));
 	    }
 	    end = new Date();
 
 	} while (continueMe(start, end, duration));
 
 	return null;
+
+    }
+
+    private SyncMessage processResponse(String response) {
+	SyncMessage syncMessage = null;
+	try {
+	    syncMessage = jsonMapper.readValue(response, SyncMessage.class);
+	} catch (Exception e) {
+	    LOG.error("Bad data", e);
+	    throw (new RuntimeException("Bad Data", e));
+	}
+
+	LOG.info("Found message {}", syncMessage);
+
+	return (syncMessage);
 
     }
 

@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,7 @@ import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.model.SyncEntityMessage;
-import tools.datasync.basic.util.JsonMapperBean;
+import tools.datasync.basic.util.ObjectMapperFactory;
 
 public class DbSeedProducer implements SeedProducer {
 
@@ -44,7 +45,7 @@ public class DbSeedProducer implements SeedProducer {
 
     private EntityGetter entityGetter;
     private GenericDao genericDao;
-    private JsonMapperBean jsonMapper = JsonMapperBean.getInstance();
+    private ObjectMapper jsonMapper = ObjectMapperFactory.getInstance();
     private boolean isRunning = false;
 
     boolean stop = false;

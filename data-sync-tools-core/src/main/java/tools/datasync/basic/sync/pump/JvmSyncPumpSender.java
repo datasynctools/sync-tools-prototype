@@ -13,10 +13,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tools.datasync.basic.comm.SyncMessage;
 import tools.datasync.basic.seed.SeedException;
 import tools.datasync.basic.seed.SeedOverException;
 import tools.datasync.basic.seed.SeedProducer;
-import tools.datasync.basic.util.JsonMapperBean;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -51,7 +51,7 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
     private SenderPreAckLogic senderPreAckLogic = new SenderPreAckLogic();
     private SenderPostAckLogic senderPostAckLogic = new SenderPostAckLogic();
 
-    public JvmSyncPumpSender(BlockingQueue<String> sendQueue,
+    public JvmSyncPumpSender(BlockingQueue<SyncMessage> sendQueue,
 	    SyncStateInitializer syncStateInitializer,
 	    JvmSyncConcurArgs concurArgs) {
 
@@ -60,9 +60,9 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
 	senderPreAckLogic.setSyncStateInitializer(syncStateInitializer);
 	senderPreAckLogic.setSendQueue(sendQueue);
 
-	JsonMapperBean jsonMapper = JsonMapperBean.getInstance();
-	senderPreAckLogic.setJsonMapper(jsonMapper);
-	senderPostAckLogic.setJsonMapper(jsonMapper);
+	// JsonMapperBean jsonMapper = JsonMapperBean.getInstance();
+	// senderPreAckLogic.setJsonMapper(jsonMapper);
+	// senderPostAckLogic.setJsonMapper(jsonMapper);
 
 	senderPostAckLogic.setIsRunning(isRunning);
 	senderPostAckLogic.setStopper(stopper);

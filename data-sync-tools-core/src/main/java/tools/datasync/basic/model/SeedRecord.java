@@ -23,7 +23,10 @@ package tools.datasync.basic.model;
 
 import java.io.Serializable;
 
-public class SeedRecord implements Serializable, Cloneable {
+import tools.datasync.basic.comm.SyncPayloadData;
+
+public class SeedRecord extends SyncPayloadData implements Serializable,
+	Cloneable {
 
     private static final long serialVersionUID = 2953233347238587733L;
     private String entityId;

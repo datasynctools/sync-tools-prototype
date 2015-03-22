@@ -5,22 +5,24 @@ import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import tools.datasync.basic.comm.SyncMessage;
+
 public abstract class AbstractPartialBlockingQueue implements
-	BlockingQueue<String> {
+	BlockingQueue<SyncMessage> {
 
-    public String remove() {
+    public SyncMessage remove() {
 	throw (new RuntimeException("Not Implemented"));
     }
 
-    public String poll() {
+    public SyncMessage poll() {
 	throw (new RuntimeException("Not Implemented"));
     }
 
-    public String element() {
+    public SyncMessage element() {
 	throw (new RuntimeException("Not Implemented"));
     }
 
-    public String peek() {
+    public SyncMessage peek() {
 	throw (new RuntimeException("Not Implemented"));
     }
 
@@ -32,7 +34,7 @@ public abstract class AbstractPartialBlockingQueue implements
 	throw (new RuntimeException("Not Implemented"));
     }
 
-    public Iterator<String> iterator() {
+    public Iterator<SyncMessage> iterator() {
 	throw (new RuntimeException("Not Implemented"));
     }
 
@@ -48,7 +50,7 @@ public abstract class AbstractPartialBlockingQueue implements
 	throw (new RuntimeException("Not Implemented"));
     }
 
-    public boolean addAll(Collection<? extends String> c) {
+    public boolean addAll(Collection<? extends SyncMessage> c) {
 	throw (new RuntimeException("Not Implemented"));
     }
 
@@ -64,20 +66,20 @@ public abstract class AbstractPartialBlockingQueue implements
 	throw (new RuntimeException("Not Implemented"));
     }
 
-    public boolean add(String e) {
+    public boolean add(SyncMessage e) {
 	throw (new RuntimeException("Not Implemented"));
     }
 
-    public boolean offer(String e) {
+    public boolean offer(SyncMessage e) {
 	throw (new RuntimeException("Not Implemented"));
     }
 
-    public boolean offer(String e, long timeout, TimeUnit unit)
+    public boolean offer(SyncMessage e, long timeout, TimeUnit unit)
 	    throws InterruptedException {
 	throw (new RuntimeException("Not Implemented"));
     }
 
-    public String take() throws InterruptedException {
+    public SyncMessage take() throws InterruptedException {
 	throw (new RuntimeException("Not Implemented"));
     }
 
@@ -93,11 +95,11 @@ public abstract class AbstractPartialBlockingQueue implements
 	throw (new RuntimeException("Not Implemented"));
     }
 
-    public int drainTo(Collection<? super String> c) {
+    public int drainTo(Collection<? super SyncMessage> c) {
 	throw (new RuntimeException("Not Implemented"));
     }
 
-    public int drainTo(Collection<? super String> c, int maxElements) {
+    public int drainTo(Collection<? super SyncMessage> c, int maxElements) {
 	throw (new RuntimeException("Not Implemented"));
     }
 

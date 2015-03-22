@@ -4,13 +4,15 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.comm.SyncMessage;
 import tools.datasync.basic.comm.SyncMessageType;
+import tools.datasync.basic.model.EnityId;
 import tools.datasync.basic.model.SeedRecord;
-import tools.datasync.basic.util.JsonMapperBean;
+import tools.datasync.basic.util.ObjectMapperFactory;
 import tools.datasync.basic.util.TimeSpan;
 
 public class NextEntityAwaiter {
@@ -22,11 +24,11 @@ public class NextEntityAwaiter {
     private CopyOnWriteArrayList<String> arrayList;
     private TimeSpan awaitTimeSpan;
     private AtomicBoolean stopper;
-    private BlockingQueue<String> sendQueue;
-    private JsonMapperBean jsonMapper = JsonMapperBean.getInstance();
+    private BlockingQueue<SyncMessage> sendQueue;
+    private ObjectMapper jsonMapper = ObjectMapperFactory.getInstance();
 
     public NextEntityAwaiter(CopyOnWriteArrayList<String> arrayList,
-	    TimeSpan awaitTimeSpan, BlockingQueue<String> sendQueue,
+	    TimeSpan awaitTimeSpan, BlockingQueue<SyncMessage> sendQueue,
 	    AtomicBoolean stopper) {
 	this.arrayList = arrayList;
 	this.awaitTimeSpan = awaitTimeSpan;
@@ -61,13 +63,13 @@ public class NextEntityAwaiter {
 	try {
 	    SyncMessage syncMessage = createSyncMessage(entityId, messageNumber);
 
-	    String message = jsonMapper.writeValueAsString(syncMessage);
+	    // String message = jsonMapper.writeValueAsString(syncMessage);
 
 	    LOG.info("Signal to peer that I have finished an "
 		    + "Entity set with value {} using {}[{}]", lastEntityId,
 		    sendQueue.getClass(), sendQueue.hashCode());
 
-	    sendQueue.put(message);
+	    sendQueue.put(syncMessage);
 	} catch (Exception e) {
 	    throw (new RuntimeException(e));
 	}
@@ -84,7 +86,9 @@ public class NextEntityAwaiter {
 		.toString());
 	syncMessage.setTimestamp(System.currentTimeMillis());
 	// syncMessage.setPaloadHash(null);//leaving null on purpose
-	syncMessage.setPayloadJson(thisEntityId);
+	EnityId entityIdObj = new EnityId();
+	entityIdObj.setEntityId(thisEntityId);
+	syncMessage.setPayloadData(entityIdObj);
 	return (syncMessage);
     }
 
@@ -125,10 +129,6 @@ public class NextEntityAwaiter {
 	    throw (new RuntimeException(e));
 	}
 	return true;
-    }
-
-    public void setJsonMapper(JsonMapperBean jsonMapper) {
-	this.jsonMapper = jsonMapper;
     }
 
 }

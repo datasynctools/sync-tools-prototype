@@ -23,6 +23,7 @@ package tools.datasync.basic.seed;
 
 import java.io.IOException;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,15 +33,15 @@ import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.IdGetter;
 import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.model.SyncEntityMessage;
-import tools.datasync.basic.util.JsonMapperBean;
 import tools.datasync.basic.util.Md5HashGenerator;
+import tools.datasync.basic.util.ObjectMapperFactory;
 
 public class DbSeedConsumer implements SeedConsumer {
 
     private static final Logger LOG = LoggerFactory
 	    .getLogger(DbSeedConsumer.class);
 
-    private JsonMapperBean jsonMapper = JsonMapperBean.getInstance();
+    private ObjectMapper jsonMapper = ObjectMapperFactory.getInstance();
     private Md5HashGenerator hashGenerator = Md5HashGenerator.getInstance();
     private GenericDao genericDao;
     private ConflictResolver conflictResolver;

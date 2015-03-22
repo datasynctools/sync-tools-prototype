@@ -2,24 +2,25 @@ package tools.datasync.basic.sync.pump;
 
 import java.util.concurrent.BlockingQueue;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.comm.SyncMessage;
 import tools.datasync.basic.comm.SyncMessageType;
-import tools.datasync.basic.util.JsonMapperBean;
+import tools.datasync.basic.model.EnityId;
+import tools.datasync.basic.util.ObjectMapperFactory;
 
 public class BlockingQueueNextEntitySignaler implements NextEntitySignaler {
 
     private static final Logger LOG = LoggerFactory
 	    .getLogger(BlockingQueueNextEntitySignaler.class);
 
-    private BlockingQueue<String> queue;
-    private JsonMapperBean jsonMapper;
+    private BlockingQueue<SyncMessage> queue;
+    private ObjectMapper jsonMapper = ObjectMapperFactory.getInstance();
 
-    public BlockingQueueNextEntitySignaler(BlockingQueue<String> queue) {
+    public BlockingQueueNextEntitySignaler(BlockingQueue<SyncMessage> queue) {
 	this.queue = queue;
-	this.jsonMapper = JsonMapperBean.getInstance();
     }
 
     @Override
@@ -28,20 +29,15 @@ public class BlockingQueueNextEntitySignaler implements NextEntitySignaler {
 	SyncMessage syncMessage = new SyncMessage();
 	// TODO: ADD Message Number capability to
 	syncMessage.setMessageNumber(-1);
-	syncMessage.setPayloadJson(previousEntityId);
+	EnityId entityIdObj = new EnityId();
+	entityIdObj.setEntityId(previousEntityId);
+	syncMessage.setPayloadData(entityIdObj);
 	syncMessage.setMessageType(SyncMessageType.PEER_READY_WITH_NEXT_ENTITY
 		.toString());
 	syncMessage.setTimestamp(System.currentTimeMillis());
 
-	String payload;
-	try {
-	    payload = jsonMapper.writeValueAsString(syncMessage);
-	} catch (Exception e) {
-	    throw (new RuntimeException(e));
-	}
-
-	LOG.info("Sending body {}", payload);
-	queue.add(payload);
+	LOG.info("Sending body {}", syncMessage);
+	queue.add(syncMessage);
     }
 
 }

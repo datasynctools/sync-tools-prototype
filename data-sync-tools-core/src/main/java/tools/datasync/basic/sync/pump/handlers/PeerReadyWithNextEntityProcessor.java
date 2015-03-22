@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.comm.SyncMessage;
+import tools.datasync.basic.model.EnityId;
 
 public class PeerReadyWithNextEntityProcessor implements SyncMessageProcessor {
 
@@ -22,7 +23,8 @@ public class PeerReadyWithNextEntityProcessor implements SyncMessageProcessor {
     @Override
     public boolean handle(SyncMessage syncMessage) {
 
-	String thisEntityId = syncMessage.getPayloadJson();
+	EnityId entityIdObj = (EnityId) syncMessage.getPayloadData();
+	String thisEntityId = entityIdObj.getEntityId().toString();
 	arrayList.add(thisEntityId);
 	LOG.info("Acknowledged Peer ready with next entity "
 		+ "message {} to arrayList {}", thisEntityId, arrayList);

@@ -7,14 +7,16 @@ import org.apache.camel.Processor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tools.datasync.basic.comm.SyncMessage;
+
 public class CamelProcessorQueue implements Processor {
 
     private static final Logger LOG = LoggerFactory
 	    .getLogger(CamelProcessorQueue.class);
 
-    private BlockingQueue<String> blockingQueue;
+    private BlockingQueue<SyncMessage> blockingQueue;
 
-    public CamelProcessorQueue(BlockingQueue<String> blockingQueue) {
+    public CamelProcessorQueue(BlockingQueue<SyncMessage> blockingQueue) {
 	this.blockingQueue = blockingQueue;
     }
 
@@ -22,7 +24,7 @@ public class CamelProcessorQueue implements Processor {
 	String body = exchange.getIn().getBody(String.class);
 	LOG.debug("body: [{}]", body);
 
-	String msg = blockingQueue.poll();
+	SyncMessage msg = blockingQueue.poll();
 
 	LOG.debug("Response 'Out' body: {}", msg);
 	// String body = exchange.getIn().getBody(String.class);

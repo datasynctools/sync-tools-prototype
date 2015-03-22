@@ -16,15 +16,14 @@ import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.seed.SeedException;
 import tools.datasync.basic.seed.SeedOverException;
 import tools.datasync.basic.seed.SeedProducer;
-import tools.datasync.basic.util.JsonMapperBean;
 
 public class SenderPostAckLogic {
 
     private static final Logger LOG = LoggerFactory
 	    .getLogger(SenderPostAckLogic.class);
 
-    private BlockingQueue<String> sendQueue;
-    private JsonMapperBean jsonMapper;
+    private BlockingQueue<SyncMessage> sendQueue;
+    // private JsonMapperBean jsonMapper;
     private SeedProducer seedProducer;
 
     private NextEntityAwaiter nextEntityAwaiter;
@@ -47,10 +46,10 @@ public class SenderPostAckLogic {
 		+ ", seedProducer.isRunning=" + seedProducer.isRunning());
 	syncMessage = createSyncMessage(messageNumber++);
 
-	message = jsonMapper.writeValueAsString(syncMessage);
+	// message = jsonMapper.writeValueAsString(syncMessage);
 
-	LOG.info("Sending - " + message);
-	this.sendQueue.put(message);
+	LOG.info("Sending - " + syncMessage);
+	this.sendQueue.put(syncMessage);
 	return messageNumber;
     }
 
@@ -75,29 +74,28 @@ public class SenderPostAckLogic {
     private long sendSyncMessage(SeedRecord seed, SyncMessage syncMessage,
 	    String message, long messageNumber) throws InterruptedException,
 	    JsonGenerationException, JsonMappingException, IOException {
-	String payloadJson = jsonMapper.writeValueAsString(seed);
+	// String payloadJson = jsonMapper.writeValueAsString(seed);
 	String payloadHash = seed.getRecordHash();
 
-	syncMessage = createSyncMessage(seed, messageNumber, payloadJson,
-		payloadHash);
+	syncMessage = createSyncMessage(seed, messageNumber, seed, payloadHash);
 
-	message = jsonMapper.writeValueAsString(syncMessage);
+	// message = jsonMapper.writeValueAsString(syncMessage);
 
-	LOG.info("Sending - " + message);
-	this.sendQueue.put(message);
+	LOG.info("Sending - " + syncMessage);
+	this.sendQueue.put(syncMessage);
 	return (messageNumber + 1);
 
     }
 
     private SyncMessage createSyncMessage(SeedRecord seed, long messageNumber,
-	    String payloadJson, String payloadHash) {
+	    SeedRecord payloadData, String payloadHash) {
 	SyncMessage syncMessage = new SyncMessage();
 	syncMessage.setOriginId(seed.getOrigin());
 	syncMessage.setMessageNumber(messageNumber);
 	syncMessage.setMessageType(SyncMessageType.SEED.toString());
 	syncMessage.setTimestamp(System.currentTimeMillis());
 	syncMessage.setPayloadHash(payloadHash);
-	syncMessage.setPayloadJson(payloadJson);
+	syncMessage.setPayloadData(payloadData);
 	return (syncMessage);
     }
 
@@ -127,11 +125,11 @@ public class SenderPostAckLogic {
 
     }
 
-    public void setJsonMapper(JsonMapperBean jsonMapper) {
-	this.jsonMapper = jsonMapper;
-    }
+    // public void setJsonMapper(JsonMapperBean jsonMapper) {
+    // this.jsonMapper = jsonMapper;
+    // }
 
-    public void setSendQueue(BlockingQueue<String> sendQueue) {
+    public void setSendQueue(BlockingQueue<SyncMessage> sendQueue) {
 	this.sendQueue = sendQueue;
     }
 

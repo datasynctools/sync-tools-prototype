@@ -20,7 +20,6 @@ import tools.datasync.basic.comm.SyncMessage;
 import tools.datasync.basic.seed.SeedConsumer;
 import tools.datasync.basic.seed.SeedException;
 import tools.datasync.basic.sync.pump.handlers.SyncMessageHandler;
-import tools.datasync.basic.util.JsonMapperBean;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -50,9 +49,9 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 
     private SyncMessageHandler syncMessageHandler = null;
 
-    private BlockingQueue<String> receiveQueue;
+    private BlockingQueue<SyncMessage> receiveQueue;
     private AtomicBoolean isRunning;
-    private JsonMapperBean jsonMapper;
+    // private JsonMapperBean jsonMapper;
     private SeedConsumer seedConsumer;
 
     private AtomicBoolean stopper;
@@ -62,13 +61,13 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
     private CopyOnWriteArrayList<String> arrayList;
     private NextEntitySignaler nextEntitySignaler;
 
-    public JvmSyncPumpReceiver(BlockingQueue<String> receiveQueue,
+    public JvmSyncPumpReceiver(BlockingQueue<SyncMessage> receiveQueue,
 	    AtomicBoolean stopped) {
 
 	this.receiveQueue = receiveQueue;
 	this.stopper = stopped;
 	this.isRunning = new AtomicBoolean(true);
-	this.jsonMapper = JsonMapperBean.getInstance();
+	// this.jsonMapper = JsonMapperBean.getInstance();
 
     }
 
@@ -85,8 +84,9 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 	return false;
     }
 
-    private String getMessage() throws InterruptedException {
-	String message = this.receiveQueue.poll(500, TimeUnit.MILLISECONDS);
+    private SyncMessage getMessage() throws InterruptedException {
+	SyncMessage message = this.receiveQueue
+		.poll(500, TimeUnit.MILLISECONDS);
 	return message;
     }
 
@@ -112,7 +112,7 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 	    return true;
 	}
 
-	String message = getMessage();
+	SyncMessage message = getMessage();
 
 	if (message != null) {
 	    finishMe = handleMessage(message);
@@ -124,14 +124,15 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 	return false;
     }
 
-    private boolean handleMessage(String message) throws JsonParseException,
-	    JsonMappingException, IOException, SeedException {
+    private boolean handleMessage(SyncMessage message)
+	    throws JsonParseException, JsonMappingException, IOException,
+	    SeedException {
 
-	// TODO Add more error handling
-	SyncMessage syncMessage = jsonMapper.readValue(message,
-		SyncMessage.class);
+	// // TODO Add more error handling
+	// SyncMessage syncMessage = jsonMapper.readValue(message,
+	// SyncMessage.class);
 
-	return syncMessageHandler.handle(syncMessage);
+	return syncMessageHandler.handle(message);
 
     }
 
@@ -175,7 +176,7 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 	this.arrayList = arrayList;
     }
 
-    public BlockingQueue<String> getQueue() {
+    public BlockingQueue<SyncMessage> getQueue() {
 	return this.receiveQueue;
     }
 

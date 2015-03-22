@@ -23,30 +23,36 @@
 
 package tools.datasync.basic.util;
 
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig.Feature;
+import org.codehaus.jackson.map.SerializationConfig;
 
-public class JsonMapperBean extends ObjectMapper {
+public class ObjectMapperFactory {
 
-    private static JsonMapperBean bean = null;
+    private static ObjectMapper bean = null;
 
-    public static synchronized JsonMapperBean getInstance() {
+    public static synchronized ObjectMapper getInstance() {
 
 	if (bean == null) {
-	    bean = new JsonMapperBean();
+	    bean = new ObjectMapper();
+
+	    bean.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+	    bean.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
+
+	    // http://stackoverflow.com/questions/6591388/configure-jackson-to-deserialize-single-quoted-invalid-json
+	    bean.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+
+	    bean.disable(SerializationConfig.Feature.INDENT_OUTPUT);
+
+	    bean.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+
+	    // bean.setSerializationConfig(SerializationConfig.Feature.WRITE_NULL_PROPERTIES)
+	    // bean.disable(SerializationConfig.);
+
 	}
+
 	return bean;
-    }
-
-    private JsonMapperBean() {
-
-	super();
-	init();
-    }
-
-    public void init() {
-
-	this.configure(Feature.FAIL_ON_EMPTY_BEANS, false);
     }
 
 }

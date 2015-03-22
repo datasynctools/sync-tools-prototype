@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +16,7 @@ import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.IdGetter;
 import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.basic.sync.pump.SyncStateInitializer;
-import tools.datasync.basic.util.JsonMapperBean;
+import tools.datasync.basic.util.ObjectMapperFactory;
 
 public class JdbcSyncStateInitializer implements SyncStateInitializer {
 
@@ -24,7 +25,7 @@ public class JdbcSyncStateInitializer implements SyncStateInitializer {
 
     private AtomicBoolean isRunning;
     private GenericDao genericDao;
-    private JsonMapperBean jsonMapper;
+    private ObjectMapper jsonMapper;
 
     private List<String> tables;
     private EntityGetter entityGetter;
@@ -33,7 +34,7 @@ public class JdbcSyncStateInitializer implements SyncStateInitializer {
     public JdbcSyncStateInitializer(List<String> tables,
 	    EntityGetter entityGetter, IdGetter idGetter, GenericDao genericDao) {
 	this.isRunning = new AtomicBoolean(false);
-	this.jsonMapper = JsonMapperBean.getInstance();
+	this.jsonMapper = ObjectMapperFactory.getInstance();
 	this.tables = tables;
 	this.entityGetter = entityGetter;
 	this.idGetter = idGetter;

@@ -26,10 +26,12 @@
 	<bean id="peerMe" class="tools.datasync.basic.sync.pump.JvmSyncPeerParms">
 		<constructor-arg ref="syncPeerA"/>
 		<constructor-arg ref="a2bQueue"/>
+		<constructor-arg ref="a2bQueue"/>
 		<constructor-arg ref="nextEntityArrayList" />
 	</bean>
 	<bean id="peerOther" class="tools.datasync.basic.sync.pump.JvmSyncPeerParms">
 		<constructor-arg ref="syncPeerB"/>
+		<constructor-arg ref="b2aQueue"/>
 		<constructor-arg ref="b2aQueue"/>
 		<constructor-arg ref="nextEntityArrayList" />
 	</bean>
@@ -118,16 +120,49 @@
 		<constructor-arg ref="b2aQueue" />
 	</bean>
 
-	<bean id="concurArgsA2B" class="tools.datasync.basic.sync.pump.JvmSyncConcurArgs">
+
+	<util:list id="nextEntityArrayListA" list-class="java.util.concurrent.CopyOnWriteArrayList" value-type="java.lang.String" />
+	<util:list id="nextEntityArrayListB" list-class="java.util.concurrent.CopyOnWriteArrayList" value-type="java.lang.String" />
+
+	<bean id="nextEntityAwaiterA" class="tools.datasync.basic.sync.pump.NextEntityAwaiter">
+		<constructor-arg ref="nextEntityArrayListA" />
 		<constructor-arg ref="stopper" />
-		<constructor-arg ref="beginSenderLatch" />
-		<constructor-arg ref="nextEntityAwaiterA2B" />
+		<constructor-arg ref="timeSpan" />
+		<constructor-arg ref="b2aQueue" />
 	</bean>
 
+	<bean id="nextEntitySignalerB" class="tools.datasync.basic.sync.pump.BlockingQueueNextEntitySignaler">
+		<constructor-arg ref="b2aQueue" />	
+	</bean>
+
+	<bean id="concurArgsA2B" class="tools.datasync.basic.sync.pump.JvmSyncConcurArgs">
+		<constructor-arg ref="stopper" />
+		<constructor-arg ref="nextEntityAwaiterA" />
+		<constructor-arg ref="nextEntitySignalerA" />
+<!-- 		
+		<constructor-arg ref="beginSenderLatch" />
+		<constructor-arg ref="nextEntityAwaiterA2B" />
+ -->		
+	</bean>
+
+<bean id="nextEntityAwaiterB" class="tools.datasync.basic.sync.pump.NextEntityAwaiter">
+		<constructor-arg ref="nextEntityArrayListA" />
+		<constructor-arg ref="stopper" />
+		<constructor-arg ref="timeSpan" />
+		<constructor-arg ref="a2bQueue" />
+	</bean>
+
+	<bean id="nextEntitySignalerA" class="tools.datasync.basic.sync.pump.BlockingQueueNextEntitySignaler">
+		<constructor-arg ref="a2bQueue" />	
+	</bean>
 	<bean id="concurArgsB2A" class="tools.datasync.basic.sync.pump.JvmSyncConcurArgs">
 		<constructor-arg ref="stopper" />
+		<constructor-arg ref="nextEntityAwaiterB" />
+		<constructor-arg ref="nextEntitySignalerB" />
+<!--  		
 		<constructor-arg ref="beginSenderLatch" />
 		<constructor-arg ref="nextEntityAwaiterB2A" />
+-->
 	</bean>
 
 	<util:list id="tables">

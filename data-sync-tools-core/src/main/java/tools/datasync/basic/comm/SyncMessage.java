@@ -25,15 +25,18 @@ package tools.datasync.basic.comm;
 
 import java.io.Serializable;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SyncMessage implements Serializable, Cloneable {
 
     private static final long serialVersionUID = -3180554612753110701L;
 
-    private String originId; // peer id
+    private String originId = ""; // TODO populate the peer id
     private long messageNumber; // required for ACK/ NACK
     private String messageType;
-    private String payloadJson;
-    private String paloadHash;
+    private SyncPayloadData payloadData = null;
+    private String paloadHash = "";
     private long timestamp;
 
     public String getOriginId() {
@@ -60,12 +63,12 @@ public class SyncMessage implements Serializable, Cloneable {
 	this.messageType = messageType;
     }
 
-    public String getPayloadJson() {
-	return payloadJson;
+    public SyncPayloadData getPayloadData() {
+	return payloadData;
     }
 
-    public void setPayloadJson(String payloadJson) {
-	this.payloadJson = payloadJson;
+    public void setPayloadData(SyncPayloadData payloadData) {
+	this.payloadData = payloadData;
     }
 
     public String getPaloadHash() {
@@ -92,7 +95,7 @@ public class SyncMessage implements Serializable, Cloneable {
     public String toString() {
 	return "SyncMessage [originId=" + originId + ", messageNumber="
 		+ messageNumber + ", messageType=" + messageType
-		+ ", payloadJson=" + payloadJson + ", paloadHash=" + paloadHash
+		+ ", payloadData=" + payloadData + ", paloadHash=" + paloadHash
 		+ ", timestamp=" + timestamp + "]";
     }
 }

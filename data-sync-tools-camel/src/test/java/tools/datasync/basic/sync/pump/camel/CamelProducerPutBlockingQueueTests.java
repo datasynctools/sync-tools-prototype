@@ -18,6 +18,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tools.datasync.basic.comm.SyncMessage;
+
 public class CamelProducerPutBlockingQueueTests {
 
     private static final Logger LOG = LoggerFactory
@@ -28,9 +30,9 @@ public class CamelProducerPutBlockingQueueTests {
 	fail("Not yet implemented");
     }
 
-    private BlockingQueue<String> buildCamelObjects(
-	    BlockingQueue<String> blockingQueue, String fromUri, String toUri,
-	    CamelContext camelContext) throws Exception {
+    private BlockingQueue<SyncMessage> buildCamelObjects(
+	    BlockingQueue<SyncMessage> blockingQueue, String fromUri,
+	    String toUri, CamelContext camelContext) throws Exception {
 
 	Processor processor = new CamelProcessorQueue(blockingQueue);
 	RoutesBuilder builder = new TestRouteBuilder(fromUri, processor);
@@ -57,17 +59,18 @@ public class CamelProducerPutBlockingQueueTests {
 
 	String toUri = "http4:localhost:10010/request";
 
-	BlockingQueue<String> blockingQueue = new LinkedBlockingQueue<String>();
+	BlockingQueue<SyncMessage> blockingQueue = new LinkedBlockingQueue<SyncMessage>();
 
-	BlockingQueue<String> camelBlockingQueue = buildCamelObjects(
+	BlockingQueue<SyncMessage> camelBlockingQueue = buildCamelObjects(
 		blockingQueue, fromUri, toUri, camelContext);
 
 	LOG.info("Getting null");
-	String val = camelBlockingQueue.poll(2, TimeUnit.SECONDS);
+	SyncMessage val = camelBlockingQueue.poll(2, TimeUnit.SECONDS);
 	Assert.assertNull(val);
 	LOG.info("val [{}]", val);
 
-	String expected = "my val";
+	// TODO FIX ME after refactoring to use generics
+	SyncMessage expected = null;// "my val";
 	blockingQueue.put(expected);
 	LOG.info("Getting value");
 	val = camelBlockingQueue.poll(2, TimeUnit.SECONDS);
