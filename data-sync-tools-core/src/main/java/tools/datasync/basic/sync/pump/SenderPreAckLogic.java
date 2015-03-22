@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.comm.SyncMessage;
 import tools.datasync.basic.comm.SyncMessageType;
+import tools.datasync.basic.util.StringUtils;
 
 public class SenderPreAckLogic {
 
@@ -120,5 +121,28 @@ public class SenderPreAckLogic {
     // BothSendersPresentAcknowledger bothSendersPresentAcknowledger) {
     // this.bothSendersPresentAcknowledger = bothSendersPresentAcknowledger;
     // }
+
+    private void addQueues(StringBuilder answer) {
+	answer.append("sendQueue=");
+	answer.append(sendQueue.toString());
+	answer.append(", ");
+	answer.append("sendQueueClass=");
+	answer.append(StringUtils.getSimpleName(sendQueue));
+	answer.append(", ");
+	answer.append("queueInstanceHashCode=");
+	answer.append(sendQueue.hashCode());
+	answer.append(", ");
+    }
+
+    public String toString() {
+	StringBuilder answer = new StringBuilder();
+	answer.append(StringUtils.getSimpleName(this));
+	answer.append("{");
+	addQueues(answer);
+	answer.append("syncStateInitializer=");
+	answer.append(syncStateInitializer.toString());
+	answer.append("}");
+	return (answer.toString());
+    }
 
 }

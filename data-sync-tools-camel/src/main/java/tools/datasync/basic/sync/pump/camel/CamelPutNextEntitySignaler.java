@@ -9,6 +9,7 @@ import tools.datasync.basic.comm.SyncMessage;
 import tools.datasync.basic.comm.SyncMessageType;
 import tools.datasync.basic.model.EnityId;
 import tools.datasync.basic.sync.pump.NextEntitySignaler;
+import tools.datasync.basic.util.StringUtils;
 
 public class CamelPutNextEntitySignaler implements NextEntitySignaler {
 
@@ -44,6 +45,16 @@ public class CamelPutNextEntitySignaler implements NextEntitySignaler {
 		+ "entity now that entityId {} complete", previousEntityId);
 	template.sendBody(updateUri, payload);
 
+    }
+
+    public String toString() {
+	StringBuilder answer = new StringBuilder();
+	answer.append(StringUtils.getSimpleName(this));
+	answer.append("{");
+	answer.append("updateUri=");
+	answer.append(updateUri);
+	answer.append("}");
+	return (answer.toString());
     }
 
 }

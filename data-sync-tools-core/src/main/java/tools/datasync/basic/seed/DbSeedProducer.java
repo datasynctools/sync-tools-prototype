@@ -38,6 +38,7 @@ import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.basic.util.HashGenerator;
 import tools.datasync.basic.util.Md5HashGenerator;
+import tools.datasync.basic.util.StringUtils;
 
 public class DbSeedProducer implements SeedProducer {
 
@@ -183,5 +184,21 @@ public class DbSeedProducer implements SeedProducer {
 
 	LOG.debug("generated seed record: " + seed);
 	return seed;
+    }
+
+    public String toString() {
+	StringBuilder answer = new StringBuilder();
+	answer.append(StringUtils.getSimpleName(this));
+	answer.append("{");
+	answer.append("genericDao=");
+	answer.append(genericDao);
+	answer.append(", ");
+	answer.append("entityGetter=");
+	answer.append(entityGetter);
+	answer.append(", ");
+	answer.append("tables=");
+	answer.append(tables);
+	answer.append("}");
+	return (answer.toString());
     }
 }

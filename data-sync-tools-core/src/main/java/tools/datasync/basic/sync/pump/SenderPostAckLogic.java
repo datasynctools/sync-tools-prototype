@@ -16,6 +16,7 @@ import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.seed.SeedException;
 import tools.datasync.basic.seed.SeedOverException;
 import tools.datasync.basic.seed.SeedProducer;
+import tools.datasync.basic.util.StringUtils;
 
 public class SenderPostAckLogic {
 
@@ -151,6 +152,29 @@ public class SenderPostAckLogic {
 
     public void setNextEntityAwaiter(NextEntityAwaiter nextEntityAwaiter) {
 	this.nextEntityAwaiter = nextEntityAwaiter;
+    }
+
+    private void addQueues(StringBuilder answer) {
+	answer.append("sendQueue=");
+	answer.append(sendQueue.toString());
+	answer.append(", ");
+	answer.append("sendQueueClass=");
+	answer.append(StringUtils.getSimpleName(sendQueue));
+	answer.append(", ");
+	answer.append("queueInstanceHashCode=");
+	answer.append(sendQueue.hashCode());
+	answer.append(", ");
+    }
+
+    public String toString() {
+	StringBuilder answer = new StringBuilder();
+	answer.append(StringUtils.getSimpleName(this));
+	answer.append("{");
+	addQueues(answer);
+	answer.append("seedProducer=");
+	answer.append(seedProducer.toString());
+	answer.append("}");
+	return (answer.toString());
     }
 
 }

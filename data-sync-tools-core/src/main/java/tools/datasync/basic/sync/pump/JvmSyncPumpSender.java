@@ -17,6 +17,7 @@ import tools.datasync.basic.comm.SyncMessage;
 import tools.datasync.basic.seed.SeedException;
 import tools.datasync.basic.seed.SeedOverException;
 import tools.datasync.basic.seed.SeedProducer;
+import tools.datasync.basic.util.StringUtils;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -60,10 +61,6 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
 	senderPreAckLogic.setSyncStateInitializer(syncStateInitializer);
 	senderPreAckLogic.setSendQueue(sendQueue);
 
-	// JsonMapperBean jsonMapper = JsonMapperBean.getInstance();
-	// senderPreAckLogic.setJsonMapper(jsonMapper);
-	// senderPostAckLogic.setJsonMapper(jsonMapper);
-
 	senderPostAckLogic.setIsRunning(isRunning);
 	senderPostAckLogic.setStopper(stopper);
 	senderPostAckLogic.setSendQueue(sendQueue);
@@ -77,7 +74,7 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
 
     public void run() {
 	isRunning.set(true);
-	LOG.info("Started sync sender");
+	LOG.info("Started sync sender: {}", this.toString());
 	try {
 
 	    runMain();
@@ -119,10 +116,6 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
 	senderPreAckLogic.setAckPeerSenderLatch(ackPeerSenderLatch);
     }
 
-    // public void setBeginSenderLatch(CountDownLatch beginSenderLatch) {
-    // senderPreAckLogic.setBeginSenderLatch(beginSenderLatch);
-    // }
-
     public AtomicBoolean isRunning() {
 	return isRunning;
     }
@@ -136,5 +129,18 @@ public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
 	LOG.error("Error on thread " + t.getName() + " with " + e.getMessage());
 	LOG.info("Initiating Stopper, shutting down");
 	stop();
+    }
+
+    public String toString() {
+	StringBuilder answer = new StringBuilder();
+	answer.append(StringUtils.getSimpleName(this));
+	answer.append("{");
+	answer.append("senderPreAckLogic=");
+	answer.append(senderPreAckLogic.toString());
+	answer.append(", ");
+	answer.append("senderPostAckLogic=");
+	answer.append(senderPostAckLogic.toString());
+	answer.append("}");
+	return (answer.toString());
     }
 }

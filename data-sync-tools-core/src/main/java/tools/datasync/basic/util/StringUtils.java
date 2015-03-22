@@ -29,4 +29,9 @@ public class StringUtils {
 	}
 	return result;
     }
+
+    public static String getSimpleName(Object obj) {
+	return (obj.getClass().getSimpleName());
+    }
+
 }

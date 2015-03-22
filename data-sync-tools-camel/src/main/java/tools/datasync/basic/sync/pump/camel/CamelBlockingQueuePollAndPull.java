@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import tools.datasync.api.utils.Jsonify;
 import tools.datasync.basic.comm.SyncMessage;
 import tools.datasync.basic.util.ObjectMapperFactory;
+import tools.datasync.basic.util.StringUtils;
 
 public class CamelBlockingQueuePollAndPull extends AbstractPartialBlockingQueue
 	implements BlockingQueue<SyncMessage> {
@@ -91,6 +92,19 @@ public class CamelBlockingQueuePollAndPull extends AbstractPartialBlockingQueue
 
 	return (syncMessage);
 
+    }
+
+    public String toString() {
+	StringBuilder answer = new StringBuilder();
+	answer.append(StringUtils.getSimpleName(this));
+	answer.append("{");
+	answer.append("updateUri=");
+	answer.append(updateUri);
+	answer.append(", ");
+	answer.append("requestUri=");
+	answer.append(requestUri);
+	answer.append("}");
+	return (answer.toString());
     }
 
 }

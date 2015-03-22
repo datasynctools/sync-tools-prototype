@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import tools.datasync.basic.model.IdGetter;
+import tools.datasync.basic.util.StringUtils;
 
 public class SampleAppTableNameGetter implements IdGetter {
 
@@ -49,6 +50,16 @@ public class SampleAppTableNameGetter implements IdGetter {
 	}
 	String value = entityNames.get(entityName);
 	return (value);
+    }
+
+    public String toString() {
+	StringBuilder answer = new StringBuilder();
+	answer.append(StringUtils.getSimpleName(this));
+	answer.append("{");
+	answer.append("entityNames=");
+	answer.append(entityNames);
+	answer.append("}");
+	return (answer.toString());
     }
 
 }

@@ -36,6 +36,7 @@ import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.basic.util.Md5HashGenerator;
 import tools.datasync.basic.util.ObjectMapperFactory;
+import tools.datasync.basic.util.StringUtils;
 
 public class DbSeedConsumer implements SeedConsumer {
 
@@ -225,6 +226,16 @@ public class DbSeedConsumer implements SeedConsumer {
 	genericDao.update(entityGetter.getSyncStateName(), syncState,
 		recordIdGetter.get(entityGetter.getSyncStateName()));
 
+    }
+
+    public String toString() {
+	StringBuilder answer = new StringBuilder();
+	answer.append(StringUtils.getSimpleName(this));
+	answer.append("{");
+	answer.append("genericDao=");
+	answer.append(genericDao);
+	answer.append("}");
+	return (answer.toString());
     }
 
 }

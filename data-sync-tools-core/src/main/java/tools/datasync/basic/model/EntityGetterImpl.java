@@ -2,6 +2,8 @@ package tools.datasync.basic.model;
 
 import java.util.Map;
 
+import tools.datasync.basic.util.StringUtils;
+
 public class EntityGetterImpl implements EntityGetter {
 
     private String syncStateName;
@@ -34,6 +36,19 @@ public class EntityGetterImpl implements EntityGetter {
 	}
 	throw (new RuntimeException("Could not find the name by id [" + id
 		+ "]"));
+    }
+
+    public String toString() {
+	StringBuilder answer = new StringBuilder();
+	answer.append(StringUtils.getSimpleName(this));
+	answer.append("{");
+	answer.append("syncStateName=");
+	answer.append(syncStateName);
+	answer.append(", ");
+	answer.append("entityNameIdMap=");
+	answer.append(entityNameIdMap);
+	answer.append("}");
+	return (answer.toString());
     }
 
 }

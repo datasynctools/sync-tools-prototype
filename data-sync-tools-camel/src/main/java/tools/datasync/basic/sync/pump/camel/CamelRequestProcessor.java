@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.comm.SyncMessage;
 import tools.datasync.basic.util.ObjectMapperFactory;
+import tools.datasync.basic.util.StringUtils;
 
 public class CamelRequestProcessor implements Processor {
 
@@ -20,11 +21,25 @@ public class CamelRequestProcessor implements Processor {
 
     private BlockingQueue<SyncMessage> receiveQueue;
 
+    private boolean firstRun = true;
+
     public CamelRequestProcessor(BlockingQueue<SyncMessage> receiveQueue) {
 	this.receiveQueue = receiveQueue;
+	LOG.info("Loaded Processor for Camel: " + this);
+    }
+
+    private void startMsg(String fromEndPointUri) {
+	LOG.info("First Message Camel Processor: " + this.toString()
+		+ ", fromEndPointUri=" + fromEndPointUri);
     }
 
     public void process(Exchange exchange) throws Exception {
+
+	if (firstRun) {
+	    startMsg(exchange.getFromEndpoint().getEndpointUri());
+	    firstRun = false;
+	}
+
 	// just get the body as a string
 	String body = exchange.getIn().getBody(String.class);
 
@@ -47,6 +62,26 @@ public class CamelRequestProcessor implements Processor {
 
 	return (syncMessage);
 
+    }
+
+    private void addQueues(StringBuilder answer) {
+	answer.append("receiveQueue=");
+	answer.append(receiveQueue.toString());
+	answer.append(", ");
+	answer.append("receiveQueueClass=");
+	answer.append(StringUtils.getSimpleName(receiveQueue));
+	answer.append(", ");
+	answer.append("queueInstanceHashCode=");
+	answer.append(receiveQueue.hashCode());
+    }
+
+    public String toString() {
+	StringBuilder answer = new StringBuilder();
+	answer.append(StringUtils.getSimpleName(this));
+	answer.append("{");
+	addQueues(answer);
+	answer.append("}");
+	return (answer.toString());
     }
 
 }

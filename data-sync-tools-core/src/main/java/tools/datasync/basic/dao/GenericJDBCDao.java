@@ -29,6 +29,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.derby.jdbc.EmbeddedDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,7 @@ import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.IdGetter;
 import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.basic.util.SqlGenUtil;
+import tools.datasync.basic.util.StringUtils;
 
 public class GenericJDBCDao implements GenericDao {
 
@@ -191,5 +193,52 @@ public class GenericJDBCDao implements GenericDao {
 
 	// TODO: Implement...
 	return null;
+    }
+
+    private void addDerbyEmbddedDataSource(StringBuilder answer) {
+	EmbeddedDataSource embeddedDs = (EmbeddedDataSource) dataSource;
+
+	answer.append(StringUtils.getSimpleName(dataSource));
+	answer.append("{");
+	answer.append("databaseName=");
+	answer.append(embeddedDs.getDatabaseName());
+	answer.append(", ");
+	answer.append("dataSourceName=");
+	answer.append(embeddedDs.getDataSourceName());
+	answer.append(", ");
+	answer.append("connectionAttributes=");
+	answer.append(embeddedDs.getConnectionAttributes());
+	// answer.append(", ");
+	// answer.append("description=");
+	// answer.append(embeddedDs.getDescription());
+	answer.append("}");
+    }
+
+    private void addDataSource(StringBuilder answer) {
+	answer.append("dataSource=");
+	if (dataSource.getClass().getName()
+		.equals("org.apache.derby.jdbc.EmbeddedDataSource")) {
+	    addDerbyEmbddedDataSource(answer);
+	} else {
+	    answer.append(dataSource);
+	}
+	answer.append(", ");
+    }
+
+    public String toString() {
+	StringBuilder answer = new StringBuilder();
+	answer.append(StringUtils.getSimpleName(this));
+	answer.append("{");
+	answer.append("dbName=");
+	answer.append(dbName);
+	answer.append(", ");
+	addDataSource(answer);
+	answer.append("idGetter=");
+	answer.append(idGetter);
+	answer.append(", ");
+	answer.append("entityGetter=");
+	answer.append(entityGetter);
+	answer.append("}");
+	return (answer.toString());
     }
 }

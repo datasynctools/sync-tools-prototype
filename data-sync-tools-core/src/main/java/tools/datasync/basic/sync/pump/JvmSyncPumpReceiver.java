@@ -20,6 +20,7 @@ import tools.datasync.basic.comm.SyncMessage;
 import tools.datasync.basic.seed.SeedConsumer;
 import tools.datasync.basic.seed.SeedException;
 import tools.datasync.basic.sync.pump.handlers.SyncMessageHandler;
+import tools.datasync.basic.util.StringUtils;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -130,7 +131,7 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
     }
 
     public void run() {
-	LOG.info("Started sync receiver");
+	LOG.info("Started sync receiver: {}", this.toString());
 	try {
 
 	    if (syncMessageHandler == null) {
@@ -186,4 +187,31 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 	LOG.error("Error on thread " + t.getName() + " with " + e.getMessage());
 	stop();
     }
+
+    private void addQueues(StringBuilder answer) {
+	answer.append("receiveQueue=");
+	answer.append(receiveQueue.toString());
+	answer.append(", ");
+	answer.append("receiveQueueClass=");
+	answer.append(StringUtils.getSimpleName(receiveQueue));
+	answer.append(", ");
+	answer.append("queueInstanceHashCode=");
+	answer.append(receiveQueue.hashCode());
+	answer.append(", ");
+    }
+
+    public String toString() {
+	StringBuilder answer = new StringBuilder();
+	answer.append(StringUtils.getSimpleName(this));
+	answer.append("{");
+	addQueues(answer);
+	answer.append("seedConsumer=");
+	answer.append(seedConsumer.toString());
+	answer.append(", ");
+	answer.append("nextEntitySignaler=");
+	answer.append(nextEntitySignaler.toString());
+	answer.append("}");
+	return (answer.toString());
+    }
+
 }

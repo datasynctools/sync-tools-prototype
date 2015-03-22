@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import tools.datasync.basic.comm.SyncMessage;
 import tools.datasync.basic.comm.SyncMessageType;
 import tools.datasync.basic.model.EnityId;
+import tools.datasync.basic.util.StringUtils;
 
 //TODO Consider this component being part of the Sender.
 //Perhaps we should passing a message to a receiver->sender queue and then the sender 
@@ -50,6 +51,16 @@ public class BlockingQueueNextEntitySignaler implements NextEntitySignaler {
 		syncMessage.getMessageNumber());
 
 	queue.add(syncMessage);
+    }
+
+    public String toString() {
+	StringBuilder answer = new StringBuilder();
+	answer.append(StringUtils.getSimpleName(this));
+	answer.append("{");
+	answer.append("queueInstanceHashCode=");
+	answer.append(queue.hashCode());
+	answer.append("}");
+	return (answer.toString());
     }
 
 }
