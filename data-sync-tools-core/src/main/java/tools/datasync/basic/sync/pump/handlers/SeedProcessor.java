@@ -12,13 +12,9 @@ public class SeedProcessor implements SyncMessageProcessor {
 
     private static final Logger LOG = LoggerFactory
 	    .getLogger(SeedProcessor.class);
-
-    // private ObjectMapper jsonMapper = ObjectMapperFactory.getInstance();
     private SeedConsumer seedConsumer;
     private String lastEntityId = null;
     private NextEntitySignaler nextEntitySignaler;
-
-    // private Jsonify jsonify = new Jsonify();
 
     public SeedProcessor(SeedConsumer seedConsumer,
 	    NextEntitySignaler nextEntitySignaler) {
@@ -31,9 +27,6 @@ public class SeedProcessor implements SyncMessageProcessor {
 
 	SeedRecord seed;
 	try {
-	    // seed = jsonMapper.readValue(
-	    // jsonify.toString(syncMessage.getPayloadData()),
-	    // SeedRecord.class);
 
 	    seed = (SeedRecord) syncMessage.getPayloadData();
 	    seedConsumer.consume(seed);

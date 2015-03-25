@@ -27,6 +27,9 @@ import java.io.Serializable;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
+//TODO: Is this Jackson-specific annotation still needed? 
+//Since Jsonify now has some Jackson-specific code in it this may no longer be needed.
+//Would like to have as few Jackson-dependencies as possible.
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SyncMessage implements Serializable, Cloneable {
 

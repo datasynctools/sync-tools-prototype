@@ -56,14 +56,14 @@
 	
 	<bean id="sampleAppTableNameGetter" class="tools.datasync.core.sampleapp.SampleAppTableNameGetter" />
 	
-	<bean id="sourceDao" class="tools.datasync.basic.dao.GenericJDBCDao">
+	<bean id="sourceDao" class="tools.datasync.basic.dao.GenericJdbcDao">
 		<constructor-arg ref="dataSourceA"/>
 		<constructor-arg value="db-A"/>
 		<constructor-arg ref="entityGetter" />
 		<constructor-arg ref="sampleAppTableNameGetter"/>
 	</bean>
 	
-	<bean id="targetDao" class="tools.datasync.basic.dao.GenericJDBCDao">
+	<bean id="targetDao" class="tools.datasync.basic.dao.GenericJdbcDao">
 		<constructor-arg ref="dataSourceB"/>
 		<constructor-arg value="db-B"/>
 		<constructor-arg ref="entityGetter" />

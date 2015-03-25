@@ -27,7 +27,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: Need state machine pattern here...
+//TODO Is it really advantageous for these states to be objects? 
+//Perhaps this class should simply be SyncMessageTypes and be a
+//a list of final static Strings? That would simplify the class a lot.
 public class SyncMessageType implements Serializable, Cloneable {
 
     public static final SyncMessageType BEGIN_SYNC = new SyncMessageType(

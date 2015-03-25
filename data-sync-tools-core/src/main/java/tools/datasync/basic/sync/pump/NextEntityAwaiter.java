@@ -61,8 +61,6 @@ public class NextEntityAwaiter {
 	try {
 	    SyncMessage syncMessage = createSyncMessage(entityId, messageNumber);
 
-	    // String message = jsonMapper.writeValueAsString(syncMessage);
-
 	    LOG.info("Signal to peer that I have finished an "
 		    + "Entity set with value {} using {}[{}]", lastEntityId,
 		    sendQueue.getClass(), sendQueue.hashCode());
@@ -78,12 +76,10 @@ public class NextEntityAwaiter {
     private SyncMessage createSyncMessage(String thisEntityId,
 	    long messageNumber) {
 	SyncMessage syncMessage = new SyncMessage();
-	// syncMessage.setOriginId(null); //leaving null on purpose
 	syncMessage.setMessageNumber(messageNumber);
 	syncMessage.setMessageType(SyncMessageType.PEER_READY_WITH_NEXT_ENTITY
 		.toString());
 	syncMessage.setTimestamp(System.currentTimeMillis());
-	// syncMessage.setPaloadHash(null);//leaving null on purpose
 	EnityId entityIdObj = new EnityId();
 	entityIdObj.setEntityId(thisEntityId);
 	syncMessage.setPayloadData(entityIdObj);

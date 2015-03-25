@@ -47,7 +47,6 @@ public class DbSeedProducer implements SeedProducer {
 
     private EntityGetter entityGetter;
     private GenericDao genericDao;
-    // private ObjectMapper jsonMapper = ObjectMapperFactory.getInstance();
     private boolean isRunning = false;
 
     private static final HashGenerator hashGenerator = Md5HashGenerator
@@ -132,7 +131,7 @@ public class DbSeedProducer implements SeedProducer {
 	    SeedRecord seed = this.createSeed(json);
 	    return seed;
 
-	    // Fix: This statement is causing early finish.
+	    // TODO: This statement is causing early finish.
 	    // isRunning = tableNameIterator.hasNext();
 	} else {
 
@@ -170,10 +169,8 @@ public class DbSeedProducer implements SeedProducer {
 	String entityId = entityGetter.getId(recordData.getEntity());
 	String recordId = String.valueOf(recordData.getCalculatedPrimaryKey());
 	String recordString = jsonify.toString(recordData); //
-	// jsonMapper.writeValueAsString(record);
-	// OLD: String recordHash = record.generateHash();
 	String recordHash = hashGenerator.generate(recordString);
-	String origin = "";// me.getPeerId();
+	String origin = "";
 
 	SeedRecord seed = new SeedRecord();
 	seed.setEntityId(entityId);

@@ -39,10 +39,10 @@ import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.basic.util.SqlGenUtil;
 import tools.datasync.basic.util.StringUtils;
 
-public class GenericJDBCDao implements GenericDao {
+public class GenericJdbcDao implements GenericDao {
 
     private static final Logger LOG = LoggerFactory
-	    .getLogger(GenericJDBCDao.class);
+	    .getLogger(GenericJdbcDao.class);
 
     private DataSource dataSource;
     private String dbName;
@@ -52,12 +52,12 @@ public class GenericJDBCDao implements GenericDao {
     private JdbcSelectionHelper<SyncEntityMessage> stateSelector;
     private JdbcSelectionHelper<Iterator<SyncEntityMessage>> allSelector;
 
-    private SyncEntityMessageResultMapper jsonResultMapper = new SyncEntityMessageResultMapper();
-    private SyncEntityMessageIteratorResultMapper jsonIteratorResultMapper;
+    private SyncEntityMessageResultMapper resultMapper = new SyncEntityMessageResultMapper();
+    private SyncEntityMessageIteratorResultMapper iteratorResultMapper;
 
     private JdbcMutationHelper jdbcMutator;
 
-    public GenericJDBCDao(DataSource dataSource, String dbName,
+    public GenericJdbcDao(DataSource dataSource, String dbName,
 	    EntityGetter entityGetter, IdGetter idGetter) {
 	this.dataSource = dataSource;
 	this.dbName = dbName;
@@ -68,7 +68,7 @@ public class GenericJDBCDao implements GenericDao {
 		dataSource);
 	jdbcMutator = new JdbcMutationHelper(dataSource,
 		new InsertSqlCreator(), new UpdateSqlCreator());
-	jsonIteratorResultMapper = new SyncEntityMessageIteratorResultMapper(
+	iteratorResultMapper = new SyncEntityMessageIteratorResultMapper(
 		idGetter);
     }
 
@@ -89,7 +89,7 @@ public class GenericJDBCDao implements GenericDao {
 	    }
 	}
 
-	return (allSelector.query(query, jsonIteratorResultMapper, entityName,
+	return (allSelector.query(query, iteratorResultMapper, entityName,
 		entityName));
 
     }
@@ -99,7 +99,7 @@ public class GenericJDBCDao implements GenericDao {
 
 	String query = "select * from " + entityName + " where "
 		+ idGetter.get(entityName) + "='" + id + "'";
-	return (stateSelector.query(query, jsonResultMapper, id, entityName));
+	return (stateSelector.query(query, resultMapper, id, entityName));
 
     }
 
@@ -109,7 +109,7 @@ public class GenericJDBCDao implements GenericDao {
 	String query = "select * from " + entityGetter.getSyncStateName()
 		+ " where EntityId='" + entityId + "' and RecordId='"
 		+ recordId + "'";
-	return (stateSelector.query(query, jsonResultMapper, recordId,
+	return (stateSelector.query(query, resultMapper, recordId,
 		entityGetter.getSyncStateName()));
 
     }
@@ -187,14 +187,6 @@ public class GenericJDBCDao implements GenericDao {
 	}
     }
 
-    public String getSyncRecordId(SyncEntityMessage json) {
-
-	// String entityName = json.getEntity();
-
-	// TODO: Implement...
-	return null;
-    }
-
     private void addDerbyEmbddedDataSource(StringBuilder answer) {
 	EmbeddedDataSource embeddedDs = (EmbeddedDataSource) dataSource;
 
@@ -208,9 +200,6 @@ public class GenericJDBCDao implements GenericDao {
 	answer.append(", ");
 	answer.append("connectionAttributes=");
 	answer.append(embeddedDs.getConnectionAttributes());
-	// answer.append(", ");
-	// answer.append("description=");
-	// answer.append(embeddedDs.getDescription());
 	answer.append("}");
     }
 

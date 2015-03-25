@@ -20,12 +20,8 @@ public class SenderPreAckLogic {
 
     private SenderPresentAcknolwedger senderPresentAcknolwedger = new SenderPresentAcknolwedger();
     private ReceiverPresentAcknolwedger receiverPresentAcknolwedger = new ReceiverPresentAcknolwedger();
-    // private BothSendersPresentAcknowledger bothSendersPresentAcknowledger =
-    // new BothSendersPresentAcknowledger();
     private SyncStateInitializer syncStateInitializer;
     private BlockingQueue<SyncMessage> sendQueue;
-
-    // private JsonMapperBean jsonMapper;
 
     // TODO does the message number make sense? how is it used? think it's just
     // extraneous and should be removed
@@ -45,11 +41,6 @@ public class SenderPreAckLogic {
 	    return new SenderPreAckLogicResult(false, messageNumber);
 	}
 
-	// if (!bothSendersPresentAcknowledger.waitForBothSendersAck(isRunning,
-	// stopper)) {
-	// return new SenderPreAckLogicResult(false, messageNumber);
-	// }
-
 	return new SenderPreAckLogicResult(true, messageNumber);
 
     }
@@ -62,7 +53,6 @@ public class SenderPreAckLogic {
 
 	// Send message to the other Peer's receiver "Begin seed"
 	SyncMessage syncMessage = createSyncMessage(messageNumber++);
-	// String message = jsonMapper.writeValueAsString(syncMessage);
 	this.sendQueue.put(syncMessage);
 	LOG.info("Completed seeding, so sent sync message of "
 		+ "type {}, number {}", syncMessage.getMessageType(),
@@ -72,12 +62,9 @@ public class SenderPreAckLogic {
 
     private SyncMessage createSyncMessage(long messageNumber) {
 	SyncMessage syncMessage = new SyncMessage();
-	// syncMessage.setOriginId(null); //on purpose null
 	syncMessage.setMessageNumber(messageNumber);
 	syncMessage.setMessageType(SyncMessageType.BEGIN_SEED.toString());
 	syncMessage.setTimestamp(System.currentTimeMillis());
-	// syncMessage.setPayloadHash(null); //on purpose null
-	// syncMessage.setPayloadJson(null); //on purpose null
 	return (syncMessage);
     }
 
@@ -91,17 +78,9 @@ public class SenderPreAckLogic {
 		.setAckPairReceiverLatch(ackPairReceiverLatch);
     }
 
-    // public void setJsonMapper(JsonMapperBean jsonMapper) {
-    // this.jsonMapper = jsonMapper;
-    // }
-
     public void setAckPeerSenderLatch(CountDownLatch ackPeerSenderLatch) {
 	senderPresentAcknolwedger.setAckPeerSenderLatch(ackPeerSenderLatch);
     }
-
-    // public void setBeginSenderLatch(CountDownLatch beginSenderLatch) {
-    // bothSendersPresentAcknowledger.setBeginSenderLatch(beginSenderLatch);
-    // }
 
     public void setSendQueue(BlockingQueue<SyncMessage> sendQueue) {
 	this.sendQueue = sendQueue;
@@ -116,11 +95,6 @@ public class SenderPreAckLogic {
 	    ReceiverPresentAcknolwedger receiverPresentAcknolwedger) {
 	this.receiverPresentAcknolwedger = receiverPresentAcknolwedger;
     }
-
-    // public void setBothSendersPresentAcknowledger(
-    // BothSendersPresentAcknowledger bothSendersPresentAcknowledger) {
-    // this.bothSendersPresentAcknowledger = bothSendersPresentAcknowledger;
-    // }
 
     private void addQueues(StringBuilder answer) {
 	answer.append("sendQueue=");

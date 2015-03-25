@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.dao.GenericDao;
-import tools.datasync.basic.dao.GenericJDBCDao;
+import tools.datasync.basic.dao.GenericJdbcDao;
 import tools.datasync.basic.model.SyncEntityMessage;
 
 //TODO Is this better in a utility class or test class and not in core?
@@ -20,7 +20,7 @@ public class DbTableComparator {
     private GenericDao targetDao = null;
 
     private static final Logger LOG = LoggerFactory
-	    .getLogger(GenericJDBCDao.class);
+	    .getLogger(GenericJdbcDao.class);
 
     public DbTableComparator(GenericDao sourceDao, GenericDao targetDao) {
 	this.sourceDao = sourceDao;

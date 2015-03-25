@@ -6,7 +6,7 @@ package tools.datasync.basic.sync.pump;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import tools.datasync.basic.dao.GenericDao;
-import tools.datasync.basic.dao.GenericJDBCDao;
+import tools.datasync.basic.dao.GenericJdbcDao;
 import tools.datasync.basic.dao.SyncPairConfig;
 import tools.datasync.basic.logic.ConflictResolver;
 import tools.datasync.basic.seed.DbSeedProducer;
@@ -40,8 +40,8 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
     private JvmSyncConcurArgs concurArgs;
     private SyncStateInitializer syncStateInitializer;
 
-    private GenericJDBCDao sourceDao = null;
-    private GenericJDBCDao targetDao = null;
+    private GenericJdbcDao sourceDao = null;
+    private GenericJdbcDao targetDao = null;
 
     public JvmSyncPumpFactory(JvmSyncPair pair, SyncPairConfig syncPairConfig,
 	    SyncStateInitializer syncStateInitializer,
@@ -66,7 +66,6 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
 	sender.setSeedProducer(seedProducer);
 	sender.setAckPairReceiverLatch(peer.getAckPairReceiverLatch());
 	sender.setAckPeerSenderLatch(peer.getAckPeerSenderLatch());
-	// sender.setBeginSenderLatch(concurArgs.getBeginSenderLatch());
 	return (sender);
     }
 
@@ -89,23 +88,11 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
     }
 
     private JvmSyncPeerParms calculateReceiverPeer(PeerMode peerMode) {
-
 	return syncPair.getPeerMe();
-	// if (peerMode.equals(PeerMode.A2B)) {
-	// return (syncPair.getPeerMe());
-	// } else {
-	// return (syncPair.getPeerOther());
-	// }
     }
 
     private JvmSyncPeerParms calculateSenderPeer(PeerMode peerMode) {
 	return syncPair.getPeerMe();
-
-//	if (peerMode.equals(PeerMode.A2B)) {
-//	    return (syncPair.getPeerMe());
-//	} else {
-//	    return (syncPair.getPeerOther());
-//	}
     }
 
     public SyncPump getInstance(PeerMode peerMode)

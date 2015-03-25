@@ -24,7 +24,6 @@ public class SenderPostAckLogic {
 	    .getLogger(SenderPostAckLogic.class);
 
     private BlockingQueue<SyncMessage> sendQueue;
-    // private JsonMapperBean jsonMapper;
     private SeedProducer seedProducer;
 
     private NextEntityAwaiter nextEntityAwaiter;
@@ -57,12 +56,9 @@ public class SenderPostAckLogic {
 
     private SyncMessage createSyncMessage(long messageNumber) {
 	SyncMessage syncMessage = new SyncMessage();
-	// syncMessage.setOriginId(null); //leaving null on purpose
 	syncMessage.setMessageNumber(messageNumber);
 	syncMessage.setMessageType(SyncMessageType.SYNC_OVER.toString());
 	syncMessage.setTimestamp(System.currentTimeMillis());
-	// syncMessage.setPaloadHash(null);//leaving null on purpose
-	// syncMessage.setPayloadJson(null); //leaving null on purpose
 	return (syncMessage);
     }
 
@@ -76,12 +72,9 @@ public class SenderPostAckLogic {
     private long sendSyncMessage(SeedRecord seed, SyncMessage syncMessage,
 	    String message, long messageNumber) throws InterruptedException,
 	    JsonGenerationException, JsonMappingException, IOException {
-	// String payloadJson = jsonMapper.writeValueAsString(seed);
 	String payloadHash = seed.getRecordHash();
 
 	syncMessage = createSyncMessage(seed, messageNumber, seed, payloadHash);
-
-	// message = jsonMapper.writeValueAsString(syncMessage);
 
 	this.sendQueue.put(syncMessage);
 	LOG.info("Sent sync message of type {}, number {}, entityId {}, "
@@ -129,10 +122,6 @@ public class SenderPostAckLogic {
 	return (messageNumber);
 
     }
-
-    // public void setJsonMapper(JsonMapperBean jsonMapper) {
-    // this.jsonMapper = jsonMapper;
-    // }
 
     public void setSendQueue(BlockingQueue<SyncMessage> sendQueue) {
 	this.sendQueue = sendQueue;

@@ -47,9 +47,6 @@ public class ObjectMapperFactory {
 
 	    bean.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
 
-	    // bean.setSerializationConfig(SerializationConfig.Feature.WRITE_NULL_PROPERTIES)
-	    // bean.disable(SerializationConfig.);
-
 	}
 
 	return bean;

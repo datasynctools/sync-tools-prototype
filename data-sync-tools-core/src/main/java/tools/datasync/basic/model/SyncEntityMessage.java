@@ -34,12 +34,7 @@ import tools.datasync.basic.comm.SyncPayloadData;
 public class SyncEntityMessage extends SyncPayloadData implements Cloneable,
 	Serializable {
 
-    // private static final Logger LOG = LoggerFactory
-    // .getLogger(SyncEntityMessage.class);
-
     private static final long serialVersionUID = 1052072136660446741L;
-    // private static final HashGenerator hashGenerator = Md5HashGenerator
-    // .getInstance();
 
     private String entity;
     private String calculatedPrimaryKey;
@@ -111,6 +106,7 @@ public class SyncEntityMessage extends SyncPayloadData implements Cloneable,
 	return result;
     }
 
+    // TODO Is this needed given the current implementation?
     @Override
     public boolean equals(Object obj) {
 	if (this == obj)
@@ -124,6 +120,7 @@ public class SyncEntityMessage extends SyncPayloadData implements Cloneable,
 	return equals(this, other);
     }
 
+    // TODO Is this approach still needed given the current implementation?
     private boolean equals(SyncEntityMessage me, SyncEntityMessage other) {
 	Map<String, Object> myProps = support.getData();
 	Map<String, Object> otherProps = other.getData();
@@ -136,41 +133,4 @@ public class SyncEntityMessage extends SyncPayloadData implements Cloneable,
 	}
 	return true;
     }
-    //
-    // private List<String> sortProps() {
-    // List<String> keys = new ArrayList<String>();
-    // keys.addAll(support.getData().keySet());
-    // Collections.sort(keys);
-    // return keys;
-    // }
-    //
-    // private StringBuffer flattenProps(List<String> sortedKeys) {
-    // StringBuffer sbValue = new StringBuffer();
-    // for (String key : sortedKeys) {
-    // Object value = support.getData().get(key);
-    // sbValue.append(String.valueOf(value));
-    // sbValue.append(',');
-    // }
-    // if (sbValue.length() > 0) {
-    // sbValue.setLength(sbValue.length() - 1);
-    // }
-    // return sbValue;
-    // }
-    //
-    // public String generateHash() {
-    // Map<String, Object> props = support.getData();
-    // if (props == null || props.size() == 0) {
-    // return "NO_DATA:NO_HASH";
-    // }
-    //
-    // List<String> keys = sortProps();
-    //
-    // StringBuffer sbValue = flattenProps(keys);
-    //
-    // String hash = hashGenerator.generate(sbValue.toString());
-    // LOG.debug("Generated hash: " + hash + ", for data: ["
-    // + sbValue.toString() + "]");
-    // return hash;
-    // }
-
 }

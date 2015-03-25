@@ -27,16 +27,10 @@ import org.apache.log4j.Logger;
 public class Md5HashGenerator implements HashGenerator {
 
     private static Md5HashGenerator instance = null;
-    // private MessageDigest messageDigest = null;
     private static Logger LOG = Logger.getLogger(Md5HashGenerator.class
 	    .getName());
 
     private Md5HashGenerator() {
-	// try {
-	// messageDigest = MessageDigest.getInstance("MD5");
-	// } catch (NoSuchAlgorithmException e) {
-	// LOG.warn("Error while initializing Hash Generator.", e);
-	// }
     }
 
     public static synchronized Md5HashGenerator getInstance() {
@@ -48,13 +42,6 @@ public class Md5HashGenerator implements HashGenerator {
 
     public String generate(String data) {
 	try {
-	    // byte[] input = toBytes(data);
-	    // LOG.debug("Generating Hash for bytes: "
-	    // + convertByteArrayToHexString(input));
-	    // messageDigest.update(input);
-	    // LOG.debug("digest source: " + input);
-	    // byte[] digest = messageDigest.digest(input);
-	    // return (convertByteArrayToHexString(digest));
 	    byte[] digest = DigestUtils.md5(data);
 	    return (DigestUtils.md5Hex(digest));
 	} catch (Exception e) {
@@ -68,25 +55,5 @@ public class Md5HashGenerator implements HashGenerator {
 	String newHash = generate(data);
 	return newHash.equals(hash);
     }
-
-    // private static byte[] toBytes(String str) {
-    // char[] buffer = str.toCharArray();
-    // byte[] b = new byte[buffer.length << 1];
-    // for (int i = 0; i < buffer.length; i++) {
-    // int bpos = i << 1;
-    // b[bpos] = (byte) ((buffer[i] & 0xFF00) >> 8);
-    // b[bpos + 1] = (byte) (buffer[i] & 0x00FF);
-    // }
-    // return b;
-    // }
-    //
-    // private static String convertByteArrayToHexString(byte[] arrayBytes) {
-    // StringBuffer stringBuffer = new StringBuffer();
-    // for (int i = 0; i < arrayBytes.length; i++) {
-    // stringBuffer.append(Integer.toString(
-    // (arrayBytes[i] & 0xff) + 0x100, 16).substring(1));
-    // }
-    // return stringBuffer.toString();
-    // }
 
 }
