@@ -40,10 +40,10 @@ import tools.datasync.basic.sync.SyncSession;
  * @version 1.0
  * @since 29-Nov-2014
  */
-public class SeedIntegrationTest {
+public class CoreSeedIntegrationTest {
 
     private final static Logger LOG = LoggerFactory
-	    .getLogger(SeedIntegrationTest.class);
+	    .getLogger(CoreSeedIntegrationTest.class);
 
     private SyncOrchestrationManager syncOrchMgr;
 
@@ -90,7 +90,7 @@ public class SeedIntegrationTest {
     }
 
     @Test
-    public void firstTest() {
+    public void positiveTest() {
 
 	// for (int i = 1; i < 3; i++) {
 
