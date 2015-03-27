@@ -1,8 +1,8 @@
 package tools.datasync.api.utils;
 
-import tools.datasync.api.dao.HashFromObject;
 import tools.datasync.api.dao.SyncRecord;
 import tools.datasync.api.dao.SyncRecordFromT;
+import tools.datasync.utils.HashFromObject;
 
 public abstract class AbstractSyncRecordFromT<T> implements SyncRecordFromT<T> {
 

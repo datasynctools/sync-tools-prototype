@@ -3,7 +3,7 @@ package tools.datasync.api.utils;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import tools.datasync.api.dao.HashFromObject;
+import tools.datasync.utils.HashFromObject;
 
 public class DefaultHashFromObject implements HashFromObject {
 
