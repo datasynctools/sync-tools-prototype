@@ -1,12 +1,13 @@
 package tools.datasync.basic.sync.pump;
 
+import static tools.datasync.basic.comm.SyncMessageType.PEER_READY_WITH_NEXT_ENTITY;
+
 import java.util.concurrent.BlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.comm.SyncMessage;
-import tools.datasync.basic.comm.SyncMessageType;
 import tools.datasync.basic.model.EnityId;
 import tools.datasync.basic.util.StringUtils;
 
@@ -41,8 +42,7 @@ public class BlockingQueueNextEntitySignaler implements NextEntitySignaler {
 	EnityId entityIdObj = new EnityId();
 	entityIdObj.setEntityId(previousEntityId);
 	syncMessage.setPayloadData(entityIdObj);
-	syncMessage.setMessageType(SyncMessageType.PEER_READY_WITH_NEXT_ENTITY
-		.toString());
+	syncMessage.setMessageType(PEER_READY_WITH_NEXT_ENTITY);
 	syncMessage.setTimestamp(System.currentTimeMillis());
 
 	LOG.info("Telling peer that this component is ready for next "

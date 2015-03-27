@@ -1,5 +1,10 @@
 package tools.datasync.basic.sync.pump.handlers;
 
+import static tools.datasync.basic.comm.SyncMessageType.BEGIN_SEED;
+import static tools.datasync.basic.comm.SyncMessageType.PEER_READY_WITH_NEXT_ENTITY;
+import static tools.datasync.basic.comm.SyncMessageType.SEED;
+import static tools.datasync.basic.comm.SyncMessageType.SYNC_OVER;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -10,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.utils.Jsonify;
 import tools.datasync.basic.comm.SyncMessage;
-import tools.datasync.basic.comm.SyncMessageType;
 import tools.datasync.basic.seed.SeedConsumer;
 import tools.datasync.basic.sync.pump.NextEntitySignaler;
 
@@ -26,14 +30,12 @@ public class SyncMessageHandler {
     public SyncMessageHandler(CountDownLatch latch,
 	    CopyOnWriteArrayList<String> arrayList, SeedConsumer seedConsumer,
 	    NextEntitySignaler nextEntitySignaler) {
-	processors.put(SyncMessageType.BEGIN_SEED.toString(),
-		new BeginSeedProcessor(latch));
-	processors.put(SyncMessageType.SYNC_OVER.toString(),
-		new SyncOverProcessor());
-	processors.put(SyncMessageType.PEER_READY_WITH_NEXT_ENTITY.toString(),
+	processors.put(BEGIN_SEED, new BeginSeedProcessor(latch));
+	processors.put(SYNC_OVER, new SyncOverProcessor());
+	processors.put(PEER_READY_WITH_NEXT_ENTITY,
 		new PeerReadyWithNextEntityProcessor(arrayList));
-	processors.put(SyncMessageType.SEED.toString(), new SeedProcessor(
-		seedConsumer, nextEntitySignaler));
+	processors.put(SEED,
+		new SeedProcessor(seedConsumer, nextEntitySignaler));
 
     }
 

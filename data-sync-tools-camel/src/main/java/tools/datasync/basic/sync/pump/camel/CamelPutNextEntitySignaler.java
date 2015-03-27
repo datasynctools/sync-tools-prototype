@@ -1,12 +1,13 @@
 package tools.datasync.basic.sync.pump.camel;
 
+import static tools.datasync.basic.comm.SyncMessageType.PEER_READY_WITH_NEXT_ENTITY;
+
 import org.apache.camel.ProducerTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.utils.Jsonify;
 import tools.datasync.basic.comm.SyncMessage;
-import tools.datasync.basic.comm.SyncMessageType;
 import tools.datasync.basic.model.EnityId;
 import tools.datasync.basic.sync.pump.NextEntitySignaler;
 import tools.datasync.basic.util.StringUtils;
@@ -35,8 +36,7 @@ public class CamelPutNextEntitySignaler implements NextEntitySignaler {
 	EnityId entityIdObj = new EnityId();
 	entityIdObj.setEntityId(previousEntityId);
 	syncMessage.setPayloadData(entityIdObj);
-	syncMessage.setMessageType(SyncMessageType.PEER_READY_WITH_NEXT_ENTITY
-		.toString());
+	syncMessage.setMessageType(PEER_READY_WITH_NEXT_ENTITY);
 	syncMessage.setTimestamp(System.currentTimeMillis());
 
 	String payload = jsonify.toString(syncMessage);

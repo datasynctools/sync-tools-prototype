@@ -1,5 +1,8 @@
 package tools.datasync.basic.sync.pump;
 
+import static tools.datasync.basic.comm.SyncMessageType.SEED;
+import static tools.datasync.basic.comm.SyncMessageType.SYNC_OVER;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.concurrent.BlockingQueue;
@@ -11,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.comm.SyncMessage;
-import tools.datasync.basic.comm.SyncMessageType;
 import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.seed.SeedException;
 import tools.datasync.basic.seed.SeedOverException;
@@ -57,7 +59,7 @@ public class SenderPostAckLogic {
     private SyncMessage createSyncMessage(long messageNumber) {
 	SyncMessage syncMessage = new SyncMessage();
 	syncMessage.setMessageNumber(messageNumber);
-	syncMessage.setMessageType(SyncMessageType.SYNC_OVER.toString());
+	syncMessage.setMessageType(SYNC_OVER);
 	syncMessage.setTimestamp(System.currentTimeMillis());
 	return (syncMessage);
     }
@@ -90,7 +92,7 @@ public class SenderPostAckLogic {
 	SyncMessage syncMessage = new SyncMessage();
 	syncMessage.setOriginId(seed.getOrigin());
 	syncMessage.setMessageNumber(messageNumber);
-	syncMessage.setMessageType(SyncMessageType.SEED.toString());
+	syncMessage.setMessageType(SEED);
 	syncMessage.setTimestamp(System.currentTimeMillis());
 	syncMessage.setPayloadHash(payloadHash);
 	syncMessage.setPayloadData(payloadData);
