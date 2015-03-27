@@ -1,13 +1,13 @@
 package tools.datasync.basic.sync.pump;
 
-import static tools.datasync.basic.comm.SyncMessageType.PEER_READY_WITH_NEXT_ENTITY;
+import static tools.datasync.api.msg.SyncMessageType.PEER_READY_WITH_NEXT_ENTITY;
 
 import java.util.concurrent.BlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tools.datasync.basic.comm.SyncMessage;
+import tools.datasync.api.msg.SyncMessage;
 import tools.datasync.basic.model.EnityId;
 import tools.datasync.basic.util.StringUtils;
 

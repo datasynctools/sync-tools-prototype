@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import tools.datasync.basic.comm.SyncMessage;
+import tools.datasync.api.msg.SyncMessage;
 
 public abstract class AbstractPartialBlockingQueue implements
 	BlockingQueue<SyncMessage> {

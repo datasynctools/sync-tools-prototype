@@ -1,6 +1,6 @@
 package tools.datasync.basic.model;
 
-import tools.datasync.basic.comm.SyncPayloadData;
+import tools.datasync.api.msg.SyncPayloadData;
 
 public class EnityId extends SyncPayloadData {
 

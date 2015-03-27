@@ -1,7 +1,7 @@
 package tools.datasync.basic.sync.pump;
 
-import static tools.datasync.basic.comm.SyncMessageType.SEED;
-import static tools.datasync.basic.comm.SyncMessageType.SYNC_OVER;
+import static tools.datasync.api.msg.SyncMessageType.SEED;
+import static tools.datasync.api.msg.SyncMessageType.SYNC_OVER;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -13,7 +13,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tools.datasync.basic.comm.SyncMessage;
+import tools.datasync.api.msg.SyncMessage;
 import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.seed.SeedException;
 import tools.datasync.basic.seed.SeedOverException;

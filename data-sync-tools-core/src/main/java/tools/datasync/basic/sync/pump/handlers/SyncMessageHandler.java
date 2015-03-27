@@ -1,9 +1,9 @@
 package tools.datasync.basic.sync.pump.handlers;
 
-import static tools.datasync.basic.comm.SyncMessageType.BEGIN_SEED;
-import static tools.datasync.basic.comm.SyncMessageType.PEER_READY_WITH_NEXT_ENTITY;
-import static tools.datasync.basic.comm.SyncMessageType.SEED;
-import static tools.datasync.basic.comm.SyncMessageType.SYNC_OVER;
+import static tools.datasync.api.msg.SyncMessageType.BEGIN_SEED;
+import static tools.datasync.api.msg.SyncMessageType.PEER_READY_WITH_NEXT_ENTITY;
+import static tools.datasync.api.msg.SyncMessageType.SEED;
+import static tools.datasync.api.msg.SyncMessageType.SYNC_OVER;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,8 +13,8 @@ import java.util.concurrent.CountDownLatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tools.datasync.api.msg.SyncMessage;
 import tools.datasync.api.utils.Jsonify;
-import tools.datasync.basic.comm.SyncMessage;
 import tools.datasync.basic.seed.SeedConsumer;
 import tools.datasync.basic.sync.pump.NextEntitySignaler;
 

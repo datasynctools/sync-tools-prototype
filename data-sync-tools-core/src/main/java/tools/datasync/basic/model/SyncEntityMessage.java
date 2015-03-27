@@ -26,7 +26,7 @@ package tools.datasync.basic.model;
 import java.io.Serializable;
 import java.util.Map;
 
-import tools.datasync.basic.comm.SyncPayloadData;
+import tools.datasync.api.msg.SyncPayloadData;
 
 //TODO Doug comment: While I see what this class is doing at a high level, I think it can be further reduced.
 //For instance, it can be altered to reduce the number of non-native objects being created and 

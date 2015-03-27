@@ -21,7 +21,7 @@
  * @since   12-Nov-2014
  */
 
-package tools.datasync.basic.comm;
+package tools.datasync.api.msg;
 
 import java.io.Serializable;
 

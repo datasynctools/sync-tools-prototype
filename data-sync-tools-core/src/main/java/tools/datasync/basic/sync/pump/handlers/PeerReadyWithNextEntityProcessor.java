@@ -5,7 +5,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tools.datasync.basic.comm.SyncMessage;
+import tools.datasync.api.msg.SyncMessage;
 import tools.datasync.basic.model.EnityId;
 
 public class PeerReadyWithNextEntityProcessor implements SyncMessageProcessor {

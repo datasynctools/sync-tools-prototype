@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tools.datasync.basic.comm.SyncMessage;
+import tools.datasync.api.msg.SyncMessage;
 import tools.datasync.basic.seed.SeedOverException;
 import tools.datasync.basic.seed.SeedProducer;
 import tools.datasync.basic.util.StringUtils;

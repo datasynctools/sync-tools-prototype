@@ -6,7 +6,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import tools.datasync.basic.comm.SyncMessage;
+import tools.datasync.api.msg.SyncMessage;
 import tools.datasync.basic.seed.SeedException;
 import tools.datasync.basic.seed.SeedOverException;
 import tools.datasync.basic.seed.SeedProducer;

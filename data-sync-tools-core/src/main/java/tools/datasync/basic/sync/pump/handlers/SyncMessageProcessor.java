@@ -1,6 +1,6 @@
 package tools.datasync.basic.sync.pump.handlers;
 
-import tools.datasync.basic.comm.SyncMessage;
+import tools.datasync.api.msg.SyncMessage;
 
 public interface SyncMessageProcessor {
 

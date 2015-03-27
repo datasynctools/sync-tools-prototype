@@ -21,7 +21,7 @@
  * @since   15-Nov-2014
  */
 
-package tools.datasync.basic.comm;
+package tools.datasync.api.msg;
 
 public interface SyncMessageType {
 

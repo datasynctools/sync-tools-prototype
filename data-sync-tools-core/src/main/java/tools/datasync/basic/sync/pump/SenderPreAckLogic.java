@@ -1,6 +1,6 @@
 package tools.datasync.basic.sync.pump;
 
-import static tools.datasync.basic.comm.SyncMessageType.BEGIN_SEED;
+import static tools.datasync.api.msg.SyncMessageType.BEGIN_SEED;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tools.datasync.basic.comm.SyncMessage;
+import tools.datasync.api.msg.SyncMessage;
 import tools.datasync.basic.util.StringUtils;
 
 public class SenderPreAckLogic {

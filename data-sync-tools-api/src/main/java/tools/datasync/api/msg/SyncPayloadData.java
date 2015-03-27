@@ -1,4 +1,4 @@
-package tools.datasync.basic.comm;
+package tools.datasync.api.msg;
 
 /**
  * Represents a payload used in a SyncMessage. Design note: this is not an
