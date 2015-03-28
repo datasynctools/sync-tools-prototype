@@ -17,8 +17,8 @@ import tools.datasync.api.msg.SyncEntityMessage;
 import tools.datasync.api.utils.HashGenerator;
 import tools.datasync.api.utils.Stringify;
 import tools.datasync.basic.model.DefaultSyncEntityMessage;
-import tools.datasync.basic.sync.pump.SyncStateInitializer;
 import tools.datasync.dataformats.json.Jsonify;
+import tools.datasync.pump.SyncStateInitializer;
 import tools.datasync.utils.Md5HashGenerator;
 import tools.datasync.utils.StringUtils;
 

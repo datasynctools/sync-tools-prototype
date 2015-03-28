@@ -8,8 +8,8 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
     http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-	<bean id="syncPeerA" class="tools.datasync.basic.sync.SyncPeer"><constructor-arg value="A" /></bean>
-	<bean id="syncPeerB" class="tools.datasync.basic.sync.SyncPeer"><constructor-arg value="B" /></bean>
+	<bean id="syncPeerA" class="tools.datasync.pump.SyncPeer"><constructor-arg value="A" /></bean>
+	<bean id="syncPeerB" class="tools.datasync.pump.SyncPeer"><constructor-arg value="B" /></bean>
 
 	<bean id="dataSourceB" class="org.apache.derby.jdbc.EmbeddedDataSource">
 		<property name="databaseName" value="db-B" />
@@ -46,25 +46,25 @@
 	<bean id="b2aSendingQueue" class="java.util.concurrent.LinkedBlockingQueue" />
 	<bean id="a2bReceivingQueue" class="java.util.concurrent.LinkedBlockingQueue" />
 
-	<bean id="peerMe" class="tools.datasync.basic.sync.pump.JvmSyncPeerParms">
+	<bean id="peerMe" class="tools.datasync.pump.JvmSyncPeerParms">
 		<constructor-arg ref="syncPeerA"/>
 		<constructor-arg ref="a2bSendingQueue"/>
 		<constructor-arg ref="a2bReceivingQueue" />
 		<constructor-arg ref="nextEntityArrayListA" />		 
 	</bean>
 	
-	<bean id="peerOther" class="tools.datasync.basic.sync.pump.JvmSyncPeerParms">
+	<bean id="peerOther" class="tools.datasync.pump.JvmSyncPeerParms">
 		<constructor-arg ref="syncPeerB"/>
 		<constructor-arg ref="b2aSendingQueue"/>
 		<constructor-arg ref="b2aReceivingQueue"/>
 		<constructor-arg ref="nextEntityArrayListB" />		 
 	</bean>
 
-	<bean id="pairA" class="tools.datasync.basic.sync.pump.JvmSyncPair">
+	<bean id="pairA" class="tools.datasync.pump.JvmSyncPair">
 		<constructor-arg ref="peerMe"/>
 		<constructor-arg ref="peerOther"/>	
 	</bean>
-	<bean id="pairB" class="tools.datasync.basic.sync.pump.JvmSyncPair">
+	<bean id="pairB" class="tools.datasync.pump.JvmSyncPair">
 		<constructor-arg ref="peerOther"/>
 		<constructor-arg ref="peerMe"/>		
 	</bean>
@@ -145,14 +145,14 @@
 		<constructor-arg index="1" ref="java.util.concurrent.TimeUnit.SECONDS" />
 	</bean>
  
-	<bean id="nextEntityAwaiterA" class="tools.datasync.basic.sync.pump.NextEntityAwaiter">
+	<bean id="nextEntityAwaiterA" class="tools.datasync.pump.NextEntityAwaiter">
 		<constructor-arg ref="nextEntityArrayListA" />
 		<constructor-arg ref="stopper" />
 		<constructor-arg ref="timeSpan" />
 		<constructor-arg ref="a2bSendingQueue" />
 	</bean>
 
-	<bean id="nextEntityAwaiterB" class="tools.datasync.basic.sync.pump.NextEntityAwaiter">
+	<bean id="nextEntityAwaiterB" class="tools.datasync.pump.NextEntityAwaiter">
 		<constructor-arg ref="nextEntityArrayListB" />
 		<constructor-arg ref="stopper" />
 		<constructor-arg ref="timeSpan" />
@@ -164,17 +164,17 @@
 		<constructor-arg ref="camelTemplate" />
 	</bean>
 	
-	<bean id="nextEntitySignalerB" class="tools.datasync.basic.sync.pump.BlockingQueueNextEntitySignaler">
+	<bean id="nextEntitySignalerB" class="tools.datasync.pump.BlockingQueueNextEntitySignaler">
 		<constructor-arg ref="b2aSendingQueue" />	
 	</bean>
 
-	<bean id="concurArgsA" class="tools.datasync.basic.sync.pump.JvmSyncConcurArgs">
+	<bean id="concurArgsA" class="tools.datasync.pump.JvmSyncConcurArgs">
 		<constructor-arg ref="stopper" />
 		<constructor-arg ref="nextEntityAwaiterA" />
 		<constructor-arg ref="nextEntitySignalerB" />
 	</bean>
 
-	<bean id="concurArgsB" class="tools.datasync.basic.sync.pump.JvmSyncConcurArgs">
+	<bean id="concurArgsB" class="tools.datasync.pump.JvmSyncConcurArgs">
 		<constructor-arg ref="stopper" />
 		<constructor-arg ref="nextEntityAwaiterB" />
 		<constructor-arg ref="nextEntitySignalerA" />		
@@ -226,7 +226,7 @@
 	  </camel:route>
 	</camel:camelContext>
 
-	<bean id="pumpFactoryA" class="tools.datasync.basic.sync.pump.JvmSyncPumpFactory">
+	<bean id="pumpFactoryA" class="tools.datasync.pump.JvmSyncPumpFactory">
 		<constructor-arg ref="pairA"/>
 		<constructor-arg ref="syncPairConfigA"/>
 		<constructor-arg ref="syncStateInitializerA"/>
@@ -241,14 +241,14 @@
 		<constructor-arg ref="b2aSendingQueue" />
 	</bean>
 
-	<bean id="pumpFactoryB" class="tools.datasync.basic.sync.pump.JvmSyncPumpFactory">
+	<bean id="pumpFactoryB" class="tools.datasync.pump.JvmSyncPumpFactory">
 		<constructor-arg ref="pairB"/>
 		<constructor-arg ref="syncPairConfigB"/>
 		<constructor-arg ref="syncStateInitializerB"/>
 		<constructor-arg ref="concurArgsB"/>
 	</bean>
 
-	<bean id="syncOrchMgr" class="tools.datasync.basic.sync.SyncOrchestrationManager">
+	<bean id="syncOrchMgr" class="tools.datasync.pump.SyncOrchestrationManager">
 		<constructor-arg ref="pumpFactoryA"/>
 		<constructor-arg ref="pumpFactoryB"/>
 	</bean>

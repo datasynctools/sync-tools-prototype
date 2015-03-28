@@ -16,8 +16,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import tools.datasync.api.dao.GenericDao;
 import tools.datasync.basic.logic.DbTableComparator;
-import tools.datasync.basic.sync.SyncOrchestrationManager;
-import tools.datasync.basic.sync.SyncSession;
+import tools.datasync.pump.SyncOrchestrationManager;
+import tools.datasync.pump.SyncSession;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
