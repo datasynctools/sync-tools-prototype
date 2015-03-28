@@ -100,19 +100,33 @@
 		<constructor-arg ref="entityGetter" />
 		<constructor-arg ref="sampleAppTableNameGetter"/>	
 	</bean>
+	<bean id="seedProducerFactory" class="tools.datasync.basic.seed.DbSeedProducerFactory" />
 	
 	<bean id="initiatorWinsConflictResolverFactor" class="tools.datasync.basic.logic.InitiatorWinsConflictResolverFactory" />
 	
-	<bean id="daoPairA" class="tools.datasync.dao.SyncPairConfig">
+	<bean id="daoPairA" class="tools.datasync.dao.GenericDaoPair">
 		<constructor-arg ref="sourceDao" />
-		<constructor-arg ref="targetDao" />
+		<constructor-arg ref="targetDao" />		
+	</bean>
+	<bean id="daoPairB" class="tools.datasync.dao.GenericDaoPair">
+		<constructor-arg ref="targetDao" />		
+		<constructor-arg ref="sourceDao" />
+	</bean>
+		
+	<bean id="seedFactoryPair" class="tools.datasync.dao.SeedFactoryPair">
 		<constructor-arg ref="seedConsumerFactory" />
+		<constructor-arg ref="seedProducerFactory" />		
+	</bean>
+	
+	<bean id="syncPairConfigA" class="tools.datasync.dao.SyncPairConfig">
+		<constructor-arg ref="daoPairA" />
+		<constructor-arg ref="seedFactoryPair" />
 		<constructor-arg ref="initiatorWinsConflictResolverFactor" />		
 	</bean>
-	<bean id="daoPairB" class="tools.datasync.dao.SyncPairConfig">
-		<constructor-arg ref="targetDao" />
-		<constructor-arg ref="sourceDao" />
-		<constructor-arg ref="seedConsumerFactory" />
+	
+	<bean id="syncPairConfigB" class="tools.datasync.dao.SyncPairConfig">
+		<constructor-arg ref="daoPairB" />
+		<constructor-arg ref="seedFactoryPair" />
 		<constructor-arg ref="initiatorWinsConflictResolverFactor" />		
 	</bean>
 
@@ -214,7 +228,7 @@
 
 	<bean id="pumpFactoryA" class="tools.datasync.basic.sync.pump.JvmSyncPumpFactory">
 		<constructor-arg ref="pairA"/>
-		<constructor-arg ref="daoPairA"/>
+		<constructor-arg ref="syncPairConfigA"/>
 		<constructor-arg ref="syncStateInitializerA"/>
 		<constructor-arg ref="concurArgsA"/>
 	</bean>
@@ -229,7 +243,7 @@
 
 	<bean id="pumpFactoryB" class="tools.datasync.basic.sync.pump.JvmSyncPumpFactory">
 		<constructor-arg ref="pairB"/>
-		<constructor-arg ref="daoPairB"/>
+		<constructor-arg ref="syncPairConfigB"/>
 		<constructor-arg ref="syncStateInitializerB"/>
 		<constructor-arg ref="concurArgsB"/>
 	</bean>

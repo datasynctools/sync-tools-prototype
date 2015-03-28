@@ -9,8 +9,8 @@ import tools.datasync.api.dao.GenericDao;
 import tools.datasync.api.utils.HashGenerator;
 import tools.datasync.api.utils.Stringify;
 import tools.datasync.basic.logic.ConflictResolver;
-import tools.datasync.basic.seed.DbSeedProducer;
 import tools.datasync.basic.seed.SeedConsumer;
+import tools.datasync.basic.seed.SeedProducer;
 import tools.datasync.dao.SyncPairConfig;
 import tools.datasync.dao.jdbc.GenericJdbcDao;
 
@@ -57,13 +57,12 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
 	this.concurArgs = concurArgs;
     }
 
-    private static JvmSyncPumpSender createSender(JvmSyncPeerParms peer,
+    private JvmSyncPumpSender createSender(JvmSyncPeerParms peer,
 	    GenericDao sourceDao, SyncStateInitializer syncStateInitializer,
 	    JvmSyncConcurArgs concurArgs) {
-
-	DbSeedProducer seedProducer = new DbSeedProducer(sourceDao,
-		syncStateInitializer.getTables(),
-		syncStateInitializer.getEntityGetter());
+	SeedProducer seedProducer = syncPairConfig.getSeedProducerFactory()
+		.create(syncStateInitializer.getTables(),
+			syncStateInitializer.getEntityGetter(), sourceDao);
 
 	JvmSyncPumpSender sender = new JvmSyncPumpSender(peer.getSendQueue(),
 		syncStateInitializer, concurArgs);
