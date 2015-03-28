@@ -21,7 +21,7 @@
  * @since   20-Nov-2014
  */
 
-package tools.datasync.basic.util;
+package tools.datasync.utils;
 
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.DeserializationConfig;

@@ -20,7 +20,7 @@ import tools.datasync.api.msg.SyncMessage;
 import tools.datasync.basic.seed.SeedConsumer;
 import tools.datasync.basic.seed.SeedException;
 import tools.datasync.basic.sync.pump.handlers.SyncMessageHandler;
-import tools.datasync.basic.util.StringUtils;
+import tools.datasync.utils.StringUtils;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more

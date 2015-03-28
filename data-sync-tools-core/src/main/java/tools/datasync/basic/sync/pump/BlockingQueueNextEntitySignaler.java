@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
 import tools.datasync.basic.model.EnityId;
-import tools.datasync.basic.util.StringUtils;
+import tools.datasync.utils.StringUtils;
 
 //TODO Consider this component being part of the Sender.
 //Perhaps we should passing a message to a receiver->sender queue and then the sender 

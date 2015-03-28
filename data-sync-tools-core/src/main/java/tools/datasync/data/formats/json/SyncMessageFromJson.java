@@ -4,7 +4,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import tools.datasync.api.msg.SyncMessage;
 import tools.datasync.api.msg.SyncMessageFromT;
-import tools.datasync.basic.util.ObjectMapperFactory;
+import tools.datasync.utils.ObjectMapperFactory;
 
 public class SyncMessageFromJson implements SyncMessageFromT<String> {
 

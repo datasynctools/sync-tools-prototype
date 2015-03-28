@@ -35,10 +35,10 @@ import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.IdGetter;
 import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.model.SyncEntityMessage;
-import tools.datasync.basic.util.Md5HashGenerator;
-import tools.datasync.basic.util.ObjectMapperFactory;
-import tools.datasync.basic.util.StringUtils;
 import tools.datasync.data.formats.json.Jsonify;
+import tools.datasync.utils.Md5HashGenerator;
+import tools.datasync.utils.ObjectMapperFactory;
+import tools.datasync.utils.StringUtils;
 
 public class DbSeedConsumer implements SeedConsumer {
 

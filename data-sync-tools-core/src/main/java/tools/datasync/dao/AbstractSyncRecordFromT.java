@@ -1,4 +1,4 @@
-package tools.datasync.api.utils;
+package tools.datasync.dao;
 
 import tools.datasync.api.dao.SyncRecord;
 import tools.datasync.api.dao.SyncRecordFromT;

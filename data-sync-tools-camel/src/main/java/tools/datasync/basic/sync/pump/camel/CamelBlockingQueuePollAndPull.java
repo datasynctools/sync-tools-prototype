@@ -10,9 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
-import tools.datasync.basic.util.ObjectMapperFactory;
-import tools.datasync.basic.util.StringUtils;
 import tools.datasync.data.formats.json.Jsonify;
+import tools.datasync.utils.ObjectMapperFactory;
+import tools.datasync.utils.StringUtils;
 
 public class CamelBlockingQueuePollAndPull extends AbstractPartialBlockingQueue
 	implements BlockingQueue<SyncMessage> {

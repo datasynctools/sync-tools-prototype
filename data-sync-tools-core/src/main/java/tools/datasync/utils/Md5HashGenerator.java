@@ -19,7 +19,7 @@
  * @version 1.0
  * @since   2014-11-10
  */
-package tools.datasync.basic.util;
+package tools.datasync.utils;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;

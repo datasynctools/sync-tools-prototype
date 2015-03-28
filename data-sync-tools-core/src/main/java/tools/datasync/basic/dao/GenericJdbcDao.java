@@ -36,8 +36,8 @@ import org.slf4j.LoggerFactory;
 import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.IdGetter;
 import tools.datasync.basic.model.SyncEntityMessage;
-import tools.datasync.basic.util.SqlGenUtil;
-import tools.datasync.basic.util.StringUtils;
+import tools.datasync.utils.SqlGenUtil;
+import tools.datasync.utils.StringUtils;
 
 public class GenericJdbcDao implements GenericDao {
 

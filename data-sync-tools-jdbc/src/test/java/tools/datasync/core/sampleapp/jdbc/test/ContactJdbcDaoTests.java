@@ -15,12 +15,12 @@ import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
 
 import tools.datasync.api.dao.SyncRecordFromT;
-import tools.datasync.api.utils.DefaultHashFromObject;
 import tools.datasync.core.sampleapp.AbstractContactDaoTests;
 import tools.datasync.core.sampleapp.dao.ContactDao;
 import tools.datasync.core.sampleapp.dao.impl.jdbc.ContactJdbcDao;
 import tools.datasync.core.sampleapp.model.Contact;
 import tools.datasync.core.sampleapp.sync.creators.SyncRecordFromContact;
+import tools.datasync.utils.DefaultHashFromObject;
 
 public class ContactJdbcDaoTests extends AbstractContactDaoTests {
 

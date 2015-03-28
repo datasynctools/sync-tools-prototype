@@ -7,7 +7,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 
 import tools.datasync.api.utils.Stringify;
-import tools.datasync.basic.util.ObjectMapperFactory;
+import tools.datasync.utils.ObjectMapperFactory;
 
 public class Jsonify implements Stringify {
 

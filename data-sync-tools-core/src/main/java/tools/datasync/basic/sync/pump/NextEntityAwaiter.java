@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 import tools.datasync.api.msg.SyncMessage;
 import tools.datasync.basic.model.EnityId;
 import tools.datasync.basic.model.SeedRecord;
-import tools.datasync.basic.util.StringUtils;
-import tools.datasync.basic.util.TimeSpan;
+import tools.datasync.utils.StringUtils;
+import tools.datasync.utils.TimeSpan;
 
 public class NextEntityAwaiter {
 

@@ -126,7 +126,7 @@
 	<bean id="java.util.concurrent.TimeUnit.SECONDS"
 		class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean"/>
 
-	<bean id="timeSpan" class="tools.datasync.basic.util.TimeSpan">
+	<bean id="timeSpan" class="tools.datasync.utils.TimeSpan">
 		<constructor-arg index="0" value="1" />
 		<constructor-arg index="1" ref="java.util.concurrent.TimeUnit.SECONDS" />
 	</bean>

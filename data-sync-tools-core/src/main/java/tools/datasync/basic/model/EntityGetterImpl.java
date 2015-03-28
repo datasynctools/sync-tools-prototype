@@ -2,7 +2,7 @@ package tools.datasync.basic.model;
 
 import java.util.Map;
 
-import tools.datasync.basic.util.StringUtils;
+import tools.datasync.utils.StringUtils;
 
 public class EntityGetterImpl implements EntityGetter {
 

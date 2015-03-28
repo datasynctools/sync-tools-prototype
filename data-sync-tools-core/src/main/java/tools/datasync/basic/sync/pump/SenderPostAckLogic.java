@@ -18,7 +18,7 @@ import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.seed.SeedException;
 import tools.datasync.basic.seed.SeedOverException;
 import tools.datasync.basic.seed.SeedProducer;
-import tools.datasync.basic.util.StringUtils;
+import tools.datasync.utils.StringUtils;
 
 public class SenderPostAckLogic {
 

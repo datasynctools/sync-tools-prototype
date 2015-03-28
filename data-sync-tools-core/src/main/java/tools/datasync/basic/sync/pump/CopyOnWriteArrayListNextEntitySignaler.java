@@ -2,7 +2,7 @@ package tools.datasync.basic.sync.pump;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import tools.datasync.basic.util.StringUtils;
+import tools.datasync.utils.StringUtils;
 
 public class CopyOnWriteArrayListNextEntitySignaler implements
 	NextEntitySignaler {

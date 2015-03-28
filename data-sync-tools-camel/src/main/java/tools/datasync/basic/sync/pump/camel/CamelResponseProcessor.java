@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
 import tools.datasync.api.utils.Stringify;
-import tools.datasync.basic.util.StringUtils;
 import tools.datasync.data.formats.json.Jsonify;
+import tools.datasync.utils.StringUtils;
 
 public class CamelResponseProcessor implements Processor {
 

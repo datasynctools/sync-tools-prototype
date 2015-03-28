@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
-import tools.datasync.basic.util.StringUtils;
+import tools.datasync.utils.StringUtils;
 
 public class SenderPreAckLogic {
 

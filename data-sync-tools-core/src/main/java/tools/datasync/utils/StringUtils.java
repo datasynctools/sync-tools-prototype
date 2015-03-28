@@ -1,4 +1,4 @@
-package tools.datasync.basic.util;
+package tools.datasync.utils;
 
 public class StringUtils {
 

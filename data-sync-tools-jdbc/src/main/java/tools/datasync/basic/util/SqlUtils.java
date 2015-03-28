@@ -12,6 +12,8 @@ import java.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tools.datasync.utils.StringUtils;
+
 public class SqlUtils {
 
     private final static Logger LOG = LoggerFactory.getLogger(SqlUtils.class);

@@ -1,4 +1,4 @@
-package tools.datasync.basic.util;
+package tools.datasync.utils;
 
 import java.util.concurrent.TimeUnit;
 

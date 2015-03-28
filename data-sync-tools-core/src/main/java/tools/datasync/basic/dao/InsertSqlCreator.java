@@ -1,7 +1,7 @@
 package tools.datasync.basic.dao;
 
 import tools.datasync.basic.model.SyncEntityMessage;
-import tools.datasync.basic.util.SqlGenUtil;
+import tools.datasync.utils.SqlGenUtil;
 
 public class InsertSqlCreator implements SqlCreator {
 

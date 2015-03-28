@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.basic.model.SyncEntityMessage;
-import tools.datasync.basic.util.SqlGenUtil;
+import tools.datasync.utils.SqlGenUtil;
 
 public class JdbcMutationHelper {
 
