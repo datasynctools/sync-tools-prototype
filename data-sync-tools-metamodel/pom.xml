@@ -4,7 +4,8 @@
   <artifactId>data-sync-tools-metamodel</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <build>
-    <sourceDirectory>src/java</sourceDirectory>
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <testSourceDirectory>src/test/java</testSourceDirectory>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -22,13 +23,15 @@
       <artifactId>data-sync-tools-api</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>compile</scope>
-    </dependency>  
+    </dependency>
+    <!-- 
     <dependency>
       <groupId>data-sync-tools</groupId>
       <artifactId>data-sync-tools-core</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
+     -->
   	<dependency>
   		<groupId>commons-io</groupId>
   		<artifactId>commons-io</artifactId>

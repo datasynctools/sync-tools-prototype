@@ -2,7 +2,7 @@ package tools.datasync.core.sampleapp.jdbc.test;
 
 import java.sql.Connection;
 
-import tools.datasync.basic.util.SqlUtils;
+import tools.datasync.utils.SqlUtils;
 
 public class ContactTableCreator {
 
@@ -11,7 +11,7 @@ public class ContactTableCreator {
 	try {
 	    SqlUtils.runSQLScript(conn, path);
 	} catch (Exception e) {
-	    e.printStackTrace();
+	    throw (new RuntimeException(e));
 	}
     }
 

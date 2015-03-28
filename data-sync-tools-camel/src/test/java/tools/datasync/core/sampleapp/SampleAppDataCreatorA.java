@@ -2,6 +2,8 @@ package tools.datasync.core.sampleapp;
 
 import java.sql.Connection;
 
+import tools.datasync.utils.SqlUtils;
+
 public class SampleAppDataCreatorA {
 
     public static void createDb(Connection conn) {
