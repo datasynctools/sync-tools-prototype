@@ -23,11 +23,8 @@
 
 package tools.datasync.api.msg;
 
-import java.io.Serializable;
 
-public class SyncMessage implements Serializable, Cloneable {
-
-    private static final long serialVersionUID = -3180554612753110701L;
+public class SyncMessage {
 
     private String originId = ""; // TODO populate the peer id
     private long messageNumber; // required for ACK/ NACK
@@ -82,10 +79,6 @@ public class SyncMessage implements Serializable, Cloneable {
 
     public void setTimestamp(long timestamp) {
 	this.timestamp = timestamp;
-    }
-
-    public static long getSerialversionuid() {
-	return serialVersionUID;
     }
 
     @Override
