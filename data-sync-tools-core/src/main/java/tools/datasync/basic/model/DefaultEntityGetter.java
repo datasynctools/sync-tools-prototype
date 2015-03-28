@@ -5,12 +5,12 @@ import java.util.Map;
 import tools.datasync.api.dao.EntityGetter;
 import tools.datasync.utils.StringUtils;
 
-public class EntityGetterImpl implements EntityGetter {
+public class DefaultEntityGetter implements EntityGetter {
 
     private String syncStateName;
     private Map<String, String> entityNameIdMap;
 
-    public EntityGetterImpl(String syncStateName,
+    public DefaultEntityGetter(String syncStateName,
 	    Map<String, String> entityNameIdMap) {
 	this.syncStateName = syncStateName;
 	this.entityNameIdMap = entityNameIdMap;

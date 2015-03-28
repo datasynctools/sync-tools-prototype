@@ -49,7 +49,7 @@
 		<entry key="org.WorkHistory" value="48E2F8D3-2A90-4A26-A198-ED649A4EFBA1" />
 	</util:map>
 
-	<bean id="entityGetter" class="tools.datasync.basic.model.EntityGetterImpl">
+	<bean id="entityGetter" class="tools.datasync.basic.model.DefaultEntityGetter">
 		<constructor-arg value="seed.SyncState"/>	
 		<constructor-arg ref="entityNameIdMap"/>		
 	</bean>
