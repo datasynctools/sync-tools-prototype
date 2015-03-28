@@ -24,6 +24,8 @@ package tools.datasync.basic.util;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 
+import tools.datasync.api.utils.HashGenerator;
+
 public class Md5HashGenerator implements HashGenerator {
 
     private static Md5HashGenerator instance = null;

@@ -11,12 +11,12 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tools.datasync.api.utils.HashGenerator;
 import tools.datasync.api.utils.Jsonify;
 import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.IdGetter;
 import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.basic.sync.pump.SyncStateInitializer;
-import tools.datasync.basic.util.HashGenerator;
 import tools.datasync.basic.util.Md5HashGenerator;
 import tools.datasync.basic.util.StringUtils;
 
@@ -34,6 +34,7 @@ public class JdbcSyncStateInitializer implements SyncStateInitializer {
     private IdGetter idGetter;
 
     private Jsonify jsonify = new Jsonify();
+    // private HashFromObject hasher = new DefaultHashFromObject();
     private HashGenerator hashGenerator = Md5HashGenerator.getInstance();
 
     public JdbcSyncStateInitializer(List<String> tables,

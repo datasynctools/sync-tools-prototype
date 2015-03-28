@@ -19,7 +19,7 @@
  * @version 1.0
  * @since   2014-11-10
  */
-package tools.datasync.basic.util;
+package tools.datasync.api.utils;
 
 public interface HashGenerator {
 

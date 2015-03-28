@@ -31,12 +31,12 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tools.datasync.api.utils.HashGenerator;
 import tools.datasync.api.utils.Jsonify;
 import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.model.SyncEntityMessage;
-import tools.datasync.basic.util.HashGenerator;
 import tools.datasync.basic.util.Md5HashGenerator;
 import tools.datasync.basic.util.StringUtils;
 
