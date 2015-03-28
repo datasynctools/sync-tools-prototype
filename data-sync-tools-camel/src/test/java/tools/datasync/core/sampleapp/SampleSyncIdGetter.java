@@ -1,7 +1,7 @@
 package tools.datasync.core.sampleapp;
 
-import tools.datasync.basic.model.EntityGetter;
-import tools.datasync.basic.model.IdGetter;
+import tools.datasync.api.dao.EntityGetter;
+import tools.datasync.api.dao.IdGetter;
 
 public class SampleSyncIdGetter implements IdGetter {
 

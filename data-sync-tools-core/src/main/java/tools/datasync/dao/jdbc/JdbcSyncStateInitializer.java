@@ -11,10 +11,10 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tools.datasync.api.dao.EntityGetter;
+import tools.datasync.api.dao.IdGetter;
 import tools.datasync.api.utils.HashGenerator;
 import tools.datasync.api.utils.Stringify;
-import tools.datasync.basic.model.EntityGetter;
-import tools.datasync.basic.model.IdGetter;
 import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.basic.sync.pump.SyncStateInitializer;
 import tools.datasync.dao.GenericDao;

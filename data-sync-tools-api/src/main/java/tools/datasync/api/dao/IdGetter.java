@@ -1,4 +1,4 @@
-package tools.datasync.basic.model;
+package tools.datasync.api.dao;
 
 public interface IdGetter {
     String get(String entityName);

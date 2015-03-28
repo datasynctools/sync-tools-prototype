@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import tools.datasync.basic.model.IdGetter;
+import tools.datasync.api.dao.IdGetter;
 import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.dao.ResultMapper;
 

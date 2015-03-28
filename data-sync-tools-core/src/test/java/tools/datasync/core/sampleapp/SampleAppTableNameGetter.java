@@ -3,7 +3,7 @@ package tools.datasync.core.sampleapp;
 import java.util.HashMap;
 import java.util.Map;
 
-import tools.datasync.basic.model.IdGetter;
+import tools.datasync.api.dao.IdGetter;
 
 public class SampleAppTableNameGetter implements IdGetter {
 

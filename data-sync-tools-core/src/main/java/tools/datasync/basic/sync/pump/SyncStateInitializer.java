@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-import tools.datasync.basic.model.EntityGetter;
+import tools.datasync.api.dao.EntityGetter;
 
 public interface SyncStateInitializer {
 

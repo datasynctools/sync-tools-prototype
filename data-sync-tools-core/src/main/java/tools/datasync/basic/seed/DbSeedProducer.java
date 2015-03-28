@@ -31,9 +31,9 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tools.datasync.api.dao.EntityGetter;
 import tools.datasync.api.utils.HashGenerator;
 import tools.datasync.api.utils.Stringify;
-import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.dao.GenericDao;
