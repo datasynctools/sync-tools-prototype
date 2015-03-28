@@ -35,7 +35,7 @@ import tools.datasync.basic.logic.ConflictResolver;
 import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.dao.GenericDao;
-import tools.datasync.data.formats.json.Jsonify;
+import tools.datasync.dataformats.json.Jsonify;
 import tools.datasync.utils.Md5HashGenerator;
 import tools.datasync.utils.ObjectMapperFactory;
 import tools.datasync.utils.StringUtils;

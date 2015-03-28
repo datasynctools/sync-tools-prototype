@@ -1,4 +1,4 @@
-package tools.datasync.data.formats.json;
+package tools.datasync.dataformats.json;
 
 import org.codehaus.jackson.map.ObjectMapper;
 

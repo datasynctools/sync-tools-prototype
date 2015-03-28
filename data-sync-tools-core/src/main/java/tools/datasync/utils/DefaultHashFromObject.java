@@ -5,7 +5,7 @@ import java.security.NoSuchAlgorithmException;
 
 import tools.datasync.api.utils.HashFromObject;
 import tools.datasync.api.utils.Stringify;
-import tools.datasync.data.formats.json.Jsonify;
+import tools.datasync.dataformats.json.Jsonify;
 
 public class DefaultHashFromObject implements HashFromObject {
 

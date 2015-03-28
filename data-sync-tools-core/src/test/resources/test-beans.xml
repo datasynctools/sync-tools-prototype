@@ -70,7 +70,7 @@
 		<constructor-arg ref="sampleAppTableNameGetter"/>
 	</bean>
 	
-	<bean id="stringify" class="tools.datasync.data.formats.json.Jsonify" />
+	<bean id="stringify" class="tools.datasync.dataformats.json.Jsonify" />
 	<bean id="agentHasher" class="tools.datasync.utils.Md5HashGenerator" />
 	
 	<bean id="seedConsumerFactory" class="tools.datasync.basic.seed.DbSeedConsumerFactory">

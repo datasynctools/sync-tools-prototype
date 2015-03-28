@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
 import tools.datasync.api.msg.SyncMessageFromT;
-import tools.datasync.data.formats.json.SyncMessageFromJson;
+import tools.datasync.dataformats.json.SyncMessageFromJson;
 import tools.datasync.utils.StringUtils;
 
 public class CamelRequestProcessor implements Processor {
