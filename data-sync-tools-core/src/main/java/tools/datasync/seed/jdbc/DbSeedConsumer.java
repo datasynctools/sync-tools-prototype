@@ -27,13 +27,13 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tools.datasync.api.conflict.ConflictResolver;
 import tools.datasync.api.dao.EntityGetter;
 import tools.datasync.api.dao.GenericDao;
 import tools.datasync.api.dao.IdGetter;
 import tools.datasync.api.msg.SyncEntityMessage;
 import tools.datasync.api.utils.HashGenerator;
 import tools.datasync.api.utils.Stringify;
-import tools.datasync.basic.logic.ConflictResolver;
 import tools.datasync.dataformats.json.Jsonify;
 import tools.datasync.model.DefaultSyncEntityMessage;
 import tools.datasync.model.SeedRecord;

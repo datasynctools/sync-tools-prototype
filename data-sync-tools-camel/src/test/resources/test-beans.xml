@@ -102,7 +102,7 @@
 	</bean>
 	<bean id="seedProducerFactory" class="tools.datasync.seed.jdbc.DbSeedProducerFactory" />
 	
-	<bean id="initiatorWinsConflictResolverFactor" class="tools.datasync.basic.logic.InitiatorWinsConflictResolverFactory" />
+	<bean id="initiatorWinsConflictResolverFactor" class="tools.datasync.model.InitiatorWinsConflictResolverFactory" />
 	
 	<bean id="daoPairA" class="tools.datasync.dao.GenericDaoPair">
 		<constructor-arg ref="sourceDao" />

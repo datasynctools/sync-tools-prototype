@@ -1,6 +1,8 @@
-package tools.datasync.basic.logic;
+package tools.datasync.model;
 
-import tools.datasync.pump.PeerMode;
+import tools.datasync.api.PeerMode;
+import tools.datasync.api.conflict.ConflictResolver;
+import tools.datasync.api.conflict.ConflictResolverFactory;
 
 public class InitiatorWinsConflictResolverFactory implements
 	ConflictResolverFactory {

@@ -1,4 +1,4 @@
-package tools.datasync.basic.logic;
+package tools.datasync.utils;
 
 import java.util.HashMap;
 import java.util.InputMismatchException;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package tools.datasync.pump;
+package tools.datasync.api;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more

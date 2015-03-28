@@ -19,25 +19,12 @@
  * @version 1.0
  * @since   2014-11-10
  */
-package tools.datasync.basic.logic;
+package tools.datasync.api.conflict;
 
 import tools.datasync.api.msg.SyncEntityMessage;
 
-public class InitiatorWinsConflictResolver implements ConflictResolver {
-
-    boolean isInitiator = false;
-
-    public InitiatorWinsConflictResolver(boolean isInitiator) {
-
-	this.isInitiator = isInitiator;
-    }
+public interface ConflictResolver {
 
     public SyncEntityMessage resolve(SyncEntityMessage my,
-	    SyncEntityMessage theirs) throws ConflictException {
-
-	if (isInitiator) {
-	    return null;
-	}
-	return theirs;
-    }
+	    SyncEntityMessage theirs) throws ConflictException;
 }

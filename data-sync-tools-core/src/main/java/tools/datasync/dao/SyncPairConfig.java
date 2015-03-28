@@ -1,7 +1,7 @@
 package tools.datasync.dao;
 
+import tools.datasync.api.conflict.ConflictResolverFactory;
 import tools.datasync.api.dao.GenericDao;
-import tools.datasync.basic.logic.ConflictResolverFactory;
 import tools.datasync.seed.SeedConsumerFactory;
 import tools.datasync.seed.SeedProducerFactory;
 

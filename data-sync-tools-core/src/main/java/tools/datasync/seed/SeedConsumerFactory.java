@@ -21,8 +21,8 @@
  */
 package tools.datasync.seed;
 
+import tools.datasync.api.conflict.ConflictResolver;
 import tools.datasync.api.dao.GenericDao;
-import tools.datasync.basic.logic.ConflictResolver;
 
 public interface SeedConsumerFactory {
 

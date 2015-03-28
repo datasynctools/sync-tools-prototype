@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import tools.datasync.api.dao.GenericDao;
-import tools.datasync.basic.logic.DbTableComparator;
 import tools.datasync.pump.SyncOrchestrationManager;
 import tools.datasync.pump.SyncSession;
+import tools.datasync.utils.DbTableComparator;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more

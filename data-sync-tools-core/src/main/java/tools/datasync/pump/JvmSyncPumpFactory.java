@@ -5,10 +5,11 @@ package tools.datasync.pump;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import tools.datasync.api.PeerMode;
+import tools.datasync.api.conflict.ConflictResolver;
 import tools.datasync.api.dao.GenericDao;
 import tools.datasync.api.utils.HashGenerator;
 import tools.datasync.api.utils.Stringify;
-import tools.datasync.basic.logic.ConflictResolver;
 import tools.datasync.dao.SyncPairConfig;
 import tools.datasync.dao.jdbc.GenericJdbcDao;
 import tools.datasync.seed.SeedConsumer;

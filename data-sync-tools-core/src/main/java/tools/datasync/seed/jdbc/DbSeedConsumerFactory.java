@@ -1,11 +1,11 @@
 package tools.datasync.seed.jdbc;
 
+import tools.datasync.api.conflict.ConflictResolver;
 import tools.datasync.api.dao.EntityGetter;
 import tools.datasync.api.dao.GenericDao;
 import tools.datasync.api.dao.IdGetter;
 import tools.datasync.api.utils.HashGenerator;
 import tools.datasync.api.utils.Stringify;
-import tools.datasync.basic.logic.ConflictResolver;
 import tools.datasync.seed.SeedConsumer;
 import tools.datasync.seed.SeedConsumerFactory;
 
