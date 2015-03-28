@@ -6,3 +6,6 @@
 /derby.log
 /.settings/
 /.DS_Store
+/.classpath
+/.project
+/.springBeans
