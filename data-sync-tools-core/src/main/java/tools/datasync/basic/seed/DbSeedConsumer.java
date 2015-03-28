@@ -27,7 +27,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tools.datasync.api.utils.Jsonify;
+import tools.datasync.api.utils.HashGenerator;
+import tools.datasync.api.utils.Stringify;
 import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.logic.ConflictResolver;
 import tools.datasync.basic.model.EntityGetter;
@@ -37,6 +38,7 @@ import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.basic.util.Md5HashGenerator;
 import tools.datasync.basic.util.ObjectMapperFactory;
 import tools.datasync.basic.util.StringUtils;
+import tools.datasync.data.formats.json.Jsonify;
 
 public class DbSeedConsumer implements SeedConsumer {
 
@@ -44,12 +46,12 @@ public class DbSeedConsumer implements SeedConsumer {
 	    .getLogger(DbSeedConsumer.class);
 
     private ObjectMapper jsonMapper = ObjectMapperFactory.getInstance();
-    private Md5HashGenerator hashGenerator = Md5HashGenerator.getInstance();
+    private HashGenerator hasher = Md5HashGenerator.getInstance();
     private GenericDao genericDao;
     private ConflictResolver conflictResolver;
     private EntityGetter entityGetter;
     private IdGetter recordIdGetter;
-    private Jsonify jsonify = new Jsonify();
+    private Stringify stringify = new Jsonify();
 
     public DbSeedConsumer(ConflictResolver conflictResolver,
 	    EntityGetter entityGetter, IdGetter recordIdGetter,
@@ -62,9 +64,9 @@ public class DbSeedConsumer implements SeedConsumer {
 
     private void validate(SeedRecord seed, SyncEntityMessage recordData) {
 
-	String recordString = jsonify.toString(recordData);
+	String recordString = stringify.toString(recordData);
 
-	if (!hashGenerator.validate(recordString, seed.getRecordHash())) {
+	if (!hasher.validate(recordString, seed.getRecordHash())) {
 
 	    // TODO Is this the right logic? Should we throw an exception or
 	    // some other logic?
@@ -120,7 +122,7 @@ public class DbSeedConsumer implements SeedConsumer {
 	syncState.set("ENTITYID", entityGetter.getId(entityName));
 	syncState.set("RECORDID", recordData.getCalculatedPrimaryKey());
 	// String recordJson = jsonMapper.writeValueAsString(recordData);
-	String recordString = jsonify.toString(recordData);
+	String recordString = stringify.toString(recordData);
 	syncState.set("RECORDDATA", recordString);
 	// syncState.set("RECORDHASH", recordData.generateHash());
 	syncState.set("RECORDHASH", seed.getRecordHash());
@@ -204,12 +206,28 @@ public class DbSeedConsumer implements SeedConsumer {
 	syncState.set("ENTITYID", entityGetter.getId(entityName));
 	syncState.set("RECORDID",
 		resolvedRecordData.get(recordIdGetter.get(entityName)));
-	String recordString = jsonify.toString(resolvedRecordData);
+	String recordString = stringify.toString(resolvedRecordData);
 	syncState.set("RECORDDATA", recordString);
-	String newHash = hashGenerator.generate(recordString);
+	String newHash = hasher.generate(recordString);
 	syncState.set("RECORDHASH", newHash);
 	genericDao.update(entityGetter.getSyncStateName(), syncState,
 		recordIdGetter.get(entityGetter.getSyncStateName()));
+    }
+
+    public Stringify getStringify() {
+	return stringify;
+    }
+
+    public void setStringify(Stringify stringify) {
+	this.stringify = stringify;
+    }
+
+    public HashGenerator getHasher() {
+	return hasher;
+    }
+
+    public void setHasher(HashGenerator hasher) {
+	this.hasher = hasher;
     }
 
     public String toString() {

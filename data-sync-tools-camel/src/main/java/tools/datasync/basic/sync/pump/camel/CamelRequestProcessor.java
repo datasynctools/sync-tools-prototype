@@ -4,20 +4,20 @@ import java.util.concurrent.BlockingQueue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
-import tools.datasync.basic.util.ObjectMapperFactory;
+import tools.datasync.api.msg.SyncMessageFromT;
 import tools.datasync.basic.util.StringUtils;
+import tools.datasync.data.formats.json.SyncMessageFromJson;
 
 public class CamelRequestProcessor implements Processor {
 
     private static final Logger LOG = LoggerFactory
 	    .getLogger(CamelRequestProcessor.class);
 
-    private ObjectMapper jsonMapper = ObjectMapperFactory.getInstance();
+    private SyncMessageFromT<String> syncMessageFromStringer = new SyncMessageFromJson();
 
     private BlockingQueue<SyncMessage> receiveQueue;
 
@@ -50,9 +50,9 @@ public class CamelRequestProcessor implements Processor {
     }
 
     private SyncMessage processResponse(String response) {
-	SyncMessage syncMessage = null;
+	SyncMessage syncMessage;
 	try {
-	    syncMessage = jsonMapper.readValue(response, SyncMessage.class);
+	    syncMessage = syncMessageFromStringer.create(response);
 	} catch (Exception e) {
 	    LOG.error("Bad data [{}]", response, e);
 	    throw (new RuntimeException("Bad Data", e));
@@ -82,6 +82,15 @@ public class CamelRequestProcessor implements Processor {
 	addQueues(answer);
 	answer.append("}");
 	return (answer.toString());
+    }
+
+    public SyncMessageFromT<String> getSyncMessageFromStringer() {
+	return syncMessageFromStringer;
+    }
+
+    public void setSyncMessageFromStringer(
+	    SyncMessageFromT<String> syncMessageFromStringer) {
+	this.syncMessageFromStringer = syncMessageFromStringer;
     }
 
 }

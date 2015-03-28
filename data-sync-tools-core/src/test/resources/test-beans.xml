@@ -70,9 +70,14 @@
 		<constructor-arg ref="sampleAppTableNameGetter"/>
 	</bean>
 	
+	<bean id="stringify" class="tools.datasync.data.formats.json.Jsonify" />
+	<bean id="agentHasher" class="tools.datasync.basic.util.Md5HashGenerator" />
+	
 	<bean id="seedConsumerFactory" class="tools.datasync.basic.seed.DbSeedConsumerFactory">
 		<constructor-arg ref="entityGetter" />
 		<constructor-arg ref="sampleAppTableNameGetter"/>	
+		<property name="stringify" ref="stringify" />
+		<property name="hasher" ref="agentHasher" />
 	</bean>
 	
 	<bean id="initiatorWinsConflictResolverFactor" class="tools.datasync.basic.logic.InitiatorWinsConflictResolverFactory" />
@@ -154,6 +159,7 @@
 		<constructor-arg ref="entityGetter" />
 		<constructor-arg ref="sampleSyncIdGetter"/>		
 		<constructor-arg ref="sourceDao"/>
+		<property name="stringify" ref="stringify" />
 	</bean>
 
 	<bean id="syncStateInitializerB" class="tools.datasync.basic.dao.JdbcSyncStateInitializer">
@@ -161,6 +167,7 @@
 		<constructor-arg ref="entityGetter" />
 		<constructor-arg ref="sampleSyncIdGetter"/>		
 		<constructor-arg ref="targetDao"/>
+		<property name="stringify" ref="stringify" />
 	</bean>
 
 	<bean id="pumpFactoryA" class="tools.datasync.basic.sync.pump.JvmSyncPumpFactory">
@@ -168,6 +175,8 @@
 		<constructor-arg ref="daoPairA"/>
 		<constructor-arg ref="syncStateInitializerA"/>
 		<constructor-arg ref="concurArgsA"/>
+		<property name="stringify" ref="stringify" />
+		<property name="hasher" ref="agentHasher" />
 	</bean>
 
 	<bean id="pumpFactoryB" class="tools.datasync.basic.sync.pump.JvmSyncPumpFactory">
@@ -175,6 +184,8 @@
 		<constructor-arg ref="daoPairB"/>
 		<constructor-arg ref="syncStateInitializerB"/>
 		<constructor-arg ref="concurArgsB"/>
+		<property name="stringify" ref="stringify" />
+		<property name="hasher" ref="agentHasher" />
 	</bean>
 
 	<bean id="syncOrchMgr" class="tools.datasync.basic.sync.SyncOrchestrationManager">

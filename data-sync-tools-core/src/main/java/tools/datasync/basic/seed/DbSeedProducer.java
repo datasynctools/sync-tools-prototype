@@ -32,13 +32,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.utils.HashGenerator;
-import tools.datasync.api.utils.Jsonify;
+import tools.datasync.api.utils.Stringify;
 import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.basic.util.Md5HashGenerator;
 import tools.datasync.basic.util.StringUtils;
+import tools.datasync.data.formats.json.Jsonify;
 
 public class DbSeedProducer implements SeedProducer {
 
@@ -49,10 +50,9 @@ public class DbSeedProducer implements SeedProducer {
     private GenericDao genericDao;
     private boolean isRunning = false;
 
-    private static final HashGenerator hashGenerator = Md5HashGenerator
-	    .getInstance();
+    private HashGenerator hasher = Md5HashGenerator.getInstance();
 
-    private Jsonify jsonify = new Jsonify();
+    private Stringify stringify = new Jsonify();
 
     boolean stop = false;
 
@@ -168,8 +168,8 @@ public class DbSeedProducer implements SeedProducer {
 	    throws JsonGenerationException, JsonMappingException, IOException {
 	String entityId = entityGetter.getId(recordData.getEntity());
 	String recordId = String.valueOf(recordData.getCalculatedPrimaryKey());
-	String recordString = jsonify.toString(recordData); //
-	String recordHash = hashGenerator.generate(recordString);
+	String recordString = stringify.toString(recordData);
+	String recordHash = hasher.generate(recordString);
 	String origin = "";
 
 	SeedRecord seed = new SeedRecord();
@@ -181,6 +181,22 @@ public class DbSeedProducer implements SeedProducer {
 
 	LOG.debug("generated seed record: " + seed);
 	return seed;
+    }
+
+    public Stringify getStringify() {
+	return stringify;
+    }
+
+    public void setStringify(Stringify stringify) {
+	this.stringify = stringify;
+    }
+
+    public HashGenerator getHasher() {
+	return hasher;
+    }
+
+    public void setHasher(HashGenerator hasher) {
+	this.hasher = hasher;
     }
 
     public String toString() {

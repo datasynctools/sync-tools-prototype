@@ -7,10 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
-import tools.datasync.api.utils.Jsonify;
 import tools.datasync.basic.model.EnityId;
 import tools.datasync.basic.sync.pump.NextEntitySignaler;
 import tools.datasync.basic.util.StringUtils;
+import tools.datasync.data.formats.json.Jsonify;
 
 public class CamelPutNextEntitySignaler implements NextEntitySignaler {
 

@@ -12,13 +12,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.utils.HashGenerator;
-import tools.datasync.api.utils.Jsonify;
+import tools.datasync.api.utils.Stringify;
 import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.IdGetter;
 import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.basic.sync.pump.SyncStateInitializer;
 import tools.datasync.basic.util.Md5HashGenerator;
 import tools.datasync.basic.util.StringUtils;
+import tools.datasync.data.formats.json.Jsonify;
 
 public class JdbcSyncStateInitializer implements SyncStateInitializer {
 
@@ -27,20 +28,18 @@ public class JdbcSyncStateInitializer implements SyncStateInitializer {
 
     private AtomicBoolean isRunning;
     private GenericDao genericDao;
-    // private ObjectMapper jsonMapper;
 
     private List<String> tables;
     private EntityGetter entityGetter;
     private IdGetter idGetter;
 
-    private Jsonify jsonify = new Jsonify();
-    // private HashFromObject hasher = new DefaultHashFromObject();
-    private HashGenerator hashGenerator = Md5HashGenerator.getInstance();
+    private Stringify stringify = new Jsonify();
+
+    private HashGenerator hasher = Md5HashGenerator.getInstance();
 
     public JdbcSyncStateInitializer(List<String> tables,
 	    EntityGetter entityGetter, IdGetter idGetter, GenericDao genericDao) {
 	this.isRunning = new AtomicBoolean(false);
-	// this.jsonMapper = ObjectMapperFactory.getInstance();
 	this.tables = tables;
 	this.entityGetter = entityGetter;
 	this.idGetter = idGetter;
@@ -64,7 +63,6 @@ public class JdbcSyncStateInitializer implements SyncStateInitializer {
 
 		SyncEntityMessage syncState = new SyncEntityMessage();
 
-		// TODO Doug comment: I don't understand these variable names
 		fillSyncEntityMessage(syncState, record, table);
 
 		genericDao.save(entityGetter.getSyncStateName(), syncState);
@@ -78,10 +76,9 @@ public class JdbcSyncStateInitializer implements SyncStateInitializer {
 	syncState.setEntity(table);
 	syncState.set("ENTITYID", idGetter.get(table));
 	syncState.set("RECORDID", record.getCalculatedPrimaryKey());
-	// String recordJson = jsonMapper.writeValueAsString(record);
-	String recordString = jsonify.toString(record);
+	String recordString = stringify.toString(record);
 	syncState.set("RECORDDATA", recordString);
-	String hash = hashGenerator.generate(recordString);
+	String hash = hasher.generate(recordString);
 	syncState.set("RECORDHASH", hash);
     }
 
@@ -95,6 +92,22 @@ public class JdbcSyncStateInitializer implements SyncStateInitializer {
 
     public EntityGetter getEntityGetter() {
 	return entityGetter;
+    }
+
+    public Stringify getStringify() {
+	return stringify;
+    }
+
+    public void setStringify(Stringify stringify) {
+	this.stringify = stringify;
+    }
+
+    public HashGenerator getHasher() {
+	return hasher;
+    }
+
+    public void setHasher(HashGenerator hasher) {
+	this.hasher = hasher;
     }
 
     public String toString() {

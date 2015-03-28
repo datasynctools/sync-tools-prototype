@@ -5,6 +5,8 @@ package tools.datasync.basic.sync.pump;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import tools.datasync.api.utils.HashGenerator;
+import tools.datasync.api.utils.Stringify;
 import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.dao.GenericJdbcDao;
 import tools.datasync.basic.dao.SyncPairConfig;
@@ -42,6 +44,9 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
 
     private GenericJdbcDao sourceDao = null;
     private GenericJdbcDao targetDao = null;
+
+    private HashGenerator hasher;
+    private Stringify stringify;
 
     public JvmSyncPumpFactory(JvmSyncPair pair, SyncPairConfig syncPairConfig,
 	    SyncStateInitializer syncStateInitializer,
@@ -110,6 +115,22 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
 
 	return new JvmSyncPump(peerMode, sender, receiver);
 
+    }
+
+    public HashGenerator getHasher() {
+	return hasher;
+    }
+
+    public void setHasher(HashGenerator hasher) {
+	this.hasher = hasher;
+    }
+
+    public Stringify getStringify() {
+	return stringify;
+    }
+
+    public void setStringify(Stringify stringify) {
+	this.stringify = stringify;
     }
 
     public GenericDao getSourceDao() {

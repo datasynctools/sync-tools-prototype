@@ -1,4 +1,4 @@
-package tools.datasync.api.utils;
+package tools.datasync.data.formats.json;
 
 import java.io.StringWriter;
 
@@ -6,6 +6,7 @@ import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 
+import tools.datasync.api.utils.Stringify;
 import tools.datasync.basic.util.ObjectMapperFactory;
 
 public class Jsonify implements Stringify {

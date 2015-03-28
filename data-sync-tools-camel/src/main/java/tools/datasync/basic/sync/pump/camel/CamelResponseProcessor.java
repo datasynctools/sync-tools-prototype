@@ -8,8 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
-import tools.datasync.api.utils.Jsonify;
+import tools.datasync.api.utils.Stringify;
 import tools.datasync.basic.util.StringUtils;
+import tools.datasync.data.formats.json.Jsonify;
 
 public class CamelResponseProcessor implements Processor {
 
@@ -18,7 +19,7 @@ public class CamelResponseProcessor implements Processor {
 
     private BlockingQueue<SyncMessage> queue;
 
-    private Jsonify jsonify = new Jsonify();
+    private Stringify stringify = new Jsonify();
 
     private boolean firstRun = true;
 
@@ -44,7 +45,7 @@ public class CamelResponseProcessor implements Processor {
 	if (syncMessage == null) {
 	    body = null;
 	} else {
-	    body = jsonify.toStringSerialize(syncMessage);
+	    body = stringify.toString(syncMessage);
 	    LOG.info("Responding body {}", body);
 	}
 	exchange.getOut().setBody(body);
@@ -68,6 +69,14 @@ public class CamelResponseProcessor implements Processor {
 	addQueues(answer);
 	answer.append("}");
 	return (answer.toString());
+    }
+
+    public Stringify getStringify() {
+	return stringify;
+    }
+
+    public void setStringify(Stringify stringify) {
+	this.stringify = stringify;
     }
 
 }
