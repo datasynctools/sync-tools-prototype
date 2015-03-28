@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
-import tools.datasync.basic.model.EnityId;
+import tools.datasync.model.EnityId;
 import tools.datasync.utils.StringUtils;
 
 //TODO Consider this component being part of the Sender.

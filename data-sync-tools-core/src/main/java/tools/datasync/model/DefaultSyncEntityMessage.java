@@ -21,7 +21,7 @@
  * @since   20-Nov-2014
  */
 
-package tools.datasync.basic.model;
+package tools.datasync.model;
 
 import java.io.Serializable;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package tools.datasync.basic.model.convert;
+package tools.datasync.model.convert;
 
 import java.util.Date;
 

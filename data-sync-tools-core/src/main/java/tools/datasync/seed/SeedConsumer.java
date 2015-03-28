@@ -23,7 +23,7 @@ package tools.datasync.seed;
 
 import java.io.IOException;
 
-import tools.datasync.basic.model.SeedRecord;
+import tools.datasync.model.SeedRecord;
 
 public interface SeedConsumer {
 

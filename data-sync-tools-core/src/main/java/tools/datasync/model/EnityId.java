@@ -1,4 +1,4 @@
-package tools.datasync.basic.model;
+package tools.datasync.model;
 
 import tools.datasync.api.msg.SyncPayloadData;
 

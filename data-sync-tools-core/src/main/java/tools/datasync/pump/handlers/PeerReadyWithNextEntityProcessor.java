@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
-import tools.datasync.basic.model.EnityId;
+import tools.datasync.model.EnityId;
 
 public class PeerReadyWithNextEntityProcessor implements SyncMessageProcessor {
 

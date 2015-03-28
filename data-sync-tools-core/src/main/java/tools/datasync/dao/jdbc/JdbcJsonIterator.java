@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncEntityMessage;
-import tools.datasync.basic.model.DefaultSyncEntityMessage;
+import tools.datasync.model.DefaultSyncEntityMessage;
 
 public class JdbcJsonIterator implements Iterator<SyncEntityMessage> {
 

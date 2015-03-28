@@ -1,17 +1,17 @@
-package tools.datasync.basic.model;
+package tools.datasync.model;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import tools.datasync.basic.model.convert.BooleanConverter;
-import tools.datasync.basic.model.convert.Converter;
-import tools.datasync.basic.model.convert.DateConverter;
-import tools.datasync.basic.model.convert.DoubleConverter;
-import tools.datasync.basic.model.convert.IntegerConverter;
-import tools.datasync.basic.model.convert.LongConverter;
-import tools.datasync.basic.model.convert.StringConverter;
+import tools.datasync.model.convert.BooleanConverter;
+import tools.datasync.model.convert.Converter;
+import tools.datasync.model.convert.DateConverter;
+import tools.datasync.model.convert.DoubleConverter;
+import tools.datasync.model.convert.IntegerConverter;
+import tools.datasync.model.convert.LongConverter;
+import tools.datasync.model.convert.StringConverter;
 
 public class SyncEntityMessageSupport {
 

@@ -21,7 +21,7 @@
  */
 package tools.datasync.seed;
 
-import tools.datasync.basic.model.SeedRecord;
+import tools.datasync.model.SeedRecord;
 
 public interface SeedProducer {
 

@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import tools.datasync.api.msg.SyncEntityMessage;
-import tools.datasync.basic.model.DefaultSyncEntityMessage;
+import tools.datasync.model.DefaultSyncEntityMessage;
 
 public class SyncEntityMessageResultMapper implements
 	ResultMapper<SyncEntityMessage> {

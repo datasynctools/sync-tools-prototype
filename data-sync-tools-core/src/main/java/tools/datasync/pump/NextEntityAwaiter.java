@@ -10,8 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
-import tools.datasync.basic.model.EnityId;
-import tools.datasync.basic.model.SeedRecord;
+import tools.datasync.model.EnityId;
+import tools.datasync.model.SeedRecord;
 import tools.datasync.utils.StringUtils;
 import tools.datasync.utils.TimeSpan;
 
