@@ -1,6 +1,5 @@
 package tools.datasync.basic.logic;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Iterator;
@@ -39,7 +38,7 @@ public class DbTableComparator {
     }
 
     public void compare(String entityName) throws InputMismatchException,
-	    SQLException {
+	    Exception {
 
 	LOG.info(">>> Comparing tables: " + entityName);
 	Map<String, SyncEntityMessage> sourceMap = mapResults(sourceDao

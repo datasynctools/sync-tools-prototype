@@ -117,7 +117,7 @@ public class GenericJdbcDao implements GenericDao {
     }
 
     public void save(String entityName, SyncEntityMessage recordData)
-	    throws SQLException {
+	    throws Exception {
 
 	Connection connection = null;
 	Statement statement = null;
@@ -134,6 +134,7 @@ public class GenericJdbcDao implements GenericDao {
 	    // LOG.debug("db [{}] : {}", dbName, insert);
 	    connection.commit();
 	} finally {
+
 	    if (statement != null) {
 		try {
 		    statement.close();
@@ -168,15 +169,17 @@ public class GenericJdbcDao implements GenericDao {
 
 	} finally {
 
-	    JdbcCloseUtils.closeRuntimeException(connection, statement);
+	    JdbcCloseUtils.closeRuntimeException(statement, connection);
 
 	}
     }
 
-    public void saveOrUpdate(String entityName, SyncEntityMessage syncEntityMsg,
-	    String keyColumn) throws SQLException {
+    public void saveOrUpdate(String entityName,
+	    SyncEntityMessage syncEntityMsg, String keyColumn)
+	    throws SQLException {
 
-	jdbcMutator.saveOrUpdate(entityName, entityName, syncEntityMsg, keyColumn);
+	jdbcMutator.saveOrUpdate(entityName, entityName, syncEntityMsg,
+		keyColumn);
 
     }
 
@@ -184,7 +187,8 @@ public class GenericJdbcDao implements GenericDao {
 	    List<SyncEntityMessage> syncEntityMsgList, String keyColumn)
 	    throws SQLException {
 	LOG.debug(dbName + ": saveOrUpdate() - entityName=" + entityName
-		+ ", count=" + syncEntityMsgList.size() + ", keyColumn=" + keyColumn);
+		+ ", count=" + syncEntityMsgList.size() + ", keyColumn="
+		+ keyColumn);
 	for (SyncEntityMessage syncEntityMsg : syncEntityMsgList) {
 	    this.saveOrUpdate(entityName, syncEntityMsg, keyColumn);
 	}

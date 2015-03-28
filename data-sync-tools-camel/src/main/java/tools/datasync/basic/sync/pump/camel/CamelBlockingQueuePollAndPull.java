@@ -48,7 +48,6 @@ public class CamelBlockingQueuePollAndPull extends AbstractPartialBlockingQueue
 
     public SyncMessage poll(long timeout, TimeUnit unit)
 	    throws InterruptedException {
-
 	String obj = "";
 	Date start = new Date();
 	Date end = new Date();
@@ -70,7 +69,6 @@ public class CamelBlockingQueuePollAndPull extends AbstractPartialBlockingQueue
 	} while (continueMe(start, end, duration));
 	LOG.debug("No message in timeout period");
 	return null;
-
     }
 
     private SyncMessage processResponse(String response) {
@@ -87,7 +85,6 @@ public class CamelBlockingQueuePollAndPull extends AbstractPartialBlockingQueue
 	LOG.debug("SyncMessage {}", syncMessage);
 
 	return (syncMessage);
-
     }
 
     public void setSyncMessageFromStringer(

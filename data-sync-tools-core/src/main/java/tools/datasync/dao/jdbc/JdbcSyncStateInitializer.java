@@ -1,7 +1,6 @@
 package tools.datasync.dao.jdbc;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -52,7 +51,7 @@ public class JdbcSyncStateInitializer implements SyncStateInitializer {
 	return tables;
     }
 
-    public void doSeed() throws SQLException, IOException {
+    public void doSeed() throws Exception {
 
 	for (String table : tables) {
 

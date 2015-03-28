@@ -2,8 +2,6 @@ package tools.datasync.basic.sync.pump;
 
 import static tools.datasync.api.msg.SyncMessageType.BEGIN_SEED;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -27,8 +25,7 @@ public class SenderPreAckLogic {
     // TODO does the message number make sense? how is it used? think it's just
     // extraneous and should be removed
     public SenderPreAckLogicResult preAckMain(AtomicBoolean isRunning,
-	    AtomicBoolean stopper, long messageNumber) throws SQLException,
-	    IOException, InterruptedException {
+	    AtomicBoolean stopper, long messageNumber) throws Exception {
 
 	messageNumber = initialze(messageNumber);
 
@@ -46,8 +43,7 @@ public class SenderPreAckLogic {
 
     }
 
-    private long initialze(long messageNumber) throws SQLException,
-	    IOException, InterruptedException {
+    private long initialze(long messageNumber) throws Exception {
 	syncStateInitializer.setIsRunning(true);
 	syncStateInitializer.doSeed();
 	syncStateInitializer.setIsRunning(false);

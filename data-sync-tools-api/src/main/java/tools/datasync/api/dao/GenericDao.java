@@ -21,7 +21,6 @@
  */
 package tools.datasync.api.dao;
 
-import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,24 +29,24 @@ import tools.datasync.api.msg.SyncEntityMessage;
 public interface GenericDao {
 
     public Iterator<SyncEntityMessage> selectAll(String entityName,
-	    boolean sorted) throws SQLException;
+	    boolean sorted) throws Exception;
 
     public void saveOrUpdate(String entityName,
 	    List<SyncEntityMessage> jsonList, String keyColumn)
-	    throws SQLException;
+	    throws Exception;
 
     public void saveOrUpdate(String entityName, SyncEntityMessage json,
-	    String keyColumn) throws SQLException;
+	    String keyColumn) throws Exception;
 
     public void save(String entityName, SyncEntityMessage json)
-	    throws SQLException;
+	    throws Exception;
 
     public void update(String entityName, SyncEntityMessage json,
-	    String keyColumn) throws SQLException;
+	    String keyColumn) throws Exception;
 
     public SyncEntityMessage select(String tableName, String recordId)
-	    throws SQLException;
+	    throws Exception;
 
     public SyncEntityMessage selectState(String entityId, String recordId)
-	    throws SQLException;
+	    throws Exception;
 }

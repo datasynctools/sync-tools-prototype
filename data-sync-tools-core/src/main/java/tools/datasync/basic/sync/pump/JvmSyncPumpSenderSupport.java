@@ -1,14 +1,10 @@
 package tools.datasync.basic.sync.pump;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import tools.datasync.api.msg.SyncMessage;
-import tools.datasync.basic.seed.SeedException;
-import tools.datasync.basic.seed.SeedOverException;
 import tools.datasync.basic.seed.SeedProducer;
 
 public class JvmSyncPumpSenderSupport {
@@ -37,8 +33,7 @@ public class JvmSyncPumpSenderSupport {
 		.getNextEntityAwaiter());
     }
 
-    public void runMain() throws SQLException, IOException,
-	    InterruptedException, SeedOverException, SeedException {
+    public void runMain() throws Exception {
 
 	SenderPreAckLogicResult result = senderPreAckLogic.preAckMain(
 		isRunning, stopper, messageNumber);

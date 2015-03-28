@@ -22,7 +22,6 @@
 package tools.datasync.basic.seed;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -108,7 +107,7 @@ public class DbSeedProducer implements SeedProducer {
 	    try {
 		this.currentJsonIterator = genericDao
 			.selectAll(tableName, true);
-	    } catch (SQLException e) {
+	    } catch (Exception e) {
 		throw new SeedException(e);
 	    }
 	    // Invoke for the first time...
