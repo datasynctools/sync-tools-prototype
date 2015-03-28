@@ -1,4 +1,4 @@
-package tools.datasync.basic.dao;
+package tools.datasync.dao.jdbc;
 
 import java.io.Closeable;
 import java.sql.ResultSet;
@@ -10,6 +10,7 @@ import java.util.List;
 
 import tools.datasync.basic.model.IdGetter;
 import tools.datasync.basic.model.SyncEntityMessage;
+import tools.datasync.dao.ResultMapper;
 
 public class SyncEntityMessageIteratorResultMapper implements
 	ResultMapper<Iterator<SyncEntityMessage>> {
@@ -33,6 +34,8 @@ public class SyncEntityMessageIteratorResultMapper implements
 	}
 	Collections.sort(primaryKeyColumns);
 
+	// TODO Create an abstraction to have pluggable formats (not bound to
+	// JSON)
 	return (new JdbcJsonIterator(result, entityName, primaryKeyColumns,
 		closable));
 

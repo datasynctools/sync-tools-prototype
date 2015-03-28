@@ -1,13 +1,13 @@
-package tools.datasync.basic.dao;
+package tools.datasync.dao.jdbc;
 
 import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.utils.SqlGenUtil;
 
-public class InsertSqlCreator implements SqlCreator {
+public class UpdateSqlCreator implements SqlCreator {
 
     public String createSQL(String entityName, SyncEntityMessage json,
 	    String keyColumn) {
-	String sql = SqlGenUtil.getInsertStatement(entityName, json);
+	String sql = SqlGenUtil.getUpdateStatement(entityName, json, keyColumn);
 	return sql;
     }
 

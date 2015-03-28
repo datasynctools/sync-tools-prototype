@@ -7,12 +7,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import tools.datasync.api.utils.HashGenerator;
 import tools.datasync.api.utils.Stringify;
-import tools.datasync.basic.dao.GenericDao;
-import tools.datasync.basic.dao.GenericJdbcDao;
-import tools.datasync.basic.dao.SyncPairConfig;
 import tools.datasync.basic.logic.ConflictResolver;
 import tools.datasync.basic.seed.DbSeedProducer;
 import tools.datasync.basic.seed.SeedConsumer;
+import tools.datasync.dao.GenericDao;
+import tools.datasync.dao.SyncPairConfig;
+import tools.datasync.dao.jdbc.GenericJdbcDao;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more

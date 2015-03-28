@@ -2,10 +2,10 @@ package tools.datasync.basic.seed;
 
 import tools.datasync.api.utils.HashGenerator;
 import tools.datasync.api.utils.Stringify;
-import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.logic.ConflictResolver;
 import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.IdGetter;
+import tools.datasync.dao.GenericDao;
 
 public class DbSeedConsumerFactory implements SeedConsumerFactory {
 

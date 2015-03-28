@@ -82,14 +82,14 @@
 	
 	<bean id="sampleAppTableNameGetter" class="tools.datasync.core.sampleapp.SampleAppTableNameGetter" />
 	
-	<bean id="sourceDao" class="tools.datasync.basic.dao.GenericJdbcDao">
+	<bean id="sourceDao" class="tools.datasync.dao.jdbc.GenericJdbcDao">
 		<constructor-arg ref="dataSourceA"/>
 		<constructor-arg value="db-A"/>
 		<constructor-arg ref="entityGetter" />
 		<constructor-arg ref="sampleAppTableNameGetter"/>
 	</bean>
 	
-	<bean id="targetDao" class="tools.datasync.basic.dao.GenericJdbcDao">
+	<bean id="targetDao" class="tools.datasync.dao.jdbc.GenericJdbcDao">
 		<constructor-arg ref="dataSourceB"/>
 		<constructor-arg value="db-B"/>
 		<constructor-arg ref="entityGetter" />
@@ -103,13 +103,13 @@
 	
 	<bean id="initiatorWinsConflictResolverFactor" class="tools.datasync.basic.logic.InitiatorWinsConflictResolverFactory" />
 	
-	<bean id="daoPairA" class="tools.datasync.basic.dao.SyncPairConfig">
+	<bean id="daoPairA" class="tools.datasync.dao.SyncPairConfig">
 		<constructor-arg ref="sourceDao" />
 		<constructor-arg ref="targetDao" />
 		<constructor-arg ref="seedConsumerFactory" />
 		<constructor-arg ref="initiatorWinsConflictResolverFactor" />		
 	</bean>
-	<bean id="daoPairB" class="tools.datasync.basic.dao.SyncPairConfig">
+	<bean id="daoPairB" class="tools.datasync.dao.SyncPairConfig">
 		<constructor-arg ref="targetDao" />
 		<constructor-arg ref="sourceDao" />
 		<constructor-arg ref="seedConsumerFactory" />
@@ -177,14 +177,14 @@
 		<constructor-arg ref="entityGetter" />
 	</bean>
 	
-	<bean id="syncStateInitializerA" class="tools.datasync.basic.dao.JdbcSyncStateInitializer">
+	<bean id="syncStateInitializerA" class="tools.datasync.dao.jdbc.JdbcSyncStateInitializer">
 		<constructor-arg ref="tables"/>
 		<constructor-arg ref="entityGetter" />
 		<constructor-arg ref="sampleSyncIdGetter"/>		
 		<constructor-arg ref="sourceDao"/>
 	</bean>
 
-	<bean id="syncStateInitializerB" class="tools.datasync.basic.dao.JdbcSyncStateInitializer">
+	<bean id="syncStateInitializerB" class="tools.datasync.dao.jdbc.JdbcSyncStateInitializer">
 		<constructor-arg ref="tables"/>
 		<constructor-arg ref="entityGetter" />
 		<constructor-arg ref="sampleSyncIdGetter"/>		

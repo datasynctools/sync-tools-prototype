@@ -29,12 +29,12 @@ import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.utils.HashGenerator;
 import tools.datasync.api.utils.Stringify;
-import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.logic.ConflictResolver;
 import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.IdGetter;
 import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.basic.model.SyncEntityMessage;
+import tools.datasync.dao.GenericDao;
 import tools.datasync.data.formats.json.Jsonify;
 import tools.datasync.utils.Md5HashGenerator;
 import tools.datasync.utils.ObjectMapperFactory;

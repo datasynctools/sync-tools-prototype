@@ -14,10 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import tools.datasync.basic.dao.GenericDao;
 import tools.datasync.basic.logic.DbTableComparator;
 import tools.datasync.basic.sync.SyncOrchestrationManager;
 import tools.datasync.basic.sync.SyncSession;
+import tools.datasync.dao.GenericDao;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more

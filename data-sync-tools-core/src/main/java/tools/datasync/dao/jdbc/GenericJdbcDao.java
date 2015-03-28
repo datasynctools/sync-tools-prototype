@@ -19,7 +19,7 @@
  * @version 1.0
  * @since   2014-11-10
  */
-package tools.datasync.basic.dao;
+package tools.datasync.dao.jdbc;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -36,6 +36,8 @@ import org.slf4j.LoggerFactory;
 import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.IdGetter;
 import tools.datasync.basic.model.SyncEntityMessage;
+import tools.datasync.dao.GenericDao;
+import tools.datasync.dao.SyncEntityMessageResultMapper;
 import tools.datasync.utils.SqlGenUtil;
 import tools.datasync.utils.StringUtils;
 
@@ -143,18 +145,19 @@ public class GenericJdbcDao implements GenericDao {
 	}
     }
 
-    public void update(String entityName, SyncEntityMessage json,
+    public void update(String entityName, SyncEntityMessage syncEntityMsg,
 	    String keyColumn) throws SQLException {
 
-	LOG.debug(dbName + ": update() - entityName=" + entityName + ", json="
-		+ json + ", keyColumn=" + keyColumn);
+	LOG.debug(dbName + ": update() - entityName=" + entityName
+		+ ", syncEntityMsg=" + syncEntityMsg + ", keyColumn="
+		+ keyColumn);
 	Connection connection = null;
 	Statement statement = null;
 
 	try {
 	    // Try update statement...
-	    String update = SqlGenUtil.getUpdateStatement(entityName, json,
-		    keyColumn);
+	    String update = SqlGenUtil.getUpdateStatement(entityName,
+		    syncEntityMsg, keyColumn);
 	    LOG.debug(dbName + ": update() - " + update);
 	    connection = dataSource.getConnection();
 	    statement = connection.createStatement();
@@ -170,20 +173,20 @@ public class GenericJdbcDao implements GenericDao {
 	}
     }
 
-    public void saveOrUpdate(String entityName, SyncEntityMessage json,
+    public void saveOrUpdate(String entityName, SyncEntityMessage syncEntityMsg,
 	    String keyColumn) throws SQLException {
 
-	jdbcMutator.saveOrUpdate(entityName, entityName, json, keyColumn);
+	jdbcMutator.saveOrUpdate(entityName, entityName, syncEntityMsg, keyColumn);
 
     }
 
     public void saveOrUpdate(String entityName,
-	    List<SyncEntityMessage> jsonList, String keyColumn)
+	    List<SyncEntityMessage> syncEntityMsgList, String keyColumn)
 	    throws SQLException {
 	LOG.debug(dbName + ": saveOrUpdate() - entityName=" + entityName
-		+ ", count=" + jsonList.size() + ", keyColumn=" + keyColumn);
-	for (SyncEntityMessage json : jsonList) {
-	    this.saveOrUpdate(entityName, json, keyColumn);
+		+ ", count=" + syncEntityMsgList.size() + ", keyColumn=" + keyColumn);
+	for (SyncEntityMessage syncEntityMsg : syncEntityMsgList) {
+	    this.saveOrUpdate(entityName, syncEntityMsg, keyColumn);
 	}
     }
 

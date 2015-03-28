@@ -1,4 +1,4 @@
-package tools.datasync.basic.dao;
+package tools.datasync.dao;
 
 import java.io.Closeable;
 import java.sql.ResultSet;
@@ -13,17 +13,17 @@ public class SyncEntityMessageResultMapper implements
 	    Closeable closable) throws SQLException {
 	if (result.next()) {
 
-	    SyncEntityMessage json = new SyncEntityMessage();
-	    json.setEntity(entityName);
+	    SyncEntityMessage syncEntityMsg = new SyncEntityMessage();
+	    syncEntityMsg.setEntity(entityName);
 	    int count = result.getMetaData().getColumnCount();
 	    for (int index = 1; index <= count; index++) {
 		String columnName = result.getMetaData().getColumnName(index);
 		Object value = result.getObject(index);
 
-		json.set(columnName.toUpperCase(), value);
+		syncEntityMsg.set(columnName.toUpperCase(), value);
 	    }
 
-	    return json;
+	    return syncEntityMsg;
 	} else {
 	    return null;
 	}

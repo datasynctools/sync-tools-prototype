@@ -1,4 +1,4 @@
-package tools.datasync.basic.dao;
+package tools.datasync.dao.jdbc;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -8,6 +8,8 @@ import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import tools.datasync.dao.ResultMapper;
 
 public class JdbcSelectionHelper<T> {
 

@@ -19,7 +19,7 @@
  * @version 1.0
  * @since   2014-11-10
  */
-package tools.datasync.basic.dao;
+package tools.datasync.dao;
 
 import java.sql.SQLException;
 import java.util.Iterator;

@@ -1,4 +1,4 @@
-package tools.datasync.basic.dao;
+package tools.datasync.dao.jdbc;
 
 import tools.datasync.basic.model.SyncEntityMessage;
 

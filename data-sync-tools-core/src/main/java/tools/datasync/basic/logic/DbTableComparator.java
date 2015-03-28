@@ -9,9 +9,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tools.datasync.basic.dao.GenericDao;
-import tools.datasync.basic.dao.GenericJdbcDao;
 import tools.datasync.basic.model.SyncEntityMessage;
+import tools.datasync.dao.GenericDao;
+import tools.datasync.dao.jdbc.GenericJdbcDao;
 
 //TODO Is this better in a utility class or test class and not in core?
 public class DbTableComparator {

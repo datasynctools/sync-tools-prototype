@@ -1,4 +1,4 @@
-package tools.datasync.basic.dao;
+package tools.datasync.dao;
 
 import tools.datasync.basic.logic.ConflictResolverFactory;
 import tools.datasync.basic.seed.SeedConsumerFactory;

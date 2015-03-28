@@ -1,4 +1,4 @@
-package tools.datasync.basic.dao;
+package tools.datasync.dao.jdbc;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -17,6 +17,7 @@ import tools.datasync.basic.model.EntityGetter;
 import tools.datasync.basic.model.IdGetter;
 import tools.datasync.basic.model.SyncEntityMessage;
 import tools.datasync.basic.sync.pump.SyncStateInitializer;
+import tools.datasync.dao.GenericDao;
 import tools.datasync.data.formats.json.Jsonify;
 import tools.datasync.utils.Md5HashGenerator;
 import tools.datasync.utils.StringUtils;

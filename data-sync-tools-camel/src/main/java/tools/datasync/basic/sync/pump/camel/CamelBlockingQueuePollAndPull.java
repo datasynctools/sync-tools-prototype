@@ -5,13 +5,13 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ProducerTemplate;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
+import tools.datasync.api.msg.SyncMessageFromT;
 import tools.datasync.data.formats.json.Jsonify;
-import tools.datasync.utils.ObjectMapperFactory;
+import tools.datasync.data.formats.json.SyncMessageFromJson;
 import tools.datasync.utils.StringUtils;
 
 public class CamelBlockingQueuePollAndPull extends AbstractPartialBlockingQueue
@@ -23,7 +23,7 @@ public class CamelBlockingQueuePollAndPull extends AbstractPartialBlockingQueue
     private String updateUri;
     private String requestUri;
 
-    private ObjectMapper jsonMapper = ObjectMapperFactory.getInstance();
+    private SyncMessageFromT<String> syncMessageFromStringer = new SyncMessageFromJson();
     private Jsonify jsonify = new Jsonify();
 
     private ProducerTemplate template;
@@ -78,9 +78,9 @@ public class CamelBlockingQueuePollAndPull extends AbstractPartialBlockingQueue
     }
 
     private SyncMessage processResponse(String response) {
-	SyncMessage syncMessage = null;
+	SyncMessage syncMessage;
 	try {
-	    syncMessage = jsonMapper.readValue(response, SyncMessage.class);
+	    syncMessage = syncMessageFromStringer.create(response);
 	} catch (Exception e) {
 	    LOG.error("Bad data [{}]", response, e);
 	    throw (new RuntimeException("Bad Data", e));
@@ -92,6 +92,11 @@ public class CamelBlockingQueuePollAndPull extends AbstractPartialBlockingQueue
 
 	return (syncMessage);
 
+    }
+
+    public void setSyncMessageFromStringer(
+	    SyncMessageFromT<String> syncMessageFromStringer) {
+	this.syncMessageFromStringer = syncMessageFromStringer;
     }
 
     public String toString() {

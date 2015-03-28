@@ -1,4 +1,4 @@
-package tools.datasync.basic.dao;
+package tools.datasync.dao;
 
 import java.io.Closeable;
 import java.io.IOException;
