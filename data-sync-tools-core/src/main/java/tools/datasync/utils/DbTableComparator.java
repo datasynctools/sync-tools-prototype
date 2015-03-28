@@ -69,8 +69,8 @@ public class DbTableComparator {
 	    if (targetMap.containsKey(sourceKey)) {
 		SyncEntityMessage target = targetMap.get(sourceKey);
 		if (source.equals(target)) {
-		    LOG.info("Records match in entity " + entityName
-			    + " and record " + sourceKey + ", json=" + source);
+		    LOG.info("Records match in entity {} and record {}",
+			    entityName, sourceKey);
 		    // Remove the value from the target map (will use later to
 		    // make sure there aren't missing values in source)
 		    targetMap.remove(sourceKey);
