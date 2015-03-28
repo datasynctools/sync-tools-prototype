@@ -19,13 +19,13 @@
  * @version 1.0
  * @since   2014-11-10
  */
-package tools.datasync.dao;
+package tools.datasync.api.dao;
 
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 
-import tools.datasync.basic.model.SyncEntityMessage;
+import tools.datasync.api.msg.SyncEntityMessage;
 
 public interface GenericDao {
 

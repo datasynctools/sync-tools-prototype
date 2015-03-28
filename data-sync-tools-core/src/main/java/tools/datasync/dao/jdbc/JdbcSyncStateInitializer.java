@@ -12,12 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.dao.EntityGetter;
+import tools.datasync.api.dao.GenericDao;
 import tools.datasync.api.dao.IdGetter;
+import tools.datasync.api.msg.SyncEntityMessage;
 import tools.datasync.api.utils.HashGenerator;
 import tools.datasync.api.utils.Stringify;
-import tools.datasync.basic.model.SyncEntityMessage;
+import tools.datasync.basic.model.DefaultSyncEntityMessage;
 import tools.datasync.basic.sync.pump.SyncStateInitializer;
-import tools.datasync.dao.GenericDao;
 import tools.datasync.dataformats.json.Jsonify;
 import tools.datasync.utils.Md5HashGenerator;
 import tools.datasync.utils.StringUtils;
@@ -62,7 +63,7 @@ public class JdbcSyncStateInitializer implements SyncStateInitializer {
 	    while (jsonIterator.hasNext()) {
 		SyncEntityMessage record = jsonIterator.next();
 
-		SyncEntityMessage syncState = new SyncEntityMessage();
+		SyncEntityMessage syncState = new DefaultSyncEntityMessage();
 
 		fillSyncEntityMessage(syncState, record, table);
 

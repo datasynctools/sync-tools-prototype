@@ -10,7 +10,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tools.datasync.basic.model.SyncEntityMessage;
+import tools.datasync.api.msg.SyncEntityMessage;
+import tools.datasync.basic.model.DefaultSyncEntityMessage;
 
 public class JdbcJsonIterator implements Iterator<SyncEntityMessage> {
 
@@ -61,7 +62,7 @@ public class JdbcJsonIterator implements Iterator<SyncEntityMessage> {
     }
 
     private SyncEntityMessage nextLogic() throws SQLException {
-	SyncEntityMessage json = new SyncEntityMessage();
+	SyncEntityMessage json = new DefaultSyncEntityMessage();
 	json.setEntity(entityName);
 
 	StringBuffer sbPrimaryKey = new StringBuffer();

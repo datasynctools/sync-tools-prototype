@@ -21,7 +21,7 @@
  */
 package tools.datasync.basic.logic;
 
-import tools.datasync.basic.model.SyncEntityMessage;
+import tools.datasync.api.msg.SyncEntityMessage;
 
 public interface ConflictResolver {
 

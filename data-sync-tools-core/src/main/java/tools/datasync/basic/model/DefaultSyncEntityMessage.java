@@ -26,13 +26,14 @@ package tools.datasync.basic.model;
 import java.io.Serializable;
 import java.util.Map;
 
+import tools.datasync.api.msg.SyncEntityMessage;
 import tools.datasync.api.msg.SyncPayloadData;
 
 //TODO Doug comment: While I see what this class is doing at a high level, I think it can be further reduced.
 //For instance, it can be altered to reduce the number of non-native objects being created and 
 //to better support a pluggable data format.
-public class SyncEntityMessage extends SyncPayloadData implements Cloneable,
-	Serializable {
+public class DefaultSyncEntityMessage extends SyncPayloadData implements
+	SyncEntityMessage, Cloneable, Serializable {
 
     private static final long serialVersionUID = 1052072136660446741L;
 
@@ -40,7 +41,7 @@ public class SyncEntityMessage extends SyncPayloadData implements Cloneable,
     private String calculatedPrimaryKey;
     private SyncEntityMessageSupport support;
 
-    public SyncEntityMessage() {
+    public DefaultSyncEntityMessage() {
 	support = new SyncEntityMessageSupport();
     }
 
@@ -116,12 +117,13 @@ public class SyncEntityMessage extends SyncPayloadData implements Cloneable,
 	if (getClass() != obj.getClass())
 	    return false;
 
-	SyncEntityMessage other = (SyncEntityMessage) obj;
+	DefaultSyncEntityMessage other = (DefaultSyncEntityMessage) obj;
 	return equals(this, other);
     }
 
     // TODO Is this approach still needed given the current implementation?
-    private boolean equals(SyncEntityMessage me, SyncEntityMessage other) {
+    private boolean equals(DefaultSyncEntityMessage me,
+	    DefaultSyncEntityMessage other) {
 	Map<String, Object> myProps = support.getData();
 	Map<String, Object> otherProps = other.getData();
 	if (myProps == null) {

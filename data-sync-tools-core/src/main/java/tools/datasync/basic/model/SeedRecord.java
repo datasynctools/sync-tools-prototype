@@ -23,6 +23,7 @@ package tools.datasync.basic.model;
 
 import java.io.Serializable;
 
+import tools.datasync.api.msg.SyncEntityMessage;
 import tools.datasync.api.msg.SyncPayloadData;
 
 public class SeedRecord extends SyncPayloadData implements Serializable,

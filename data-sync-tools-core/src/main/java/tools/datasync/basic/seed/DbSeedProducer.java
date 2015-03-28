@@ -32,11 +32,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.dao.EntityGetter;
+import tools.datasync.api.dao.GenericDao;
+import tools.datasync.api.msg.SyncEntityMessage;
 import tools.datasync.api.utils.HashGenerator;
 import tools.datasync.api.utils.Stringify;
 import tools.datasync.basic.model.SeedRecord;
-import tools.datasync.basic.model.SyncEntityMessage;
-import tools.datasync.dao.GenericDao;
 import tools.datasync.dataformats.json.Jsonify;
 import tools.datasync.utils.Md5HashGenerator;
 import tools.datasync.utils.StringUtils;

@@ -16,28 +16,37 @@
  * 
  * @author  Upendra Jariya
  * @sponsor Douglas Johnson
+ * @copyright datasync.tools
  * @version 1.0
- * @since   2014-11-10
+ * @since   20-Nov-2014
  */
-package tools.datasync.basic.logic;
 
-import tools.datasync.api.msg.SyncEntityMessage;
+package tools.datasync.api.msg;
 
-public class InitiatorWinsConflictResolver implements ConflictResolver {
+import java.util.Map;
 
-    boolean isInitiator = false;
+public interface SyncEntityMessage {
 
-    public InitiatorWinsConflictResolver(boolean isInitiator) {
+    void set(String name, Object value);
 
-	this.isInitiator = isInitiator;
-    }
+    Object get(String name);
 
-    public SyncEntityMessage resolve(SyncEntityMessage my,
-	    SyncEntityMessage theirs) throws ConflictException {
+    String getType(String name);
 
-	if (isInitiator) {
-	    return null;
-	}
-	return theirs;
-    }
+    String getEntity();
+
+    void setEntity(String entity);
+
+    String getCalculatedPrimaryKey();
+
+    void setCalculatedPrimaryKey(String calculatedPrimaryKey);
+
+    Map<String, Object> getData();
+
+    void setData(Map<String, Object> props);
+
+    Map<String, String> getTypes();
+
+    void setTypes(Map<String, String> types);
+
 }

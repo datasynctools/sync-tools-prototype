@@ -9,7 +9,7 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tools.datasync.basic.model.SyncEntityMessage;
+import tools.datasync.api.msg.SyncEntityMessage;
 import tools.datasync.utils.SqlGenUtil;
 
 public class JdbcMutationHelper {

@@ -34,9 +34,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.dao.EntityGetter;
+import tools.datasync.api.dao.GenericDao;
 import tools.datasync.api.dao.IdGetter;
-import tools.datasync.basic.model.SyncEntityMessage;
-import tools.datasync.dao.GenericDao;
+import tools.datasync.api.msg.SyncEntityMessage;
 import tools.datasync.dao.SyncEntityMessageResultMapper;
 import tools.datasync.utils.SqlGenUtil;
 import tools.datasync.utils.StringUtils;

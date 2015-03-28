@@ -28,13 +28,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.dao.EntityGetter;
+import tools.datasync.api.dao.GenericDao;
 import tools.datasync.api.dao.IdGetter;
+import tools.datasync.api.msg.SyncEntityMessage;
 import tools.datasync.api.utils.HashGenerator;
 import tools.datasync.api.utils.Stringify;
 import tools.datasync.basic.logic.ConflictResolver;
+import tools.datasync.basic.model.DefaultSyncEntityMessage;
 import tools.datasync.basic.model.SeedRecord;
-import tools.datasync.basic.model.SyncEntityMessage;
-import tools.datasync.dao.GenericDao;
 import tools.datasync.dataformats.json.Jsonify;
 import tools.datasync.utils.Md5HashGenerator;
 import tools.datasync.utils.ObjectMapperFactory;
@@ -117,7 +118,7 @@ public class DbSeedConsumer implements SeedConsumer {
 	genericDao.save(entityName, recordData);
 
 	// 2. insert the SyncState table with the new value
-	SyncEntityMessage syncState = new SyncEntityMessage();
+	SyncEntityMessage syncState = new DefaultSyncEntityMessage();
 	syncState.setEntity(entityGetter.getSyncStateName());
 	syncState.set("ENTITYID", entityGetter.getId(entityName));
 	syncState.set("RECORDID", recordData.getCalculatedPrimaryKey());
@@ -201,7 +202,7 @@ public class DbSeedConsumer implements SeedConsumer {
 	    String entityName) throws Exception {
 	// 3. update the SyncState table with the newly
 	// calculated hash
-	SyncEntityMessage syncState = new SyncEntityMessage();
+	SyncEntityMessage syncState = new DefaultSyncEntityMessage();
 	syncState.setEntity(entityGetter.getSyncStateName());
 	syncState.set("ENTITYID", entityGetter.getId(entityName));
 	syncState.set("RECORDID",

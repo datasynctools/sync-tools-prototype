@@ -31,7 +31,7 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
-import tools.datasync.basic.model.SyncEntityMessage;
+import tools.datasync.api.msg.SyncEntityMessage;
 
 public class SqlGenUtil {
 

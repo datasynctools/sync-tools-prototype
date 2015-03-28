@@ -4,7 +4,8 @@ import java.io.Closeable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import tools.datasync.basic.model.SyncEntityMessage;
+import tools.datasync.api.msg.SyncEntityMessage;
+import tools.datasync.basic.model.DefaultSyncEntityMessage;
 
 public class SyncEntityMessageResultMapper implements
 	ResultMapper<SyncEntityMessage> {
@@ -13,7 +14,7 @@ public class SyncEntityMessageResultMapper implements
 	    Closeable closable) throws SQLException {
 	if (result.next()) {
 
-	    SyncEntityMessage syncEntityMsg = new SyncEntityMessage();
+	    SyncEntityMessage syncEntityMsg = new DefaultSyncEntityMessage();
 	    syncEntityMsg.setEntity(entityName);
 	    int count = result.getMetaData().getColumnCount();
 	    for (int index = 1; index <= count; index++) {

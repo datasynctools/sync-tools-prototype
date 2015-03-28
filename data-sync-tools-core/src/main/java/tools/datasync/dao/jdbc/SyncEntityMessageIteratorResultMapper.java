@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import tools.datasync.api.dao.IdGetter;
-import tools.datasync.basic.model.SyncEntityMessage;
+import tools.datasync.api.msg.SyncEntityMessage;
 import tools.datasync.dao.ResultMapper;
 
 public class SyncEntityMessageIteratorResultMapper implements

@@ -1,6 +1,6 @@
 package tools.datasync.dao.jdbc;
 
-import tools.datasync.basic.model.SyncEntityMessage;
+import tools.datasync.api.msg.SyncEntityMessage;
 import tools.datasync.utils.SqlGenUtil;
 
 public class UpdateSqlCreator implements SqlCreator {

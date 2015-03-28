@@ -1,11 +1,11 @@
 package tools.datasync.basic.seed;
 
 import tools.datasync.api.dao.EntityGetter;
+import tools.datasync.api.dao.GenericDao;
 import tools.datasync.api.dao.IdGetter;
 import tools.datasync.api.utils.HashGenerator;
 import tools.datasync.api.utils.Stringify;
 import tools.datasync.basic.logic.ConflictResolver;
-import tools.datasync.dao.GenericDao;
 
 public class DbSeedConsumerFactory implements SeedConsumerFactory {
 
