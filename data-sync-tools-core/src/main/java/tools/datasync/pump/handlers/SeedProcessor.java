@@ -22,7 +22,6 @@ public class SeedProcessor implements SyncMessageProcessor {
 	this.nextEntitySignaler = nextEntitySignaler;
     }
 
-    @Override
     public boolean handle(SyncMessage syncMessage) {
 
 	SeedRecord seed;

@@ -18,7 +18,6 @@ public class BeginSeedProcessor implements SyncMessageProcessor {
 	this.latch = latch;
     }
 
-    @Override
     public boolean handle(SyncMessage syncMessage) {
 
 	latch.countDown();

@@ -9,7 +9,6 @@ public class CopyOnWriteArrayListNextEntitySignaler implements
 
     private CopyOnWriteArrayList<String> arrayList;
 
-    @Override
     public void tellPeerReadyForNextEntity(String previousEntityId) {
 	arrayList.add(previousEntityId);
     }

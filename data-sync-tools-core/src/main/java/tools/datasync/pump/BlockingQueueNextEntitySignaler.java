@@ -32,7 +32,6 @@ public class BlockingQueueNextEntitySignaler implements NextEntitySignaler {
 	this.queue = queue;
     }
 
-    @Override
     public void tellPeerReadyForNextEntity(String previousEntityId) {
 
 	SyncMessage syncMessage = new SyncMessage();

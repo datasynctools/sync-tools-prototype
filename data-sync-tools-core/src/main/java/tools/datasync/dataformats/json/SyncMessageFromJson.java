@@ -10,7 +10,6 @@ public class SyncMessageFromJson implements SyncMessageFromT<String> {
 
     private ObjectMapper jsonMapper = ObjectMapperFactory.getInstance();
 
-    @Override
     public SyncMessage create(String item) {
 	SyncMessage syncMessage;
 	try {

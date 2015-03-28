@@ -9,7 +9,6 @@ import tools.datasync.seed.SeedProducerFactory;
 
 public class DbSeedProducerFactory implements SeedProducerFactory {
 
-    @Override
     public SeedProducer create(List<String> tables, EntityGetter entityGetter,
 	    GenericDao genericDao) {
 	DbSeedProducer seedProducer = new DbSeedProducer(genericDao, tables,
