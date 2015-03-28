@@ -1,8 +1,8 @@
 package tools.datasync.core.sampleapp.sync.creators;
 
 import tools.datasync.api.utils.AbstractSyncRecordFromT;
+import tools.datasync.api.utils.HashFromObject;
 import tools.datasync.core.sampleapp.model.WorkHistory;
-import tools.datasync.utils.HashFromObject;
 
 public class SyncRecordFromWorkHIstory extends
 	AbstractSyncRecordFromT<WorkHistory> {
