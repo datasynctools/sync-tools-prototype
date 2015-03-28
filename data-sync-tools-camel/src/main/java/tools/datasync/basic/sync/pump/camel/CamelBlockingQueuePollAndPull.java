@@ -39,10 +39,6 @@ public class CamelBlockingQueuePollAndPull extends AbstractPartialBlockingQueue
 	String body = jsonify.toString(syncMessage);
 	template.sendBody(updateUri, body);
 	LOG.info("Sent sync message number {}", syncMessage.getMessageNumber());
-
-	// LOG.info("Sent sync message type {}, number {}, hash {}",
-	// syncMessage.getMessageType(), syncMessage.getMessageNumber(),
-	// syncMessage.getPaloadHash());
     }
 
     private boolean continueMe(Date start, Date end, long duration) {
