@@ -19,7 +19,7 @@
  * @version 1.0
  * @since   2014-11-10
  */
-package tools.datasync.basic.seed;
+package tools.datasync.seed.jdbc;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -37,6 +37,9 @@ import tools.datasync.api.utils.HashGenerator;
 import tools.datasync.api.utils.Stringify;
 import tools.datasync.basic.model.SeedRecord;
 import tools.datasync.dataformats.json.Jsonify;
+import tools.datasync.seed.SeedException;
+import tools.datasync.seed.SeedOverException;
+import tools.datasync.seed.SeedProducer;
 import tools.datasync.utils.Md5HashGenerator;
 import tools.datasync.utils.StringUtils;
 

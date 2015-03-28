@@ -5,7 +5,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import tools.datasync.api.msg.SyncMessage;
-import tools.datasync.basic.seed.SeedProducer;
+import tools.datasync.seed.SeedProducer;
 
 public class JvmSyncPumpSenderSupport {
 

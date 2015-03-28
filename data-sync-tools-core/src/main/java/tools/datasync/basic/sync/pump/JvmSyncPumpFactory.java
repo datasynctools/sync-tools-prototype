@@ -9,10 +9,10 @@ import tools.datasync.api.dao.GenericDao;
 import tools.datasync.api.utils.HashGenerator;
 import tools.datasync.api.utils.Stringify;
 import tools.datasync.basic.logic.ConflictResolver;
-import tools.datasync.basic.seed.SeedConsumer;
-import tools.datasync.basic.seed.SeedProducer;
 import tools.datasync.dao.SyncPairConfig;
 import tools.datasync.dao.jdbc.GenericJdbcDao;
+import tools.datasync.seed.SeedConsumer;
+import tools.datasync.seed.SeedProducer;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more

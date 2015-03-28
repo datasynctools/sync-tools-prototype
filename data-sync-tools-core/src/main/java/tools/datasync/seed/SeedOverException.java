@@ -19,7 +19,7 @@
  * @version 1.0
  * @since   2014-11-10
  */
-package tools.datasync.basic.seed;
+package tools.datasync.seed;
 
 //TODO: Remove all framework-specific Exceptions? 
 //Would we rather the framework to use all runtime exceptions. 

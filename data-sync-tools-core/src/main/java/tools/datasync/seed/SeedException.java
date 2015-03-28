@@ -19,13 +19,29 @@
  * @version 1.0
  * @since   2014-11-10
  */
-package tools.datasync.basic.seed;
+package tools.datasync.seed;
 
-import java.io.IOException;
+//TODO: Remove all framework-specific Exceptions? 
+//Would we rather the framework to use all runtime exceptions. 
+//This seems to be an emerging/preferred trend and a personal preference, of Doug Johnson. 
+//This maps better to languages like C#.
+public class SeedException extends Exception {
 
-import tools.datasync.basic.model.SeedRecord;
+    private static final long serialVersionUID = -383765003985920204L;
 
-public interface SeedConsumer {
+    public SeedException() {
 
-    public void consume(SeedRecord seed) throws IOException, SeedException;
+    }
+
+    public SeedException(String message) {
+	super(message);
+    }
+
+    public SeedException(String message, Throwable cause) {
+	super(message, cause);
+    }
+
+    public SeedException(Throwable cause) {
+	super(cause);
+    }
 }

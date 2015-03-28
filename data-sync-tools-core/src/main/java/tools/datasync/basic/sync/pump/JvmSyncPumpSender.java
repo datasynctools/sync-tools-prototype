@@ -12,8 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
-import tools.datasync.basic.seed.SeedOverException;
-import tools.datasync.basic.seed.SeedProducer;
+import tools.datasync.seed.SeedOverException;
+import tools.datasync.seed.SeedProducer;
 import tools.datasync.utils.StringUtils;
 
 /**

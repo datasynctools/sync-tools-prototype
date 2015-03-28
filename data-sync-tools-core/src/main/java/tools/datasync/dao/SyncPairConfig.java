@@ -2,8 +2,8 @@ package tools.datasync.dao;
 
 import tools.datasync.api.dao.GenericDao;
 import tools.datasync.basic.logic.ConflictResolverFactory;
-import tools.datasync.basic.seed.SeedConsumerFactory;
-import tools.datasync.basic.seed.SeedProducerFactory;
+import tools.datasync.seed.SeedConsumerFactory;
+import tools.datasync.seed.SeedProducerFactory;
 
 public class SyncPairConfig {
 

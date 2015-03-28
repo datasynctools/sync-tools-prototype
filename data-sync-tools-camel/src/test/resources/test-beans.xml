@@ -96,11 +96,11 @@
 		<constructor-arg ref="sampleAppTableNameGetter"/>
 	</bean>
 	
-	<bean id="seedConsumerFactory" class="tools.datasync.basic.seed.DbSeedConsumerFactory">
+	<bean id="seedConsumerFactory" class="tools.datasync.seed.jdbc.DbSeedConsumerFactory">
 		<constructor-arg ref="entityGetter" />
 		<constructor-arg ref="sampleAppTableNameGetter"/>	
 	</bean>
-	<bean id="seedProducerFactory" class="tools.datasync.basic.seed.DbSeedProducerFactory" />
+	<bean id="seedProducerFactory" class="tools.datasync.seed.jdbc.DbSeedProducerFactory" />
 	
 	<bean id="initiatorWinsConflictResolverFactor" class="tools.datasync.basic.logic.InitiatorWinsConflictResolverFactory" />
 	

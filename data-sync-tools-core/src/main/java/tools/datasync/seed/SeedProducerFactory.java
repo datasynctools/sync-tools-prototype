@@ -1,4 +1,4 @@
-package tools.datasync.basic.seed;
+package tools.datasync.seed;
 
 import java.util.List;
 

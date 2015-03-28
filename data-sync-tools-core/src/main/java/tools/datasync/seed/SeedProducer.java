@@ -19,13 +19,14 @@
  * @version 1.0
  * @since   2014-11-10
  */
-package tools.datasync.basic.seed;
+package tools.datasync.seed;
 
-import tools.datasync.api.dao.GenericDao;
-import tools.datasync.basic.logic.ConflictResolver;
+import tools.datasync.basic.model.SeedRecord;
 
-public interface SeedConsumerFactory {
+public interface SeedProducer {
 
-    public SeedConsumer create(ConflictResolver conflictResolver,
-	    GenericDao genericDao);
+    public SeedRecord getNextSeed() throws SeedOverException, SeedException;
+
+    public boolean isRunning();
+
 }

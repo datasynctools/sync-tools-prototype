@@ -73,13 +73,13 @@
 	<bean id="stringify" class="tools.datasync.dataformats.json.Jsonify" />
 	<bean id="agentHasher" class="tools.datasync.utils.Md5HashGenerator" />
 	
-	<bean id="seedConsumerFactory" class="tools.datasync.basic.seed.DbSeedConsumerFactory">
+	<bean id="seedConsumerFactory" class="tools.datasync.seed.jdbc.DbSeedConsumerFactory">
 		<constructor-arg ref="entityGetter" />
 		<constructor-arg ref="sampleAppTableNameGetter"/>	
 		<property name="stringify" ref="stringify" />
 		<property name="hasher" ref="agentHasher" />
 	</bean>
-	<bean id="seedProducerFactory" class="tools.datasync.basic.seed.DbSeedProducerFactory" />
+	<bean id="seedProducerFactory" class="tools.datasync.seed.jdbc.DbSeedProducerFactory" />
 	
 	<bean id="initiatorWinsConflictResolverFactor" class="tools.datasync.basic.logic.InitiatorWinsConflictResolverFactory" />
 	

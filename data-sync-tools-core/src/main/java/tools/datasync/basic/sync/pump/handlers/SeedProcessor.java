@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
 import tools.datasync.basic.model.SeedRecord;
-import tools.datasync.basic.seed.SeedConsumer;
 import tools.datasync.basic.sync.pump.NextEntitySignaler;
+import tools.datasync.seed.SeedConsumer;
 
 public class SeedProcessor implements SyncMessageProcessor {
 

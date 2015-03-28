@@ -1,9 +1,11 @@
-package tools.datasync.basic.seed;
+package tools.datasync.seed.jdbc;
 
 import java.util.List;
 
 import tools.datasync.api.dao.EntityGetter;
 import tools.datasync.api.dao.GenericDao;
+import tools.datasync.seed.SeedProducer;
+import tools.datasync.seed.SeedProducerFactory;
 
 public class DbSeedProducerFactory implements SeedProducerFactory {
 

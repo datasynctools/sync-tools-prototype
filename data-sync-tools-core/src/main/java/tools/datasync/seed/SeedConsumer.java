@@ -19,14 +19,13 @@
  * @version 1.0
  * @since   2014-11-10
  */
-package tools.datasync.basic.seed;
+package tools.datasync.seed;
+
+import java.io.IOException;
 
 import tools.datasync.basic.model.SeedRecord;
 
-public interface SeedProducer {
+public interface SeedConsumer {
 
-    public SeedRecord getNextSeed() throws SeedOverException, SeedException;
-
-    public boolean isRunning();
-
+    public void consume(SeedRecord seed) throws IOException, SeedException;
 }

@@ -17,9 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
-import tools.datasync.basic.seed.SeedConsumer;
-import tools.datasync.basic.seed.SeedException;
 import tools.datasync.basic.sync.pump.handlers.SyncMessageHandler;
+import tools.datasync.seed.SeedConsumer;
+import tools.datasync.seed.SeedException;
 import tools.datasync.utils.StringUtils;
 
 /**
