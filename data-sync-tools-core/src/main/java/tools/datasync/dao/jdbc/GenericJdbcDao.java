@@ -29,7 +29,6 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.derby.jdbc.EmbeddedDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -194,31 +193,31 @@ public class GenericJdbcDao implements GenericDao {
 	}
     }
 
-    private void addDerbyEmbddedDataSource(StringBuilder answer) {
-	EmbeddedDataSource embeddedDs = (EmbeddedDataSource) dataSource;
-
-	answer.append(StringUtils.getSimpleName(dataSource));
-	answer.append("{");
-	answer.append("databaseName=");
-	answer.append(embeddedDs.getDatabaseName());
-	answer.append(", ");
-	answer.append("dataSourceName=");
-	answer.append(embeddedDs.getDataSourceName());
-	answer.append(", ");
-	answer.append("connectionAttributes=");
-	answer.append(embeddedDs.getConnectionAttributes());
-	answer.append("}");
-    }
+    // private void addDerbyEmbddedDataSource(StringBuilder answer) {
+    // EmbeddedDataSource embeddedDs = (EmbeddedDataSource) dataSource;
+    //
+    // answer.append(StringUtils.getSimpleName(dataSource));
+    // answer.append("{");
+    // answer.append("databaseName=");
+    // answer.append(embeddedDs.getDatabaseName());
+    // answer.append(", ");
+    // answer.append("dataSourceName=");
+    // answer.append(embeddedDs.getDataSourceName());
+    // answer.append(", ");
+    // answer.append("connectionAttributes=");
+    // answer.append(embeddedDs.getConnectionAttributes());
+    // answer.append("}");
+    // }
 
     private void addDataSource(StringBuilder answer) {
 	answer.append("dataSource=");
-	if (dataSource.getClass().getName()
-		.equals("org.apache.derby.jdbc.EmbeddedDataSource")) {
-	    addDerbyEmbddedDataSource(answer);
-	} else {
-	    answer.append(dataSource);
-	}
-	answer.append(", ");
+	// if (dataSource.getClass().getName()
+	// .equals("org.apache.derby.jdbc.EmbeddedDataSource")) {
+	// addDerbyEmbddedDataSource(answer);
+	// } else {
+	answer.append(dataSource);
+	// }
+	// answer.append(", ");
     }
 
     public String toString() {
