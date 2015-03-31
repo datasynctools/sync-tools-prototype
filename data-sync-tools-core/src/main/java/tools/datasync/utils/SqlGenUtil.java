@@ -156,7 +156,7 @@ public class SqlGenUtil {
     }
 
     private static void handleInsertPrepKeys(Iterator<String> keys,
-	    SyncEntityMessage json, StringBuffer names, StringBuffer values) {
+	    SyncEntityMessage syncEntityMsg, StringBuffer names, StringBuffer values) {
 	while (keys.hasNext()) {
 	    String name = keys.next();
 	    names.append(name);
@@ -170,18 +170,18 @@ public class SqlGenUtil {
     }
 
     public static String getUpdateStatement(String tableName,
-	    SyncEntityMessage json, String keyColumn) {
+	    SyncEntityMessage syncEntityMsg, String keyColumn) {
 
 	StringBuffer sql = new StringBuffer();
 	sql.append("update ");
 	sql.append(tableName);
 	sql.append(" set ");
 
-	Iterator<String> keys = json.getData().keySet().iterator();
+	Iterator<String> keys = syncEntityMsg.getData().keySet().iterator();
 
-	handleUpdateKeys(keys, json, sql);
+	handleUpdateKeys(keys, syncEntityMsg, sql);
 
-	handleUpdateWhere(sql, keyColumn, json);
+	handleUpdateWhere(sql, keyColumn, syncEntityMsg);
 
 	LOG.debug(sql.toString());
 	return sql.toString();

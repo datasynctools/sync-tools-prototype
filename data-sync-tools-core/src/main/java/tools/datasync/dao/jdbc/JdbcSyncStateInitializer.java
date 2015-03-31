@@ -56,11 +56,11 @@ public class JdbcSyncStateInitializer implements SyncStateInitializer {
 	for (String table : tables) {
 
 	    LOG.info("Populating SyncState table for [" + table + "] records");
-	    Iterator<SyncEntityMessage> jsonIterator = genericDao.selectAll(
+	    Iterator<SyncEntityMessage> syncEntityMsgIterator = genericDao.selectAll(
 		    table, true);
 
-	    while (jsonIterator.hasNext()) {
-		SyncEntityMessage record = jsonIterator.next();
+	    while (syncEntityMsgIterator.hasNext()) {
+		SyncEntityMessage record = syncEntityMsgIterator.next();
 
 		SyncEntityMessage syncState = new DefaultSyncEntityMessage();
 

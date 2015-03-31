@@ -124,10 +124,8 @@ public class DbSeedConsumer implements SeedConsumer {
 	syncState.setEntity(entityGetter.getSyncStateName());
 	syncState.set("ENTITYID", entityGetter.getId(entityName));
 	syncState.set("RECORDID", recordData.getCalculatedPrimaryKey());
-	// String recordJson = jsonMapper.writeValueAsString(recordData);
 	String recordString = stringify.toString(recordData);
 	syncState.set("RECORDDATA", recordString);
-	// syncState.set("RECORDHASH", recordData.generateHash());
 	syncState.set("RECORDHASH", seed.getRecordHash());
 
 	// LOG.info("Inserting the SyncState table with the new value [{}]",
@@ -164,6 +162,8 @@ public class DbSeedConsumer implements SeedConsumer {
 	// If the record exists in the SyncState table and the hash
 	// does not match:
 
+	// TODO this is hard coded to JSON. Finish data format abstraction
+	// implementation for this class
 	SyncEntityMessage myJSON = jsonMapper.readValue(
 		String.valueOf(stateRecord.get("RECORDDATA")),
 		SyncEntityMessage.class);

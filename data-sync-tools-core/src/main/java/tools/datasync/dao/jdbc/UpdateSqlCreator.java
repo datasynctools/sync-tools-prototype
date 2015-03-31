@@ -5,9 +5,9 @@ import tools.datasync.utils.SqlGenUtil;
 
 public class UpdateSqlCreator implements SqlCreator {
 
-    public String createSQL(String entityName, SyncEntityMessage json,
+    public String createSQL(String entityName, SyncEntityMessage syncEntityMsg,
 	    String keyColumn) {
-	String sql = SqlGenUtil.getUpdateStatement(entityName, json, keyColumn);
+	String sql = SqlGenUtil.getUpdateStatement(entityName, syncEntityMsg, keyColumn);
 	return sql;
     }
 

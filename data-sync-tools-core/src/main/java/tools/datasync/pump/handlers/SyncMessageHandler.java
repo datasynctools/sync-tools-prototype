@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
+import tools.datasync.api.utils.Stringify;
 import tools.datasync.dataformats.json.Jsonify;
 import tools.datasync.pump.NextEntitySignaler;
 import tools.datasync.seed.SeedConsumer;
@@ -25,7 +26,7 @@ public class SyncMessageHandler {
 
     private Map<String, SyncMessageProcessor> processors = new HashMap<String, SyncMessageProcessor>();
 
-    private Jsonify stringifier = new Jsonify();
+    private Stringify stringifier = new Jsonify();
 
     public SyncMessageHandler(CountDownLatch latch,
 	    CopyOnWriteArrayList<String> arrayList, SeedConsumer seedConsumer,
@@ -41,8 +42,7 @@ public class SyncMessageHandler {
 
     public boolean handle(SyncMessage syncMessage) {
 
-	LOG.debug("Received Sync Message: "
-		+ stringifier.toStringSerialize(syncMessage));
+	LOG.debug("Received Sync Message: " + stringifier.toString(syncMessage));
 	// LOG.info("Received Sync Message: \n"
 	// + stringifier.toStringPretty(syncMessage));
 
@@ -57,4 +57,11 @@ public class SyncMessageHandler {
 	return (processor.handle(syncMessage));
 
     }
+
+    // TODO this object is not set when loaded, fix this so we are not bound to
+    // the Json implementation
+    public void setStringifier(Stringify stringifier) {
+	this.stringifier = stringifier;
+    }
+
 }

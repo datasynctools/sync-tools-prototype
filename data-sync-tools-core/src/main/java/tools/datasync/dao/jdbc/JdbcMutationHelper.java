@@ -29,20 +29,20 @@ public class JdbcMutationHelper {
     }
 
     public void saveOrUpdate(String dbName, String entityName,
-	    SyncEntityMessage json, String keyColumn) throws SQLException {
+	    SyncEntityMessage syncEntityMsg, String keyColumn) throws SQLException {
 	Connection connection = null;
 	Statement statement = null;
 
 	try {
 	    connection = dataSource.getConnection();
 	    statement = connection.createStatement();
-	    executeInsert(statement, entityName, json, keyColumn);
+	    executeInsert(statement, entityName, syncEntityMsg, keyColumn);
 
 	} catch (SQLException ex) {
 	    // May be primary key violation, try update statement...
 	    if (SqlGenUtil.isConstraintViolation(ex)) {
 
-		executeUpdate(statement, entityName, json, keyColumn);
+		executeUpdate(statement, entityName, syncEntityMsg, keyColumn);
 
 	    } else {
 		LOG.error(dbName + ": Failed to insert record", ex);
@@ -56,15 +56,15 @@ public class JdbcMutationHelper {
     }
 
     private void executeInsert(Statement statement, String entityName,
-	    SyncEntityMessage json, String keyColumn) throws SQLException {
-	String sql = insertCreator.createSQL(entityName, json, keyColumn);
+	    SyncEntityMessage syncEntityMsg, String keyColumn) throws SQLException {
+	String sql = insertCreator.createSQL(entityName, syncEntityMsg, keyColumn);
 	LOG.debug(sql + ": saveOrUpdate() - " + sql);
 	statement.execute(sql);
     }
 
     private void executeUpdate(Statement statement, String entityName,
-	    SyncEntityMessage json, String keyColumn) throws SQLException {
-	String sql = updateCreator.createSQL(entityName, json, keyColumn);
+	    SyncEntityMessage syncEntityMsg, String keyColumn) throws SQLException {
+	String sql = updateCreator.createSQL(entityName, syncEntityMsg, keyColumn);
 	LOG.debug(sql + ": saveOrUpdate() - " + sql);
 	statement.execute(sql);
     }

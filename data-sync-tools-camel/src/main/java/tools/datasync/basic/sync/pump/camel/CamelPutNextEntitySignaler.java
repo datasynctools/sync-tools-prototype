@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
+import tools.datasync.api.utils.Stringify;
 import tools.datasync.dataformats.json.Jsonify;
 import tools.datasync.model.EnityId;
 import tools.datasync.pump.NextEntitySignaler;
@@ -20,7 +21,7 @@ public class CamelPutNextEntitySignaler implements NextEntitySignaler {
     private String updateUri;
     private ProducerTemplate template;
 
-    private Jsonify jsonify = new Jsonify();
+    private Stringify stringify = new Jsonify();
 
     public CamelPutNextEntitySignaler(String updateUri,
 	    ProducerTemplate template) {
@@ -39,12 +40,16 @@ public class CamelPutNextEntitySignaler implements NextEntitySignaler {
 	syncMessage.setMessageType(PEER_READY_WITH_NEXT_ENTITY);
 	syncMessage.setTimestamp(System.currentTimeMillis());
 
-	String payload = jsonify.toString(syncMessage);
+	String payload = stringify.toString(syncMessage);
 
 	LOG.info("Sending that next peer is this component is ready for next "
 		+ "entity now that entityId {} complete", previousEntityId);
 	template.sendBody(updateUri, payload);
 
+    }
+
+    public void setStringify(Stringify stringify) {
+	this.stringify = stringify;
     }
 
     public String toString() {

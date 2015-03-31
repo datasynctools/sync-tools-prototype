@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
 import tools.datasync.api.msg.SyncMessageFromT;
+import tools.datasync.api.utils.Stringify;
 import tools.datasync.dataformats.json.Jsonify;
 import tools.datasync.dataformats.json.SyncMessageFromJson;
 import tools.datasync.utils.StringUtils;
@@ -24,7 +25,7 @@ public class CamelBlockingQueuePollAndPull extends AbstractPartialBlockingQueue
     private String requestUri;
 
     private SyncMessageFromT<String> syncMessageFromStringer = new SyncMessageFromJson();
-    private Jsonify jsonify = new Jsonify();
+    private Stringify stringify = new Jsonify();
 
     private ProducerTemplate template;
 
@@ -36,7 +37,7 @@ public class CamelBlockingQueuePollAndPull extends AbstractPartialBlockingQueue
     }
 
     public void put(SyncMessage syncMessage) throws InterruptedException {
-	String body = jsonify.toString(syncMessage);
+	String body = stringify.toString(syncMessage);
 	template.sendBody(updateUri, body);
 	LOG.info("Sent sync message number {}", syncMessage.getMessageNumber());
     }
@@ -90,6 +91,10 @@ public class CamelBlockingQueuePollAndPull extends AbstractPartialBlockingQueue
     public void setSyncMessageFromStringer(
 	    SyncMessageFromT<String> syncMessageFromStringer) {
 	this.syncMessageFromStringer = syncMessageFromStringer;
+    }
+
+    public void setStringify(Stringify stringify) {
+	this.stringify = stringify;
     }
 
     public String toString() {

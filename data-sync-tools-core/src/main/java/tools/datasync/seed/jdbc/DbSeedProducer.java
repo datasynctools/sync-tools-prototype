@@ -129,8 +129,8 @@ public class DbSeedProducer implements SeedProducer {
     public SeedRecord getNextSeed() throws SeedOverException, SeedException {
 
 	if (hasNextSeed()) {
-	    SyncEntityMessage json = this.currentJsonIterator.next();
-	    SeedRecord seed = this.createSeed(json);
+	    SyncEntityMessage syncEntityMsg = this.currentJsonIterator.next();
+	    SeedRecord seed = this.createSeed(syncEntityMsg);
 	    return seed;
 
 	    // TODO: This statement is causing early finish.
@@ -159,8 +159,9 @@ public class DbSeedProducer implements SeedProducer {
 	    seed = createSeedRecord(record);
 
 	} catch (IOException e) {
-	    LOG.warn("Error while JSON Serialization", e);
-	    throw new SeedException("Error while JSON Serialization", e);
+	    String msg = "Error in Serialization";
+	    LOG.warn(msg, e);
+	    throw new SeedException(msg, e);
 	}
 
 	return seed;

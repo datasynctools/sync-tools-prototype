@@ -32,16 +32,16 @@ public interface GenericDao {
 	    boolean sorted) throws Exception;
 
     public void saveOrUpdate(String entityName,
-	    List<SyncEntityMessage> jsonList, String keyColumn)
+	    List<SyncEntityMessage> syncEntityMsgList, String keyColumn)
 	    throws Exception;
 
-    public void saveOrUpdate(String entityName, SyncEntityMessage json,
+    public void saveOrUpdate(String entityName, SyncEntityMessage syncEntityMsg,
 	    String keyColumn) throws Exception;
 
-    public void save(String entityName, SyncEntityMessage json)
+    public void save(String entityName, SyncEntityMessage syncEntityMsg)
 	    throws Exception;
 
-    public void update(String entityName, SyncEntityMessage json,
+    public void update(String entityName, SyncEntityMessage syncEntityMsg,
 	    String keyColumn) throws Exception;
 
     public SyncEntityMessage select(String tableName, String recordId)

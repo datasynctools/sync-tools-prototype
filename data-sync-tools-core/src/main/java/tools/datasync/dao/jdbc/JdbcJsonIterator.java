@@ -51,31 +51,31 @@ public class JdbcJsonIterator implements Iterator<SyncEntityMessage> {
 	}
     }
 
-    private void addObjects(SyncEntityMessage json, int count)
+    private void addObjects(SyncEntityMessage syncEntityMsg, int count)
 	    throws SQLException {
 	for (int index = 1; index <= count; index++) {
 	    String columnName = result.getMetaData().getColumnName(index);
 	    Object value = result.getObject(index);
 
-	    json.set(columnName.toUpperCase(), value);
+	    syncEntityMsg.set(columnName.toUpperCase(), value);
 	}
     }
 
     private SyncEntityMessage nextLogic() throws SQLException {
-	SyncEntityMessage json = new DefaultSyncEntityMessage();
-	json.setEntity(entityName);
+	SyncEntityMessage syncEntityMsg = new DefaultSyncEntityMessage();
+	syncEntityMsg.setEntity(entityName);
 
 	StringBuffer sbPrimaryKey = new StringBuffer();
 	addPrimaryKeys(sbPrimaryKey);
 	if (sbPrimaryKey.length() > 2) {
 	    sbPrimaryKey.setLength(sbPrimaryKey.length() - 2);
 	}
-	json.setCalculatedPrimaryKey(sbPrimaryKey.toString());
+	syncEntityMsg.setCalculatedPrimaryKey(sbPrimaryKey.toString());
 
 	int count = result.getMetaData().getColumnCount();
-	addObjects(json, count);
+	addObjects(syncEntityMsg, count);
 	count++;
-	return json;
+	return syncEntityMsg;
     }
 
     public SyncEntityMessage next() {
