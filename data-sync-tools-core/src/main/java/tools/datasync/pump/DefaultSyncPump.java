@@ -29,17 +29,17 @@ import tools.datasync.api.PeerMode;
  * @version 1.0
  * @since 29-Nov-2014
  */
-public class JvmSyncPump implements SyncPump {
+public class DefaultSyncPump implements SyncPump {
 
     private static final Logger LOG = LoggerFactory
-	    .getLogger(JvmSyncPump.class);
+	    .getLogger(DefaultSyncPump.class);
 
     private PeerMode peerMode;
-    private JvmSyncPumpSender sender = null;
-    private JvmSyncPumpReceiver receiver = null;
+    private SyncPumpSender sender = null;
+    private SyncPumpReceiver receiver = null;
 
-    public JvmSyncPump(PeerMode peerMode, JvmSyncPumpSender sender,
-	    JvmSyncPumpReceiver receiver) {
+    public DefaultSyncPump(PeerMode peerMode, SyncPumpSender sender,
+	    SyncPumpReceiver receiver) {
 	this.peerMode = peerMode;
 	this.sender = sender;
 	this.receiver = receiver;

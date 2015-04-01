@@ -21,24 +21,24 @@
 	<bean id="b2aSendingQueue" class="java.util.concurrent.LinkedBlockingQueue" />
 	<alias alias="a2bReceivingQueue" name="a2bSendingQueue" />
 	
-	<bean id="peerMe" class="tools.datasync.pump.JvmSyncPeerParms">
+	<bean id="peerMe" class="tools.datasync.pump.SyncPeerParms">
 		<constructor-arg ref="syncPeerA"/>
 		<constructor-arg ref="a2bSendingQueue"/>
 		<constructor-arg ref="a2bReceivingQueue" />
 		<constructor-arg ref="nextEntityArrayListA" />		 
 	</bean>
-	<bean id="peerOther" class="tools.datasync.pump.JvmSyncPeerParms">
+	<bean id="peerOther" class="tools.datasync.pump.SyncPeerParms">
 		<constructor-arg ref="syncPeerB"/>
 		<constructor-arg ref="b2aSendingQueue"/>
 		<constructor-arg ref="b2aReceivingQueue"/>
 		<constructor-arg ref="nextEntityArrayListB" />		 
 	</bean>
 
-	<bean id="pairA" class="tools.datasync.pump.JvmSyncPair">
+	<bean id="pairA" class="tools.datasync.pump.SyncPair">
 		<constructor-arg ref="peerMe"/>
 		<constructor-arg ref="peerOther"/>	
 	</bean>
-	<bean id="pairB" class="tools.datasync.pump.JvmSyncPair">
+	<bean id="pairB" class="tools.datasync.pump.SyncPair">
 		<constructor-arg ref="peerOther"/>
 		<constructor-arg ref="peerMe"/>		
 	</bean>
@@ -145,13 +145,13 @@
 		<constructor-arg ref="b2aSendingQueue" />	
 	</bean>
 
-	<bean id="concurArgsA" class="tools.datasync.pump.JvmSyncConcurArgs">
+	<bean id="concurArgsA" class="tools.datasync.pump.SyncConcurArgs">
 		<constructor-arg ref="stopper" />
 		<constructor-arg ref="nextEntityAwaiterA" />
 		<constructor-arg ref="nextEntitySignalerB" />
 	</bean>
 
-	<bean id="concurArgsB" class="tools.datasync.pump.JvmSyncConcurArgs">
+	<bean id="concurArgsB" class="tools.datasync.pump.SyncConcurArgs">
 		<constructor-arg ref="stopper" />
 		<constructor-arg ref="nextEntityAwaiterB" />
 		<constructor-arg ref="nextEntitySignalerA" />		
@@ -184,7 +184,7 @@
 		<property name="stringify" ref="stringify" />
 	</bean>
 
-	<bean id="pumpFactoryA" class="tools.datasync.pump.JvmSyncPumpFactory">
+	<bean id="pumpFactoryA" class="tools.datasync.pump.DefaultSyncPumpFactory">
 		<constructor-arg ref="pairA"/>
 		<constructor-arg ref="syncPairConfigA"/>
 		<constructor-arg ref="syncStateInitializerA"/>
@@ -193,7 +193,7 @@
 		<property name="hasher" ref="agentHasher" />
 	</bean>
 
-	<bean id="pumpFactoryB" class="tools.datasync.pump.JvmSyncPumpFactory">
+	<bean id="pumpFactoryB" class="tools.datasync.pump.DefaultSyncPumpFactory">
 		<constructor-arg ref="pairB"/>
 		<constructor-arg ref="syncPairConfigB"/>
 		<constructor-arg ref="syncStateInitializerB"/>

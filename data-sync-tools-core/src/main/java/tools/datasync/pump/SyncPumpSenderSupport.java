@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import tools.datasync.api.msg.SyncMessage;
 import tools.datasync.seed.SeedProducer;
 
-public class JvmSyncPumpSenderSupport {
+public class SyncPumpSenderSupport {
 
     SenderPreAckLogic senderPreAckLogic = new SenderPreAckLogic();
     SenderPostAckLogic senderPostAckLogic = new SenderPostAckLogic();
@@ -18,7 +18,7 @@ public class JvmSyncPumpSenderSupport {
 
     public void initialize(BlockingQueue<SyncMessage> sendQueue,
 	    SyncStateInitializer syncStateInitializer,
-	    JvmSyncConcurArgs concurArgs) {
+	    SyncConcurArgs concurArgs) {
 
 	this.stopper = concurArgs.getStopper();
 	this.isRunning = new AtomicBoolean(false);

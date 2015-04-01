@@ -2,13 +2,13 @@ package tools.datasync.pump;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class JvmSyncConcurArgs {
+public class SyncConcurArgs {
 
     private AtomicBoolean stopper;
     private NextEntityAwaiter nextEntityAwaiter;
     private NextEntitySignaler nextEntitySignaler;
 
-    public JvmSyncConcurArgs(AtomicBoolean stopper,
+    public SyncConcurArgs(AtomicBoolean stopper,
 	    NextEntityAwaiter nextEntityAwaiter,
 	    NextEntitySignaler nextEntitySignaler) {
 	this.stopper = stopper;

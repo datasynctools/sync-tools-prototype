@@ -43,10 +43,10 @@ import tools.datasync.utils.StringUtils;
  * @version 1.0
  * @since 29-Nov-2014
  */
-public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
+public class SyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 
     private static final Logger LOG = LoggerFactory
-	    .getLogger(JvmSyncPumpReceiver.class);
+	    .getLogger(SyncPumpReceiver.class);
 
     private SyncMessageHandler syncMessageHandler = null;
 
@@ -61,7 +61,7 @@ public class JvmSyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
     private CopyOnWriteArrayList<String> arrayList;
     private NextEntitySignaler nextEntitySignaler;
 
-    public JvmSyncPumpReceiver(BlockingQueue<SyncMessage> receiveQueue,
+    public SyncPumpReceiver(BlockingQueue<SyncMessage> receiveQueue,
 	    AtomicBoolean stopped) {
 
 	this.receiveQueue = receiveQueue;

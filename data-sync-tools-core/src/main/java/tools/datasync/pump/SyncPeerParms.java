@@ -6,7 +6,7 @@ import java.util.concurrent.CountDownLatch;
 
 import tools.datasync.api.msg.SyncMessage;
 
-public class JvmSyncPeerParms {
+public class SyncPeerParms {
 
     private SyncPeer syncPeer;
     private BlockingQueue<SyncMessage> sendQueue;
@@ -16,7 +16,7 @@ public class JvmSyncPeerParms {
     private CountDownLatch ackPeerSenderLatchA = new CountDownLatch(1);
     private CopyOnWriteArrayList<String> arrayList;
 
-    public JvmSyncPeerParms(SyncPeer syncPeer,
+    public SyncPeerParms(SyncPeer syncPeer,
 	    BlockingQueue<SyncMessage> sendQueue,
 	    BlockingQueue<SyncMessage> receiveQueue,
 	    CopyOnWriteArrayList<String> arrayList) {

@@ -36,11 +36,11 @@ import tools.datasync.seed.SeedProducer;
  * @version 1.0
  * @since 29-Nov-2014
  */
-public class JvmSyncPumpFactory implements SyncPumpFactory {
+public class DefaultSyncPumpFactory implements SyncPumpFactory {
 
-    private JvmSyncPair syncPair;
+    private SyncPair syncPair;
     private SyncPairConfig syncPairConfig;
-    private JvmSyncConcurArgs concurArgs;
+    private SyncConcurArgs concurArgs;
     private SyncStateInitializer syncStateInitializer;
 
     private GenericJdbcDao sourceDao = null;
@@ -49,23 +49,23 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
     private HashGenerator hasher;
     private Stringify stringify;
 
-    public JvmSyncPumpFactory(JvmSyncPair pair, SyncPairConfig syncPairConfig,
+    public DefaultSyncPumpFactory(SyncPair pair, SyncPairConfig syncPairConfig,
 	    SyncStateInitializer syncStateInitializer,
-	    JvmSyncConcurArgs concurArgs) {
+	    SyncConcurArgs concurArgs) {
 	this.syncPair = pair;
 	this.syncPairConfig = syncPairConfig;
 	this.syncStateInitializer = syncStateInitializer;
 	this.concurArgs = concurArgs;
     }
 
-    private JvmSyncPumpSender createSender(JvmSyncPeerParms peer,
+    private SyncPumpSender createSender(SyncPeerParms peer,
 	    GenericDao sourceDao, SyncStateInitializer syncStateInitializer,
-	    JvmSyncConcurArgs concurArgs) {
+	    SyncConcurArgs concurArgs) {
 	SeedProducer seedProducer = syncPairConfig.getSeedProducerFactory()
 		.create(syncStateInitializer.getTables(),
 			syncStateInitializer.getEntityGetter(), sourceDao);
 
-	JvmSyncPumpSender sender = new JvmSyncPumpSender(peer.getSendQueue(),
+	SyncPumpSender sender = new SyncPumpSender(peer.getSendQueue(),
 		syncStateInitializer, concurArgs);
 
 	sender.setSeedProducer(seedProducer);
@@ -74,10 +74,10 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
 	return (sender);
     }
 
-    private JvmSyncPumpReceiver createReceiver(JvmSyncPeerParms peer,
+    private SyncPumpReceiver createReceiver(SyncPeerParms peer,
 	    GenericDao targetDao, ConflictResolver conflictResolver,
 	    AtomicBoolean stopper) {
-	JvmSyncPumpReceiver receiver = new JvmSyncPumpReceiver(
+	SyncPumpReceiver receiver = new SyncPumpReceiver(
 		peer.getReceiveQueue(), stopper);
 
 	SeedConsumer seedConsumer = syncPairConfig.getSeedConsumerFactory()
@@ -92,28 +92,28 @@ public class JvmSyncPumpFactory implements SyncPumpFactory {
 	return (receiver);
     }
 
-    private JvmSyncPeerParms calculateReceiverPeer(PeerMode peerMode) {
+    private SyncPeerParms calculateReceiverPeer(PeerMode peerMode) {
 	return syncPair.getPeerMe();
     }
 
-    private JvmSyncPeerParms calculateSenderPeer(PeerMode peerMode) {
+    private SyncPeerParms calculateSenderPeer(PeerMode peerMode) {
 	return syncPair.getPeerMe();
     }
 
     public SyncPump getInstance(PeerMode peerMode)
 	    throws InstantiationException {
 
-	JvmSyncPeerParms senderPeer = calculateSenderPeer(peerMode);
-	JvmSyncPeerParms receiverPeer = calculateReceiverPeer(peerMode);
+	SyncPeerParms senderPeer = calculateSenderPeer(peerMode);
+	SyncPeerParms receiverPeer = calculateReceiverPeer(peerMode);
 
-	JvmSyncPumpSender sender = createSender(senderPeer,
+	SyncPumpSender sender = createSender(senderPeer,
 		syncPairConfig.getSourceDao(), syncStateInitializer, concurArgs);
-	JvmSyncPumpReceiver receiver = createReceiver(receiverPeer,
+	SyncPumpReceiver receiver = createReceiver(receiverPeer,
 		syncPairConfig.getTargetDao(), syncPairConfig
 			.getConflictResolverFactory().create(peerMode),
 		concurArgs.getStopper());
 
-	return new JvmSyncPump(peerMode, sender, receiver);
+	return new DefaultSyncPump(peerMode, sender, receiver);
 
     }
 

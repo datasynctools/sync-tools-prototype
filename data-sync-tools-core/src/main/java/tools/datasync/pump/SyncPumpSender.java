@@ -37,16 +37,16 @@ import tools.datasync.utils.StringUtils;
  * @version 1.0
  * @since 29-Nov-2014
  */
-public class JvmSyncPumpSender implements Runnable, UncaughtExceptionHandler {
+public class SyncPumpSender implements Runnable, UncaughtExceptionHandler {
 
     private static final Logger LOG = LoggerFactory
-	    .getLogger(JvmSyncPumpSender.class);
+	    .getLogger(SyncPumpSender.class);
 
-    private JvmSyncPumpSenderSupport support = new JvmSyncPumpSenderSupport();
+    private SyncPumpSenderSupport support = new SyncPumpSenderSupport();
 
-    public JvmSyncPumpSender(BlockingQueue<SyncMessage> sendQueue,
+    public SyncPumpSender(BlockingQueue<SyncMessage> sendQueue,
 	    SyncStateInitializer syncStateInitializer,
-	    JvmSyncConcurArgs concurArgs) {
+	    SyncConcurArgs concurArgs) {
 
 	support.initialize(sendQueue, syncStateInitializer, concurArgs);
 
