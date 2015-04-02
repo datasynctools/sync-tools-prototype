@@ -16,9 +16,20 @@
 		<property name="databaseName" value="db-B" />
 	</bean>
  	
-	<bean id="a2bSendingQueue" class="java.util.concurrent.LinkedBlockingQueue" />
+	<bean id="a2bSendingQueue" class="tools.datasync.utils.BlockingSyncMessageQueue">
+		<constructor-arg>
+			<bean class="java.util.concurrent.LinkedBlockingQueue" />
+		</constructor-arg>
+	</bean>
 	<alias alias="b2aReceivingQueue" name="b2aSendingQueue" />
+	<!-- 
 	<bean id="b2aSendingQueue" class="java.util.concurrent.LinkedBlockingQueue" />
+	 -->
+	<bean id="b2aSendingQueue" class="tools.datasync.utils.BlockingSyncMessageQueue">
+		<constructor-arg>
+			<bean class="java.util.concurrent.LinkedBlockingQueue" />
+		</constructor-arg>
+	</bean>
 	<alias alias="a2bReceivingQueue" name="a2bSendingQueue" />
 	
 	<bean id="peerMe" class="tools.datasync.pump.SyncPeerParms">

@@ -1,10 +1,9 @@
 package tools.datasync.pump;
 
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import tools.datasync.api.msg.SyncMessage;
+import tools.datasync.api.utils.SyncMessageQueue;
 import tools.datasync.seed.SeedProducer;
 
 public class SyncPumpSenderSupport {
@@ -16,9 +15,8 @@ public class SyncPumpSenderSupport {
     private AtomicBoolean stopper;
     private long messageNumber = 0;
 
-    public void initialize(BlockingQueue<SyncMessage> sendQueue,
-	    SyncStateInitializer syncStateInitializer,
-	    SyncConcurArgs concurArgs) {
+    public void initialize(SyncMessageQueue sendQueue,
+	    SyncStateInitializer syncStateInitializer, SyncConcurArgs concurArgs) {
 
 	this.stopper = concurArgs.getStopper();
 	this.isRunning = new AtomicBoolean(false);

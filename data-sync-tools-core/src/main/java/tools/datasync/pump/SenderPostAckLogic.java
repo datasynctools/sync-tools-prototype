@@ -5,7 +5,6 @@ import static tools.datasync.api.msg.SyncMessageType.SYNC_OVER;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.codehaus.jackson.JsonGenerationException;
@@ -14,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
+import tools.datasync.api.utils.SyncMessageQueue;
 import tools.datasync.model.SeedRecord;
 import tools.datasync.seed.SeedException;
 import tools.datasync.seed.SeedOverException;
@@ -25,7 +25,7 @@ public class SenderPostAckLogic {
     private static final Logger LOG = LoggerFactory
 	    .getLogger(SenderPostAckLogic.class);
 
-    private BlockingQueue<SyncMessage> sendQueue;
+    private SyncMessageQueue sendQueue;
     private SeedProducer seedProducer;
 
     private NextEntityAwaiter nextEntityAwaiter;
@@ -125,7 +125,7 @@ public class SenderPostAckLogic {
 
     }
 
-    public void setSendQueue(BlockingQueue<SyncMessage> sendQueue) {
+    public void setSendQueue(SyncMessageQueue sendQueue) {
 	this.sendQueue = sendQueue;
     }
 

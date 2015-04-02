@@ -2,7 +2,6 @@ package tools.datasync.pump;
 
 import static tools.datasync.api.msg.SyncMessageType.BEGIN_SEED;
 
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -10,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
+import tools.datasync.api.utils.SyncMessageQueue;
 import tools.datasync.utils.StringUtils;
 
 public class SenderPreAckLogic {
@@ -20,7 +20,7 @@ public class SenderPreAckLogic {
     private SenderPresentAcknolwedger senderPresentAcknolwedger = new SenderPresentAcknolwedger();
     private ReceiverPresentAcknolwedger receiverPresentAcknolwedger = new ReceiverPresentAcknolwedger();
     private SyncStateInitializer syncStateInitializer;
-    private BlockingQueue<SyncMessage> sendQueue;
+    private SyncMessageQueue sendQueue;
 
     // TODO does the message number make sense? how is it used? think it's just
     // extraneous and should be removed
@@ -79,7 +79,7 @@ public class SenderPreAckLogic {
 	senderPresentAcknolwedger.setAckPeerSenderLatch(ackPeerSenderLatch);
     }
 
-    public void setSendQueue(BlockingQueue<SyncMessage> sendQueue) {
+    public void setSendQueue(SyncMessageQueue sendQueue) {
 	this.sendQueue = sendQueue;
     }
 

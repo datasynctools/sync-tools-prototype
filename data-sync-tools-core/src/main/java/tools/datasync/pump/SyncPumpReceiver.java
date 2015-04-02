@@ -5,7 +5,6 @@ package tools.datasync.pump;
 
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -17,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
+import tools.datasync.api.utils.SyncMessageQueue;
 import tools.datasync.pump.handlers.SyncMessageHandler;
 import tools.datasync.seed.SeedConsumer;
 import tools.datasync.seed.SeedException;
@@ -50,7 +50,7 @@ public class SyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 
     private SyncMessageHandler syncMessageHandler = null;
 
-    private BlockingQueue<SyncMessage> receiveQueue;
+    private SyncMessageQueue receiveQueue;
     private AtomicBoolean isRunning;
     private SeedConsumer seedConsumer;
 
@@ -61,8 +61,7 @@ public class SyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
     private CopyOnWriteArrayList<String> arrayList;
     private NextEntitySignaler nextEntitySignaler;
 
-    public SyncPumpReceiver(BlockingQueue<SyncMessage> receiveQueue,
-	    AtomicBoolean stopped) {
+    public SyncPumpReceiver(SyncMessageQueue receiveQueue, AtomicBoolean stopped) {
 
 	this.receiveQueue = receiveQueue;
 	this.stopper = stopped;
@@ -170,8 +169,8 @@ public class SyncPumpReceiver implements Runnable, UncaughtExceptionHandler {
 	this.arrayList = arrayList;
     }
 
-    public BlockingQueue<SyncMessage> getQueue() {
-	return this.receiveQueue;
+    public SyncMessageQueue getQueue() {
+	return receiveQueue;
     }
 
     public void stop() {

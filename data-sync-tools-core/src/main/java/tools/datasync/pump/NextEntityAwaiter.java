@@ -2,7 +2,6 @@ package tools.datasync.pump;
 
 import static tools.datasync.api.msg.SyncMessageType.PEER_READY_WITH_NEXT_ENTITY;
 
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -10,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
+import tools.datasync.api.utils.SyncMessageQueue;
 import tools.datasync.model.EnityId;
 import tools.datasync.model.SeedRecord;
 import tools.datasync.utils.StringUtils;
@@ -24,10 +24,10 @@ public class NextEntityAwaiter {
     private CopyOnWriteArrayList<String> arrayList;
     private TimeSpan awaitTimeSpan;
     private AtomicBoolean stopper;
-    private BlockingQueue<SyncMessage> sendQueue;
+    private SyncMessageQueue sendQueue;
 
     public NextEntityAwaiter(CopyOnWriteArrayList<String> arrayList,
-	    TimeSpan awaitTimeSpan, BlockingQueue<SyncMessage> sendQueue,
+	    TimeSpan awaitTimeSpan, SyncMessageQueue sendQueue,
 	    AtomicBoolean stopper) {
 	this.arrayList = arrayList;
 	this.awaitTimeSpan = awaitTimeSpan;

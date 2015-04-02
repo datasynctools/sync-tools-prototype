@@ -1,24 +1,22 @@
 package tools.datasync.pump;
 
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 
-import tools.datasync.api.msg.SyncMessage;
+import tools.datasync.api.utils.SyncMessageQueue;
 
 public class SyncPeerParms {
 
     private SyncPeer syncPeer;
-    private BlockingQueue<SyncMessage> sendQueue;
-    private BlockingQueue<SyncMessage> receiveQueue;
+    private SyncMessageQueue sendQueue;
+    private SyncMessageQueue receiveQueue;
 
     private CountDownLatch ackPairReceiverLatch = new CountDownLatch(1);
     private CountDownLatch ackPeerSenderLatchA = new CountDownLatch(1);
     private CopyOnWriteArrayList<String> arrayList;
 
-    public SyncPeerParms(SyncPeer syncPeer,
-	    BlockingQueue<SyncMessage> sendQueue,
-	    BlockingQueue<SyncMessage> receiveQueue,
+    public SyncPeerParms(SyncPeer syncPeer, SyncMessageQueue sendQueue,
+	    SyncMessageQueue receiveQueue,
 	    CopyOnWriteArrayList<String> arrayList) {
 	this.syncPeer = syncPeer;
 	this.sendQueue = sendQueue;
@@ -30,11 +28,11 @@ public class SyncPeerParms {
 	return syncPeer;
     }
 
-    public BlockingQueue<SyncMessage> getSendQueue() {
+    public SyncMessageQueue getSendQueue() {
 	return sendQueue;
     }
 
-    public BlockingQueue<SyncMessage> getReceiveQueue() {
+    public SyncMessageQueue getReceiveQueue() {
 	return receiveQueue;
     }
 

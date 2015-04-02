@@ -2,12 +2,11 @@ package tools.datasync.pump;
 
 import static tools.datasync.api.msg.SyncMessageType.PEER_READY_WITH_NEXT_ENTITY;
 
-import java.util.concurrent.BlockingQueue;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
+import tools.datasync.api.utils.SyncMessageQueue;
 import tools.datasync.model.EnityId;
 import tools.datasync.utils.StringUtils;
 
@@ -26,9 +25,9 @@ public class BlockingQueueNextEntitySignaler implements NextEntitySignaler {
     private static final Logger LOG = LoggerFactory
 	    .getLogger(BlockingQueueNextEntitySignaler.class);
 
-    private BlockingQueue<SyncMessage> queue;
+    private SyncMessageQueue queue;
 
-    public BlockingQueueNextEntitySignaler(BlockingQueue<SyncMessage> queue) {
+    public BlockingQueueNextEntitySignaler(SyncMessageQueue queue) {
 	this.queue = queue;
     }
 
@@ -49,7 +48,7 @@ public class BlockingQueueNextEntitySignaler implements NextEntitySignaler {
 		+ "type {}, number {}", syncMessage.getMessageType(),
 		syncMessage.getMessageNumber());
 
-	queue.add(syncMessage);
+	queue.put(syncMessage);
     }
 
     public String toString() {

@@ -4,14 +4,13 @@
 package tools.datasync.pump;
 
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tools.datasync.api.msg.SyncMessage;
+import tools.datasync.api.utils.SyncMessageQueue;
 import tools.datasync.seed.SeedOverException;
 import tools.datasync.seed.SeedProducer;
 import tools.datasync.utils.StringUtils;
@@ -44,9 +43,8 @@ public class SyncPumpSender implements Runnable, UncaughtExceptionHandler {
 
     private SyncPumpSenderSupport support = new SyncPumpSenderSupport();
 
-    public SyncPumpSender(BlockingQueue<SyncMessage> sendQueue,
-	    SyncStateInitializer syncStateInitializer,
-	    SyncConcurArgs concurArgs) {
+    public SyncPumpSender(SyncMessageQueue sendQueue,
+	    SyncStateInitializer syncStateInitializer, SyncConcurArgs concurArgs) {
 
 	support.initialize(sendQueue, syncStateInitializer, concurArgs);
 
