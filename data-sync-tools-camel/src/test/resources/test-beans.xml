@@ -32,19 +32,27 @@
 	
 	<camel:endpoint id="camel-endpoint-peerOther-a2BSender" uri="jetty:http://localhost:10010/syncResponse"/>
 	
-	<bean id="a2bSendingQueue" class="tools.datasync.basic.sync.pump.camel.CamelBlockingQueuePollAndPull">
+	<bean id="a2bSendingQueue" class="tools.datasync.basic.sync.pump.camel.CamelSyncMessageQueue">
 		<constructor-arg ref="peerMe-a2bSenderUri" />
 		<constructor-arg ref="peerMe-b2aReceiverUri" />
 		<constructor-arg ref="camelTemplate" />
 	</bean>
-	<bean id="b2aReceivingQueue" class="tools.datasync.basic.sync.pump.camel.CamelBlockingQueuePollAndPull">
+	<bean id="b2aReceivingQueue" class="tools.datasync.basic.sync.pump.camel.CamelSyncMessageQueue">
 		<constructor-arg ref="peerMe-a2bSenderUri" />
 		<constructor-arg ref="peerMe-b2aReceiverUri" />
 		<constructor-arg ref="camelTemplate" />
 	</bean>
 
-	<bean id="b2aSendingQueue" class="java.util.concurrent.LinkedBlockingQueue" />
-	<bean id="a2bReceivingQueue" class="java.util.concurrent.LinkedBlockingQueue" />
+	<bean id="b2aSendingQueue" class="tools.datasync.utils.BlockingSyncMessageQueue">
+		<constructor-arg>
+			<bean class="java.util.concurrent.LinkedBlockingQueue" />
+		</constructor-arg>
+	</bean>
+	<bean id="a2bReceivingQueue" class="tools.datasync.utils.BlockingSyncMessageQueue">
+		<constructor-arg>
+			<bean class="java.util.concurrent.LinkedBlockingQueue" />
+		</constructor-arg>
+	</bean>
 
 	<bean id="peerMe" class="tools.datasync.pump.SyncPeerParms">
 		<constructor-arg ref="syncPeerA"/>

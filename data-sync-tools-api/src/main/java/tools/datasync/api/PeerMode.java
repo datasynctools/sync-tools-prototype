@@ -24,6 +24,8 @@ package tools.datasync.api;
  * @version 1.0
  * @since 20-Dec-2014
  */
+// TODO Not sure this is really needed anymore... that is should it be factored
+// out?
 public enum PeerMode {
 
     A2B, B2A

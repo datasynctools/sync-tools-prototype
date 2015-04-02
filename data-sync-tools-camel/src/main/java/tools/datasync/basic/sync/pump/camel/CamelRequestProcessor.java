@@ -1,7 +1,5 @@
 package tools.datasync.basic.sync.pump.camel;
 
-import java.util.concurrent.BlockingQueue;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.slf4j.Logger;
@@ -9,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
 import tools.datasync.api.msg.SyncMessageFromT;
+import tools.datasync.api.utils.SyncMessageQueue;
 import tools.datasync.dataformats.json.SyncMessageFromJson;
 import tools.datasync.utils.StringUtils;
 
@@ -19,11 +18,11 @@ public class CamelRequestProcessor implements Processor {
 
     private SyncMessageFromT<String> syncMessageFromStringer = new SyncMessageFromJson();
 
-    private BlockingQueue<SyncMessage> receiveQueue;
+    private SyncMessageQueue receiveQueue;
 
     private boolean firstRun = true;
 
-    public CamelRequestProcessor(BlockingQueue<SyncMessage> receiveQueue) {
+    public CamelRequestProcessor(SyncMessageQueue receiveQueue) {
 	this.receiveQueue = receiveQueue;
 	LOG.info("Loaded Processor for Camel: " + this);
     }

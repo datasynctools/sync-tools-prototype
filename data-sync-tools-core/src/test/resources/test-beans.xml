@@ -22,9 +22,6 @@
 		</constructor-arg>
 	</bean>
 	<alias alias="b2aReceivingQueue" name="b2aSendingQueue" />
-	<!-- 
-	<bean id="b2aSendingQueue" class="java.util.concurrent.LinkedBlockingQueue" />
-	 -->
 	<bean id="b2aSendingQueue" class="tools.datasync.utils.BlockingSyncMessageQueue">
 		<constructor-arg>
 			<bean class="java.util.concurrent.LinkedBlockingQueue" />

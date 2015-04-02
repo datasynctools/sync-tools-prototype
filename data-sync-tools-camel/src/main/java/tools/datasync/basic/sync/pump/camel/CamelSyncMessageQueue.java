@@ -1,7 +1,6 @@
 package tools.datasync.basic.sync.pump.camel;
 
 import java.util.Date;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ProducerTemplate;
@@ -11,15 +10,15 @@ import org.slf4j.LoggerFactory;
 import tools.datasync.api.msg.SyncMessage;
 import tools.datasync.api.msg.SyncMessageFromT;
 import tools.datasync.api.utils.Stringify;
+import tools.datasync.api.utils.SyncMessageQueue;
 import tools.datasync.dataformats.json.Jsonify;
 import tools.datasync.dataformats.json.SyncMessageFromJson;
 import tools.datasync.utils.StringUtils;
 
-public class CamelBlockingQueuePollAndPull extends AbstractPartialBlockingQueue
-	implements BlockingQueue<SyncMessage> {
+public class CamelSyncMessageQueue implements SyncMessageQueue {
 
     private static final Logger LOG = LoggerFactory
-	    .getLogger(CamelBlockingQueuePollAndPull.class);
+	    .getLogger(CamelSyncMessageQueue.class);
 
     private String updateUri;
     private String requestUri;
@@ -29,14 +28,14 @@ public class CamelBlockingQueuePollAndPull extends AbstractPartialBlockingQueue
 
     private ProducerTemplate template;
 
-    public CamelBlockingQueuePollAndPull(String updateUri, String requestUri,
+    public CamelSyncMessageQueue(String updateUri, String requestUri,
 	    ProducerTemplate template) {
 	this.updateUri = updateUri;
 	this.requestUri = requestUri;
 	this.template = template;
     }
 
-    public void put(SyncMessage syncMessage) throws InterruptedException {
+    public void put(SyncMessage syncMessage) {
 	String body = stringify.toString(syncMessage);
 	template.sendBody(updateUri, body);
 	LOG.info("Sent sync message number {}", syncMessage.getMessageNumber());
@@ -47,8 +46,7 @@ public class CamelBlockingQueuePollAndPull extends AbstractPartialBlockingQueue
 	return (thisDuration < duration);
     }
 
-    public SyncMessage poll(long timeout, TimeUnit unit)
-	    throws InterruptedException {
+    public SyncMessage poll(long timeout, TimeUnit unit) {
 	String obj = "";
 	Date start = new Date();
 	Date end = new Date();

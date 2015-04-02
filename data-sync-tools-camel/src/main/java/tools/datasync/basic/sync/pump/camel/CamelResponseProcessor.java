@@ -1,6 +1,6 @@
 package tools.datasync.basic.sync.pump.camel;
 
-import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.msg.SyncMessage;
 import tools.datasync.api.utils.Stringify;
+import tools.datasync.api.utils.SyncMessageQueue;
 import tools.datasync.dataformats.json.Jsonify;
 import tools.datasync.utils.StringUtils;
 
@@ -17,13 +18,13 @@ public class CamelResponseProcessor implements Processor {
     private static final Logger LOG = LoggerFactory
 	    .getLogger(CamelResponseProcessor.class);
 
-    private BlockingQueue<SyncMessage> queue;
+    private SyncMessageQueue queue;
 
     private Stringify stringify = new Jsonify();
 
     private boolean firstRun = true;
 
-    public CamelResponseProcessor(BlockingQueue<SyncMessage> queue) {
+    public CamelResponseProcessor(SyncMessageQueue queue) {
 	this.queue = queue;
     }
 
@@ -40,7 +41,7 @@ public class CamelResponseProcessor implements Processor {
 	}
 
 	// just get the body as a string
-	SyncMessage syncMessage = queue.poll();
+	SyncMessage syncMessage = queue.poll(0, TimeUnit.SECONDS);
 	String body;
 	if (syncMessage == null) {
 	    body = null;
