@@ -34,35 +34,6 @@ public class JsonTests {
 
     private final static Logger LOG = LoggerFactory.getLogger(JsonTests.class);
 
-    //
-    // @Test
-    // public void simpleJsonTest() {
-    //
-    // SyncMessage msg = new SyncMessage();
-    // msg.setMessageNumber(1);
-    // msg.setMessageType("BEGIN_SEED");
-    // String jsonString = new Jsonify().toString(msg);
-    // LOG.info(jsonString);
-    //
-    // // String jsonString =
-    // //
-    // "{ 'syncMessage': {'originId':'','messageNumber':0,'messageType':'BEGIN_SEED','payloadData':{},'paloadHash':'','timestamp':1426981765867} }";
-    // ObjectMapper objectMapper = ObjectMapperFactory.getInstance();
-    // SyncMessage syncMessage = null;
-    // try {
-    //
-    // syncMessage = objectMapper.readValue(jsonString, SyncMessage.class);
-    // } catch (Exception e) {
-    // LOG.error("Bad data [{}]", jsonString, e);
-    // throw (new RuntimeException("Bad Data", e));
-    // }
-    //
-    // jsonString = new Jsonify().toString(syncMessage);
-    // LOG.info("Found message {}", jsonString);
-    // Assert.assertTrue("Begin Seed value not correct",
-    // "BEGIN_SEED".equals(syncMessage.getMessageType()));
-    // }
-
     @Test
     public void dateTest() throws ParseException {
 	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -75,40 +46,5 @@ public class JsonTests {
 	long bTime = bDate.getTime();
 	LOG.info("B's time {}", bTime);
     }
-    //
-    // @Test
-    // public void simpleEmbeddedObjTest() {
-    //
-    // SyncMessage msg = new SyncMessage();
-    // msg.setMessageNumber(1);
-    // msg.setMessageType("BEGIN_SEED");
-    // SeedRecord payloadData = new SeedRecord();
-    // payloadData.setEntityId("123");
-    // // payloadData.setRecordData("some json");
-    // msg.setPayloadData(payloadData);
-    // String jsonString = new Jsonify().toString(msg);
-    // LOG.info(jsonString);
-    //
-    // // String jsonString =
-    // //
-    // "{'originId':'','messageNumber':0,'messageType':'BEGIN_SEED','payloadData':{},'paloadHash':'','timestamp':1426981765867 }";
-    // ObjectMapper objectMapper = ObjectMapperFactory.getInstance();
-    // SyncMessage syncMessage = null;
-    // try {
-    //
-    // syncMessage = objectMapper.readValue(jsonString, SyncMessage.class);
-    // } catch (Exception e) {
-    // LOG.error("Bad data [{}]", jsonString, e);
-    // throw (new RuntimeException("Bad Data", e));
-    // }
-    //
-    // jsonString = new Jsonify().toString(syncMessage);
-    // LOG.info("Found message {}", jsonString);
-    // Assert.assertTrue("Begin Seed value not correct",
-    // "BEGIN_SEED".equals(syncMessage.getMessageType()));
-    // Assert.assertTrue("Embedded Data not correct", "some json"
-    // .equals(((SeedRecord) syncMessage.getPayloadData())
-    // .getRecordData()));
-    // }
 
 }

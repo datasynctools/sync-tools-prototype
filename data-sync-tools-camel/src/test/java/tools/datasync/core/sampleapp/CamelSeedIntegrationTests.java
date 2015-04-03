@@ -3,12 +3,13 @@ package tools.datasync.core.sampleapp;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.commons.dbcp2.Utils;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import tools.datasync.api.dao.GenericDao;
 import tools.datasync.pump.SyncOrchestrationManager;
 import tools.datasync.pump.SyncSession;
 import tools.datasync.utils.DbTableComparator;
+import tools.datasync.utils.SqlUtils;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -50,49 +52,45 @@ public class CamelSeedIntegrationTests {
     private GenericDao sourceDao = null;
     private GenericDao targetDao = null;
 
-    private void createDatabases() {
+    private static String pref = "src/test/resources/";
+
+    private static void createDatabases() {
 	FileUtils.deleteQuietly(new File("db-A"));
 	FileUtils.deleteQuietly(new File("db-B"));
 
 	Connection conn = createConnection("db-A", true);
-	SyncStateTableCreator.createDb(conn);
-	SampleAppTableCreator.createDb(conn);
-	SampleAppDataCreatorA.createDb(conn);
+	SqlUtils.runSQLScript(conn, pref + "create_table_framework.sql");
+	SqlUtils.runSQLScript(conn, pref + "create_table_model.sql");
 
 	conn = createConnection("db-B", true);
-	SyncStateTableCreator.createDb(conn);
-	SampleAppTableCreator.createDb(conn);
-	SampleAppDataCreatorB.createDb(conn);
+	SqlUtils.runSQLScript(conn, pref + "create_table_framework.sql");
+	SqlUtils.runSQLScript(conn, pref + "create_table_model.sql");
     }
 
-    @Before
-    public void init() {
-
+    @BeforeClass
+    public static void staticSetup() {
 	createDatabases();
+    }
 
-	ClassPathXmlApplicationContext appContext = null;
-	try {
-	    appContext = new ClassPathXmlApplicationContext("test-beans.xml");
-
-	    syncOrchMgr = appContext.getBean("syncOrchMgr",
-		    SyncOrchestrationManager.class);
-
-	    sourceDao = appContext.getBean("sourceDao", GenericDao.class);
-	    targetDao = appContext.getBean("targetDao", GenericDao.class);
-
-	} catch (Exception e) {
-	    LOG.error("Cannot load app enviornment", e);
-	    if (appContext != null) {
-		appContext.close();
-	    }
-	}
-
+    private void positiveTestSetup() {
+	Connection conn = createConnection("db-A", true);
+	SqlUtils.runSQLScript(conn, pref + "clear_database_model.sql");
+	SqlUtils.runSQLScript(conn, pref
+		+ "populate_positive_database_peerA.sql");
+	conn = createConnection("db-B", true);
+	SqlUtils.runSQLScript(conn, pref + "clear_database_model.sql");
+	SqlUtils.runSQLScript(conn, pref
+		+ "populate_positive_database_peerA.sql");
     }
 
     @Test
     public void positiveTest() {
 
 	// for (int i = 1; i < 3; i++) {
+
+	positiveTestSetup();
+
+	loadTestObjs("test-beans.xml");
 
 	try {
 	    LOG.info("first test...");
@@ -114,6 +112,97 @@ public class CamelSeedIntegrationTests {
 
 	// init();
 	// }
+    }
+
+    private void loadTestObjs(String beansFile) {
+
+	ClassPathXmlApplicationContext appContext = null;
+	try {
+	    appContext = new ClassPathXmlApplicationContext(beansFile);
+
+	    syncOrchMgr = appContext.getBean("syncOrchMgr",
+		    SyncOrchestrationManager.class);
+
+	    sourceDao = appContext.getBean("sourceDao", GenericDao.class);
+	    targetDao = appContext.getBean("targetDao", GenericDao.class);
+
+	} catch (Exception e) {
+	    LOG.error("Cannot load app enviornment", e);
+	    if (appContext != null) {
+		appContext.close();
+	    }
+	}
+
+    }
+
+    private void stopTestSetup() {
+	Connection conn = createConnection("db-A", true);
+	SqlUtils.runSQLScript(conn, pref + "clear_database_model.sql");
+	SqlUtils.runSQLScript(conn, pref + "populate_stop_database_peerA.sql");
+	conn = createConnection("db-B", true);
+	SqlUtils.runSQLScript(conn, pref + "clear_database_model.sql");
+	SqlUtils.runSQLScript(conn, pref + "populate_stop_database_peerB.sql");
+    }
+
+    private void stopTestCheckResultsA() throws Exception {
+	Connection conn = createConnection("db-A", true);
+	ResultSet rs = conn.createStatement().executeQuery(
+		"select * from org.Contact");
+
+	Assert.assertTrue(rs.next() == true);
+	Assert.assertTrue(rs.getString("FirstName").equals("John"));
+	Assert.assertTrue(rs.next() == false);
+    }
+
+    private void stopTestCheckResultsB() throws Exception {
+	Connection conn = createConnection("db-B", true);
+	ResultSet rs = conn.createStatement().executeQuery(
+		"select * from org.Contact");
+
+	Assert.assertTrue(rs.next() == true);
+	Assert.assertTrue("value [" + rs.getString("FirstName")
+		+ "] is not what it's expected to be", rs
+		.getString("FirstName").equals("Jill"));
+	Assert.assertTrue(rs.next() == false);
+    }
+
+    private void stopTestCheckResults() {
+	try {
+
+	    // A basic proof that there are no changes were made from the
+	    // original tables (showing that the process stopped)
+	    stopTestCheckResultsA();
+
+	    stopTestCheckResultsB();
+
+	} catch (Exception e) {
+	    throw (new RuntimeException(e));
+	}
+    }
+
+    @Test
+    public void stopTest() {
+
+	stopTestSetup();
+
+	loadTestObjs("test-stop-beans.xml");
+
+	try {
+	    LOG.info("first test...");
+	    SyncSession syncSession = syncOrchMgr.createSession();
+
+	    syncSession.doSync();
+
+	    stopTestCheckResults();
+
+	} catch (Exception ex) {
+	    ex.printStackTrace();
+	    Assert.fail("Exception: " + ex.getMessage());
+	}
+
+	// init();
+	// }
+
     }
 
     private static void setupDerbyProps() {

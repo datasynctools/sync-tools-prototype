@@ -6,9 +6,7 @@ import tools.datasync.utils.SqlUtils;
 
 public class SyncStateTableCreator {
 
-    public static void createDb(Connection conn) {
-	// TODO Remove hard coding of sql statement
-	String path = "src/test/resources/create_table_framework.sql";
+    public static void createDb(Connection conn, String path) {
 	try {
 	    SqlUtils.runSQLScript(conn, path);
 	} catch (Exception e) {

@@ -78,6 +78,8 @@ public class GenericJdbcDao implements GenericDao {
     public Iterator<SyncEntityMessage> selectAll(final String entityName,
 	    boolean sorted) throws SQLException {
 
+	// TODO Improve seed so it can scale to billions of records
+	// (selectAll as currently implemented doesn't)
 	String query = "select * from " + entityName;
 	if (sorted) {
 	    // query = query + " order by " + Ids.KeyColumn.get(entityName);
