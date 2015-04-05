@@ -38,7 +38,7 @@ public class ContactJpaDaoTests extends AbstractContactDaoTests {
 	FileUtils.deleteQuietly(new File(DB_FILE_PATH));
 	Connection conn = createConnection(DB_FILE_PATH, true);
 
-	ContactTableCreator.createDb(conn);
+	TableCreator.createDb(conn);
 	// SyncStateTableCreator.createDb(conn);
     }
 

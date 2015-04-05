@@ -4,16 +4,15 @@ import java.sql.Connection;
 
 import tools.datasync.utils.SqlUtils;
 
-public class SyncStateTableCreator {
+public class TableCreator {
 
     public static void createDb(Connection conn) {
-	String path = "src/test/resources/create_table_framework.sql";
+	String path = "src/main/resources/META-INF/sampleCreate.sql";
 	try {
 	    SqlUtils.runSQLScript(conn, path);
 	} catch (Exception e) {
-	    e.printStackTrace();
+	    throw (new RuntimeException(e));
 	}
-
     }
 
 }
