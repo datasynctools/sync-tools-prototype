@@ -17,7 +17,7 @@ public class ContactUpdateHelper {
 	addLastNameSql(item, builder);
 	addHeightFtSql(item, builder);
 	addHeightInchSql(item, builder);
-	addPictureSql(item, builder);
+	// addPictureSql(item, builder);
 	addPreferredHeightSql(item, builder);
 
 	// Note: stripping last comma, so re-ordering is easier in the future
@@ -30,11 +30,12 @@ public class ContactUpdateHelper {
 
     }
 
-    private static final void addPictureSql(Contact item, StringBuilder builder) {
-	builder.append("Picture=");
-	builder.append(item.getPicture());
-	builder.append(",");
-    }
+    // private static final void addPictureSql(Contact item, StringBuilder
+    // builder) {
+    // builder.append("Picture=");
+    // builder.append(item.getPicture());
+    // builder.append(",");
+    // }
 
     private static final void addPreferredHeightSql(Contact item,
 	    StringBuilder builder) {

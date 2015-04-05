@@ -6,8 +6,8 @@ import tools.datasync.dao.AbstractSyncRecordFromT;
 
 public class SyncRecordFromContact extends AbstractSyncRecordFromT<Contact> {
 
-    public SyncRecordFromContact(HashFromObject hasher) {
-	super(hasher);
+    public SyncRecordFromContact(HashFromObject hasher, String entityId) {
+	super(hasher, entityId);
     }
 
     public String getRecordId(Contact item) {

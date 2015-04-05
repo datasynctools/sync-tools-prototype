@@ -64,7 +64,6 @@ public class ContactMetamodelDao implements ContactDao {
 		.value("LastName", item.getLastName())
 		.value("HeightFt", item.getHeightFt())
 		.value("HeightInch", item.getHeightInch())
-		.value("Picture", item.getPicture())
 		.value("PreferredHeight", item.getPreferredHeight());
 	return (answer);
     }
@@ -110,7 +109,6 @@ public class ContactMetamodelDao implements ContactDao {
 			.value("LastName", item.getLastName())
 			.value("HeightFt", item.getHeightFt())
 			.value("HeightInch", item.getHeightInch())
-			.value("Picture", item.getPicture())
 			.value("PreferredHeight", item.getPreferredHeight())
 			.execute();
 	    }

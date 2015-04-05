@@ -7,8 +7,8 @@ import tools.datasync.dao.AbstractSyncRecordFromT;
 public class SyncRecordFromWorkHIstory extends
 	AbstractSyncRecordFromT<WorkHistory> {
 
-    public SyncRecordFromWorkHIstory(HashFromObject hasher) {
-	super(hasher);
+    public SyncRecordFromWorkHIstory(HashFromObject hasher, String entityId) {
+	super(hasher, entityId);
     }
 
     public String getRecordId(WorkHistory item) {

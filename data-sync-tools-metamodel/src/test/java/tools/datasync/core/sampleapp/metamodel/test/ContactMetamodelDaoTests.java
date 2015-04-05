@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.UUID;
 
 import junit.framework.Assert;
 
@@ -44,7 +45,7 @@ public class ContactMetamodelDaoTests extends AbstractContactDaoTests {
 	UpdateableDataContext updateableContext = new JdbcDataContext(conn);
 
 	SyncRecordFromT<Contact> syncRecordCreator = new SyncRecordFromContact(
-		new DefaultHashFromObject());
+		new DefaultHashFromObject(), UUID.randomUUID().toString());
 
 	ContactDao contactDao = new ContactMetamodelDao(updateableContext,
 		syncRecordCreator);

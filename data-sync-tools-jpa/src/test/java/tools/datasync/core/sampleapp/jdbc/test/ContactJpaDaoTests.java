@@ -9,6 +9,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.UUID;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
 import org.apache.commons.dbcp2.Utils;
 import org.apache.commons.io.FileUtils;
 import org.apache.derby.jdbc.EmbeddedDataSource;
@@ -18,12 +22,12 @@ import org.junit.BeforeClass;
 import tools.datasync.api.dao.SyncRecordFromT;
 import tools.datasync.core.sampleapp.AbstractContactDaoTests;
 import tools.datasync.core.sampleapp.dao.ContactDao;
-import tools.datasync.core.sampleapp.dao.impl.jdbc.ContactJdbcDao;
+import tools.datasync.core.sampleapp.dao.impl.jpa.ContactJpaDao;
 import tools.datasync.core.sampleapp.model.Contact;
 import tools.datasync.core.sampleapp.sync.creators.SyncRecordFromContact;
 import tools.datasync.utils.DefaultHashFromObject;
 
-public class ContactJdbcDaoTests extends AbstractContactDaoTests {
+public class ContactJpaDaoTests extends AbstractContactDaoTests {
 
     static final String BASE_FILE_PATH = "derby-tmp";
     static final String DB_FILE_PATH = BASE_FILE_PATH + "/resources/test1.db";
@@ -35,10 +39,13 @@ public class ContactJdbcDaoTests extends AbstractContactDaoTests {
 	Connection conn = createConnection(DB_FILE_PATH, true);
 
 	ContactTableCreator.createDb(conn);
-	SyncStateTableCreator.createDb(conn);
+	// SyncStateTableCreator.createDb(conn);
     }
 
     public ContactDao setupTestInsertAndSelect() {
+
+	EntityManagerFactory entityFactory = Persistence
+		.createEntityManagerFactory("testJpa");
 
 	SyncRecordFromT<Contact> syncRecordCreator = new SyncRecordFromContact(
 		new DefaultHashFromObject(), UUID.randomUUID().toString());
@@ -46,10 +53,16 @@ public class ContactJdbcDaoTests extends AbstractContactDaoTests {
 	EmbeddedDataSource dataSource = new EmbeddedDataSource();
 	dataSource.setDatabaseName(DB_FILE_PATH);
 
-	ContactDao contactDao = new ContactJdbcDao(dataSource,
+	ContactDao contactDao = new ContactJpaDao(entityFactory,
 		syncRecordCreator);
 
+	EntityManager entityManager = entityFactory.createEntityManager();
+
+	entityManager.getTransaction().begin();
+
 	assertEquals(0, contactDao.getContacts().size());
+
+	entityManager.getTransaction().commit();
 
 	return contactDao;
     }

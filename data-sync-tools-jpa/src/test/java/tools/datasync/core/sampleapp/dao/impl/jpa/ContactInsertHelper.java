@@ -1,14 +1,11 @@
-package tools.datasync.core.sampleapp.dao.impl.jdbc;
+package tools.datasync.core.sampleapp.dao.impl.jpa;
 
 import tools.datasync.core.sampleapp.model.Contact;
 
 public class ContactInsertHelper {
 
     private static final String TABLE_COLUMNS = "(ContactId, DateOfBirth, "
-	    + "FirstName, LastName, HeightFt, HeightInch, PreferredHeight)";
-
-    // private static final String TABLE_COLUMNS = "(ContactId, DateOfBirth, "
-    // + "FirstName, LastName, HeightFt, HeightInch, Picture, PreferredHeight)";
+	    + "FirstName, LastName, HeightFt, HeightInch, Picture, PreferredHeight)";
 
     public static final String prepareInsert(Contact item,
 	    String contactTableName) {

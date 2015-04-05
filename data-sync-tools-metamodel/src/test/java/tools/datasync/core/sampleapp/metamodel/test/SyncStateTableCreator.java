@@ -34,7 +34,7 @@ public class SyncStateTableCreator {
 	tableBuilder.withColumn("EntityId").ofType(VARCHAR).ofSize(36);
 	tableBuilder.withColumn("RecordId").ofType(VARCHAR).ofSize(36);
 	tableBuilder.withColumn("RecordHash").ofType(VARCHAR).ofSize(100);
-	tableBuilder.withColumn("RecordData").ofType(VARCHAR).ofSize(200);
+	tableBuilder.withColumn("RecordData").ofType(VARCHAR).ofSize(2000);
 	tableBuilder.execute();
     }
 

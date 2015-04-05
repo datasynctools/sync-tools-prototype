@@ -2,18 +2,33 @@ package tools.datasync.core.sampleapp.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "Contact")
 public class Contact {
 
+    @Id
     private String contactId; // ContactId varchar(36) not null,
+    @Column
     private Date dateOfBirth; // DateOfBirth date,
+    @Column(length = 128)
     private String firstName; // FirstName varchar(25) not null,
+    @Column(length = 128)
     private String lastName; // LastName varchar(25) not null,
+    @Column
     private int heightFt; // HeightFt integer,
+    @Column
     private int heightInch; // HeightInch integer,
-    private byte[] picture; // Picture clob,
+    // TOD for Derby appears to be a bug:
+    // https://bugs.eclipse.org/bugs/show_bug.cgi?id=286206
+    // @Column(nullable = true, columnDefinition = "BLOB")
+    // private byte[] picture; // Picture blob,
+    @Column(length = 32, nullable = true)
     private String preferredHeight; // PreferredHeight varchar(25),
-
-    // primary key (ContactId)
 
     public String getContactId() {
 	return contactId;
@@ -63,13 +78,13 @@ public class Contact {
 	this.heightInch = heighInch;
     }
 
-    public byte[] getPicture() {
-	return picture;
-    }
-
-    public void setPicture(byte[] picture) {
-	this.picture = picture;
-    }
+    // public byte[] getPicture() {
+    // return picture;
+    // }
+    //
+    // public void setPicture(byte[] picture) {
+    // this.picture = picture;
+    // }
 
     public String getPreferredHeight() {
 	return preferredHeight;

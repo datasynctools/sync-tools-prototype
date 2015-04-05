@@ -1,4 +1,4 @@
-package tools.datasync.core.sampleapp.dao.impl.jdbc;
+package tools.datasync.core.sampleapp.dao.impl.jpa;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

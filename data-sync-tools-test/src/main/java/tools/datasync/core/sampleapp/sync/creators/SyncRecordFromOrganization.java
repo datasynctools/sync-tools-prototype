@@ -7,8 +7,8 @@ import tools.datasync.dao.AbstractSyncRecordFromT;
 public class SyncRecordFromOrganization extends
 	AbstractSyncRecordFromT<Organization> {
 
-    public SyncRecordFromOrganization(HashFromObject hasher) {
-	super(hasher);
+    public SyncRecordFromOrganization(HashFromObject hasher, String entityId) {
+	super(hasher, entityId);
     }
 
     public String getRecordId(Organization item) {
