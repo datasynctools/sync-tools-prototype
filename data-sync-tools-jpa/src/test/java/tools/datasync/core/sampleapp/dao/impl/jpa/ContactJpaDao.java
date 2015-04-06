@@ -6,9 +6,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import tools.datasync.api.dao.SyncRecord;
 import tools.datasync.api.dao.SyncRecordFromT;
 import tools.datasync.api.impl.jpa.JpaSyncRecord;
@@ -18,8 +15,8 @@ import tools.datasync.core.sampleapp.model.Contact;
 
 public class ContactJpaDao implements ContactDao {
 
-    private static final Logger LOG = LoggerFactory
-	    .getLogger(ContactJpaDao.class);
+    // private static final Logger LOG = LoggerFactory
+    // .getLogger(ContactJpaDao.class);
 
     private EntityManagerFactory entityFactory;
     private JpaSyncRecordMutationBuilder syncRecordMutator = new JpaSyncRecordMutationBuilder();
