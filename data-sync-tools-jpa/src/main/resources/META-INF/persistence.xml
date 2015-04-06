@@ -19,8 +19,8 @@
 		<properties>
 			<!-- if this is true, hibernate will print (to stdout) the SQL it executes, 
 				so you can check it to ensure it's not doing anything crazy -->
-			<property name="hibernate.show_sql" value="true" />
-			<property name="hibernate.format_sql" value="true" />
+			<property name="hibernate.show_sql" value="false" />
+			<property name="hibernate.format_sql" value="false" />
 			<property name="hibernate.default_schema" value="org" />
 		    <property name="javax.persistence.schema-generation.scripts.create-target" value="sampleCreate.sql"/>
 		    <property name="javax.persistence.schema-generation.scripts.drop-target" value="sampleDrop.sql"/>

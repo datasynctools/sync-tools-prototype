@@ -1,12 +1,13 @@
 package tools.datasync.core.sampleapp.dao.impl.jpa;
 
-import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
-import javax.persistence.metamodel.EntityType;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import tools.datasync.api.dao.SyncRecord;
 import tools.datasync.api.dao.SyncRecordFromT;
@@ -16,6 +17,9 @@ import tools.datasync.core.sampleapp.dao.ContactDao;
 import tools.datasync.core.sampleapp.model.Contact;
 
 public class ContactJpaDao implements ContactDao {
+
+    private static final Logger LOG = LoggerFactory
+	    .getLogger(ContactJpaDao.class);
 
     private EntityManagerFactory entityFactory;
     private JpaSyncRecordMutationBuilder syncRecordMutator = new JpaSyncRecordMutationBuilder();
@@ -49,17 +53,33 @@ public class ContactJpaDao implements ContactDao {
 
     }
 
+    // private void printEntities(EntityManager entityManager) {
+    //
+    // // if (LOG.isDebugEnabled()) {
+    // Iterator<EntityType<?>> iterator = entityManager.getMetamodel()
+    // .getEntities().iterator();
+    // while (iterator.hasNext()) {
+    // EntityType<?> type = iterator.next();
+    //
+    // LOG.info("Available Entities {}, attributes {}", type.getName(),
+    // type.getAttributes());
+    // Iterator<?> attributes = type.getAttributes().iterator();
+    // while (attributes.hasNext()) {
+    // Object attribObj = attributes.next();
+    // LOG.info("{}", attribObj);
+    // }
+    //
+    // }
+    // // }
+    //
+    // }
+
     public List<Contact> getContacts() {
 
 	EntityManager entityManager = entityFactory.createEntityManager();
 
-	Iterator<EntityType<?>> iterator = entityManager.getMetamodel()
-		.getEntities().iterator();
-	while (iterator.hasNext()) {
-	    EntityType<?> type = iterator.next();
-	    System.out.println(type.getName());
+	// printEntities(entityManager);
 
-	}
 	Query query = entityManager.createQuery("SELECT e FROM Contact e",
 		Contact.class);
 	@SuppressWarnings("unchecked")
