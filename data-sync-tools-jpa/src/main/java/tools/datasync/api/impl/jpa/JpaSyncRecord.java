@@ -11,9 +11,6 @@ import javax.persistence.Table;
 @Table(name = "SyncState")
 public class JpaSyncRecord implements Serializable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -621226742190550817L;
 
     @Id
@@ -25,8 +22,6 @@ public class JpaSyncRecord implements Serializable {
     private String recordHash;
     @Column
     private String recordData;
-
-    // private String origin;
 
     public String getEntityId() {
 	return entityId;
@@ -59,13 +54,5 @@ public class JpaSyncRecord implements Serializable {
     public void setRecordData(String recordData) {
 	this.recordData = recordData;
     }
-
-    // public String getOrigin() {
-    // return origin;
-    // }
-    //
-    // public void setOrigin(String origin) {
-    // this.origin = origin;
-    // }
 
 }

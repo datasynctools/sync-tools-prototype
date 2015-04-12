@@ -23,7 +23,6 @@
 
 package tools.datasync.api.msg;
 
-
 public class SyncMessage {
 
     private String originId = ""; // TODO populate the peer id

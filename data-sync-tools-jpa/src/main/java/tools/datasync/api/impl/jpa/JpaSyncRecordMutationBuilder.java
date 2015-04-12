@@ -10,7 +10,6 @@ public class JpaSyncRecordMutationBuilder
     private JpaSyncRecord convertTo(SyncRecord syncRecord) {
 	JpaSyncRecord jpaRecord = new JpaSyncRecord();
 	jpaRecord.setEntityId(syncRecord.getEntityId());
-	// jpaRecord.setOrigin(syncRecord.getOrigin());
 	jpaRecord.setRecordData(syncRecord.getRecordData());
 	jpaRecord.setRecordHash(syncRecord.getRecordHash());
 	jpaRecord.setRecordId(syncRecord.getRecordId());
@@ -31,7 +30,6 @@ public class JpaSyncRecordMutationBuilder
     public JpaSyncRecord createDeleteSyncData(Object context,
 	    SyncRecord syncRecord) {
 	return (convertTo(syncRecord));
-
     }
 
 }
