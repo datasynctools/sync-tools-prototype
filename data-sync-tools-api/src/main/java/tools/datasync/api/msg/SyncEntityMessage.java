@@ -49,4 +49,8 @@ public interface SyncEntityMessage {
 
     void setTypes(Map<String, String> types);
 
+    boolean isDelete();
+
+    void markDelete();
+
 }

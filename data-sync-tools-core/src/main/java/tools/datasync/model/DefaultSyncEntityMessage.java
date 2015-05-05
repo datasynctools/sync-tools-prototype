@@ -40,6 +40,7 @@ public class DefaultSyncEntityMessage extends SyncPayloadData implements
     private String entity;
     private String calculatedPrimaryKey;
     private SyncEntityMessageSupport support;
+    private boolean isDelete = false;
 
     public DefaultSyncEntityMessage() {
 	support = new SyncEntityMessageSupport();
@@ -134,5 +135,13 @@ public class DefaultSyncEntityMessage extends SyncPayloadData implements
 	    return false;
 	}
 	return true;
+    }
+
+    public boolean isDelete() {
+	return isDelete;
+    }
+
+    public void markDelete() {
+	isDelete = true;
     }
 }
